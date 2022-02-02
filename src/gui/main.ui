@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <menu id="actionMenu">
+    <item>
+      <attribute name="label">New Tab</attribute>
+      <attribute name="action">win.new_tab</attribute>
+    </item>
+    <item>
+      <attribute name="label">New Window</attribute>
+      <attribute name="action">win.new_window</attribute>
+    </item>
+    <item>
+      <attribute name="label">Open Bookmarks</attribute>
+      <attribute name="action">win.open_bookmarks</attribute>
+    </item>
+    <item>
+      <attribute name="label">Bookmark Page</attribute>
+      <attribute name="action">win.bookmark_page</attribute>
+    </item>
+    <section>
+      <item>
+        <attribute name="label">Preferences</attribute>
+        <attribute name="action">win.open_prefs</attribute>
+      </item>
+      <item>
+        <attribute name="label">About</attribute>
+        <attribute name="action">win.open_about</attribute>
+      </item>
+    </section>
+    <item>
+      <attribute name="label">Quit</attribute>
+      <attribute name="action">win.quit</attribute>
+    </item>
+  </menu>
+  <object id="mainWindow" class="GtkApplicationWindow">
+    <property name="title">Eva - &lt;blank&gt;</property>
+    <property name="default-width">800</property>
+    <property name="default-height">500</property>
+    <property name="icon-name">eva</property>
+    <property name="startup-id">eva</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="halign">fill</property>
+        <child>
+          <object class="GtkBox">
+            <property name="orientation">horizontal</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="spacing">3</property>
+            <property name="halign">fill</property>
+          </object>
+        </child>
+        <child>
+          <object id="mainNotebook" class="GtkNotebook">
+            <property name="hexpand">1</property>
+            <property name="vexpand">1</property>
+            <property name="enable-popup">1</property>
+            <property name="scrollable">1</property>
+            <property name="show-tabs">1</property>
+            <child type="action-end">
+              <object class="GtkBox">
+                <property name="orientation">horizontal</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
+                <property name="margin-start">3</property>
+                <property name="margin-end">3</property>
+                <child>
+                  <object id="newTab" class="GtkButton">
+                    <property name="margin-top">3</property>
+                    <property name="margin-bottom">3</property>
+                    <property name="margin-start">3</property>
+                    <property name="margin-end">3</property>
+                    <property name="action-name">win.new_tab</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="icon-name">tab-new-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object id="menuButton" class="GtkMenuButton">
+                    <property name="margin-top">3</property>
+                    <property name="margin-bottom">3</property>
+                    <property name="margin-start">3</property>
+                    <property name="margin-end">3</property>
+                    <property name="menu-model">actionMenu</property>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="icon-name">open-menu-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
