@@ -20,9 +20,22 @@ use crate::CONFIG;
 struct Actions {
     new_tab: SimpleAction,
     close_tab: SimpleAction,
+    next_tab: SimpleAction,
+    prev_tab: SimpleAction,
+    tab1: SimpleAction,
+    tab2: SimpleAction,
+    tab3: SimpleAction,
+    tab4: SimpleAction,
+    tab5: SimpleAction,
+    tab6: SimpleAction,
+    tab7: SimpleAction,
+    tab8: SimpleAction,
+    tab9: SimpleAction,
     new_window: SimpleAction,
     open_bookmarks: SimpleAction,
     bookmark_page: SimpleAction,
+    open_history: SimpleAction,
+    clear_history: SimpleAction,
     open_prefs: SimpleAction,
     open_about: SimpleAction,
     quit: SimpleAction,
@@ -33,9 +46,22 @@ impl Default for Actions {
         Self {
             new_tab: SimpleAction::new("new_tab", None),
             close_tab: SimpleAction::new("close_tab", None),
+            next_tab: SimpleAction::new("next_tab", None),
+            prev_tab: SimpleAction::new("prev_tab", None),
+            tab1: SimpleAction::new("tab1", None),
+            tab2: SimpleAction::new("tab2", None),
+            tab3: SimpleAction::new("tab3", None),
+            tab4: SimpleAction::new("tab4", None),
+            tab5: SimpleAction::new("tab5", None),
+            tab6: SimpleAction::new("tab6", None),
+            tab7: SimpleAction::new("tab7", None),
+            tab8: SimpleAction::new("tab8", None),
+            tab9: SimpleAction::new("tab9", None),
             new_window: SimpleAction::new("new_window", None),
             open_bookmarks: SimpleAction::new("open_bookmarks", None),
             bookmark_page: SimpleAction::new("bookmark_page", None),
+            open_history: SimpleAction::new("open_history", None),
+            clear_history: SimpleAction::new("clear_history", None),
             open_prefs: SimpleAction::new("open_prefs", None),
             open_about: SimpleAction::new("open_about", None),
             quit: SimpleAction::new("quit", None),
@@ -53,6 +79,50 @@ impl Actions {
             gui.close_current();
         }));
 
+        self.next_tab.connect_activate(clone!(@weak gui => move |_,_| {
+            gui.next_tab();
+        }));
+
+        self.prev_tab.connect_activate(clone!(@weak gui => move |_,_| {
+            gui.prev_tab();
+        }));
+
+        self.tab1.connect_activate(clone!(@weak gui => move |_,_| {
+            gui.notebook.set_page(0);
+        }));
+
+        self.tab2.connect_activate(clone!(@weak gui => move |_,_| {
+            gui.notebook.set_page(1);
+        }));
+
+        self.tab3.connect_activate(clone!(@weak gui => move |_,_| {
+            gui.notebook.set_page(2);
+        }));
+
+        self.tab4.connect_activate(clone!(@weak gui => move |_,_| {
+            gui.notebook.set_page(3);
+        }));
+
+        self.tab5.connect_activate(clone!(@weak gui => move |_,_| {
+            gui.notebook.set_page(4);
+        }));
+
+        self.tab6.connect_activate(clone!(@weak gui => move |_,_| {
+            gui.notebook.set_page(5);
+        }));
+
+        self.tab7.connect_activate(clone!(@weak gui => move |_,_| {
+            gui.notebook.set_page(6);
+        }));
+
+        self.tab8.connect_activate(clone!(@weak gui => move |_,_| {
+            gui.notebook.set_page(7);
+        }));
+
+        self.tab9.connect_activate(clone!(@weak gui => move |_,_| {
+            gui.notebook.set_page(8);
+        }));
+
         self.new_window
             .connect_activate(clone!(@weak gui, @strong app => move |_,_| {
                 let new_gui = build_ui(&app);
@@ -60,11 +130,19 @@ impl Actions {
             }));
 
         self.open_bookmarks.connect_activate(clone!(@weak gui => move |_,_| {
-            println!("Open bookmarks");
+            println!("Open Bookmarks");
         }));
 
         self.bookmark_page.connect_activate(clone!(@weak gui => move |_,_| {
             println!("Bookmark page");
+        }));
+
+        self.open_history.connect_activate(clone!(@weak gui => move |_,_| {
+            println!("Open History");
+        }));
+
+        self.clear_history.connect_activate(clone!(@weak gui => move |_,_| {
+            println!("Clear History");
         }));
 
         self.open_prefs.connect_activate(clone!(@weak gui => move |_,_| {
@@ -105,18 +183,43 @@ impl Gui {
 
         app.set_accels_for_action("win.new_tab", &["<primary>T"]);
         app.set_accels_for_action("win.close_tab", &["<primary>W"]);
+        app.set_accels_for_action("win.next_tab", &["<primary>Page_Down"]);
+        app.set_accels_for_action("win.prev_tab", &["<primary>Page_Up"]);
+        app.set_accels_for_action("win.tab1", &["<Alt>1"]);
+        app.set_accels_for_action("win.tab2", &["<Alt>2"]);
+        app.set_accels_for_action("win.tab3", &["<Alt>3"]);
+        app.set_accels_for_action("win.tab4", &["<Alt>4"]);
+        app.set_accels_for_action("win.tab5", &["<Alt>5"]);
+        app.set_accels_for_action("win.tab6", &["<Alt>6"]);
+        app.set_accels_for_action("win.tab7", &["<Alt>7"]);
+        app.set_accels_for_action("win.tab8", &["<Alt>8"]);
+        app.set_accels_for_action("win.tab9", &["<Alt>9"]);
         app.set_accels_for_action("win.new_window", &["<primary>N"]);
         app.set_accels_for_action("win.open_bookmarks", &["<primary><Shift>O"]);
         app.set_accels_for_action("win.bookmark_page", &["<primary>D"]);
+        app.set_accels_for_action("win.open_history", &["<primary>H"]);
         app.set_accels_for_action("win.open_prefs", &["<primary><Shift>P"]);
         app.set_accels_for_action("win.open_about", &["<primary><Shift>A"]);
         app.set_accels_for_action("win.quit", &["<primary>Q"]);
 
         self.window.add_action(&actions.new_tab);
         self.window.add_action(&actions.close_tab);
+        self.window.add_action(&actions.next_tab);
+        self.window.add_action(&actions.prev_tab);
+        self.window.add_action(&actions.tab1);
+        self.window.add_action(&actions.tab2);
+        self.window.add_action(&actions.tab3);
+        self.window.add_action(&actions.tab4);
+        self.window.add_action(&actions.tab5);
+        self.window.add_action(&actions.tab6);
+        self.window.add_action(&actions.tab7);
+        self.window.add_action(&actions.tab8);
+        self.window.add_action(&actions.tab9);
         self.window.add_action(&actions.new_window);
         self.window.add_action(&actions.open_bookmarks);
         self.window.add_action(&actions.bookmark_page);
+        self.window.add_action(&actions.open_history);
+        self.window.add_action(&actions.clear_history);
         self.window.add_action(&actions.open_prefs);
         self.window.add_action(&actions.open_about);
         self.window.add_action(&actions.quit);
@@ -167,6 +270,28 @@ impl Gui {
 
     fn current_page(&self) -> Option<u32> {
         self.notebook.current_page()
+    }
+
+    fn next_tab(&self) {
+        if let Some(current) = self.notebook.current_page() {
+            let pages = self.notebook.n_pages();
+            if current == pages - 1 {
+                self.notebook.set_page(0);
+            } else {
+                self.notebook.set_page((current + 1).try_into().unwrap());
+            }
+        }
+    }
+
+    fn prev_tab(&self) {
+        if let Some(current) = self.current_page() {
+            let pages = self.notebook.n_pages();
+            if current == 0 {
+                self.notebook.set_page((pages - 1).try_into().unwrap());
+            } else {
+                self.notebook.set_page((current - 1).try_into().unwrap());
+            }
+        }
     }
 
     fn close_current(&self) {

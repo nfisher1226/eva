@@ -17,6 +17,10 @@
       <attribute name="label">Bookmark Page</attribute>
       <attribute name="action">win.bookmark_page</attribute>
     </item>
+    <item>
+      <attribute name="label">Open History</attribute>
+      <attribute name="action">win.open_history</attribute>
+    </item>
     <section>
       <item>
         <attribute name="label">Preferences</attribute>
