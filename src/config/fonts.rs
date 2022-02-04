@@ -30,8 +30,6 @@ pub struct Font {
     pub style: FontStyle,
     /// The size of the font
     pub size: usize,
-    /// The weight of the font
-    pub weight: usize,
 }
 
 /// Error returned if unable to parse a font from a given `str`
@@ -88,7 +86,6 @@ impl Default for Font {
             family: String::from("Sans"),
             style: FontStyle::default(),
             size: 13,
-            weight: 500,
         }
     }
 }
@@ -104,12 +101,12 @@ impl Font {
         self.family = family;
     }
 
-    /// Get the *weight* of the font
+    /// Get the *styleof the font
     pub fn style(&self) -> FontStyle {
         self.style
     }
 
-    /// Set the *weight* or *style* of the font
+    /// Set the *style* or *style* of the font
     pub fn set_style(&mut self, style: FontStyle) {
         self.style = style;
     }
@@ -122,16 +119,6 @@ impl Font {
     /// Set the *size* of the font
     pub fn set_size(&mut self, size: usize) {
         self.size = size;
-    }
-
-    /// Get the *weight* of the font
-    pub fn weight(&self) -> usize {
-        self.weight
-    }
-
-    /// Set the *weight* of the font
-    pub fn set_weight(&mut self, weight: usize) {
-        self.weight= weight;
     }
 }
 
@@ -151,13 +138,11 @@ impl Default for Fonts {
                 family: String::from("monospace"),
                 style: FontStyle::default(),
                 size: 13,
-                weight: 500,
             },
             heading: Font {
                 family: String::from("sans-serif"),
                 style: FontStyle::default(),
                 size: 18,
-                weight: 800,
             },
             quote: Font::default(),
         }

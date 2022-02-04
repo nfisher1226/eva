@@ -237,6 +237,7 @@ version = "0.1.0"
 dependencies = [
  "gmi",
  "gtk4",
+ "once_cell",
 ]
 
 [[package]]

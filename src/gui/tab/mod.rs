@@ -1,7 +1,7 @@
 use gtk::prelude::*;
 use gemview::GemView;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct TabLabel {
     handle: gtk::Box,
     label: gtk::Label,
@@ -43,6 +43,7 @@ impl TabLabel {
     }
 }
 
+#[derive(Clone, Debug)]
 pub struct Tab {
     tab: gtk::Box,
     label: TabLabel,
@@ -124,6 +125,7 @@ impl Default for Tab {
         viewer.set_margin_bottom(25);
         scroller.set_child(Some(&viewer));
         tab.append(&scroller);
+
         Self {
             tab,
             label: TabLabel::default(),

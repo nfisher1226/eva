@@ -4,6 +4,7 @@ use gtk::gdk_pixbuf::Pixbuf;
 use gtk::gio::{Cancellable, File, MemoryInputStream, SimpleAction};
 use gtk::glib::char::Char;
 use gtk::glib;
+use glib::closure_local;
 use gtk::glib::{clone, OptionArg, OptionFlags};
 use gtk::prelude::*;
 use gtk::{Application, ResponseType};
@@ -52,10 +53,11 @@ impl Actions {
             gui.close_current();
         }));
 
-        self.new_window.connect_activate(clone!(@weak gui, @strong app => move |_,_| {
-            let new_gui = build_ui(&app);
-            new_gui.new_tab(None);
-        }));
+        self.new_window
+            .connect_activate(clone!(@weak gui, @strong app => move |_,_| {
+                let new_gui = build_ui(&app);
+                new_gui.new_tab(None);
+            }));
 
         self.open_bookmarks.connect_activate(clone!(@weak gui => move |_,_| {
             println!("Open bookmarks");
@@ -74,7 +76,6 @@ impl Actions {
         }));
 
         self.quit.connect_activate(clone!(@weak gui => move |_,_| {
-            println!("Closing window");
             gui.window.close();
         }));
     }
@@ -130,14 +131,37 @@ impl Gui {
                 newtab.label().label().set_label(&host);
             }
             newtab.addr_bar().set_text(uri);
-            //newtab.viewer().visit(uri);
-            GemView::visit(&newtab.viewer(), uri);
+            match newtab.viewer().visit(uri) {
+                Ok(_) => {},
+                Err(e) => eprintln!("{:?}", e),
+            }
         }
         self.notebook.append_page(&newtab.tab(), Some(&newtab.label().handle()));
         self.notebook.set_tab_reorderable(&newtab.tab(), true);
         let notebook = self.notebook.clone();
+        let t = newtab.clone();
         newtab.label().close_button().connect_clicked(move |_| {
-            notebook.detach_tab(&newtab.tab())
+            notebook.detach_tab(&t.tab())
+        });
+        let t = newtab.clone();
+        newtab.addr_bar().connect_activate(move |bar| {
+            let uri = String::from(bar.text());
+            match t.viewer().visit(&uri) {
+                Ok(_) => {},
+                Err(e) => eprintln!("{:?}", e),
+            }
+        });
+        let t = newtab.clone();
+        newtab.viewer().connect_page_load_started(move |_,uri| {
+            t.addr_bar().set_text(&uri);
+        });
+        let t = newtab.clone();
+        newtab.viewer().connect_page_load_redirect(move |_,uri| {
+            t.addr_bar().set_text(&uri);
+        });
+        let t = newtab.clone();
+        newtab.viewer().connect_page_loaded(move |_,uri| {
+            t.addr_bar().set_text(&uri);
         });
     }
 
