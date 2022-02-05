@@ -1,5 +1,8 @@
+use fastrand;
 use gtk::prelude::*;
 use gemview::GemView;
+
+use crate::CONFIG;
 
 #[derive(Clone, Debug)]
 pub struct TabLabel {
@@ -56,8 +59,12 @@ pub struct Tab {
 
 impl Default for Tab {
     fn default() -> Self {
+        let name: String = std::iter::repeat_with(fastrand::alphanumeric)
+            .take(15)
+            .collect();
         let tab = gtk::builders::BoxBuilder::new()
             .orientation(gtk::Orientation::Vertical)
+            .name(&name)
             .build();
         let hbox = gtk::builders::BoxBuilder::new()
             .orientation(gtk::Orientation::Horizontal)
@@ -102,6 +109,7 @@ impl Default for Tab {
             .child(&image)
             .tooltip_text("Reload page")
             .sensitive(false)
+            .name("reload_button")
             .build();
         bbox.append(&reload_button);
         let addr_bar = gtk::builders::SearchEntryBuilder::new()
@@ -109,11 +117,6 @@ impl Default for Tab {
             .hexpand(true)
             .build();
         hbox.append(&addr_bar);
-        let image = gtk::builders::ImageBuilder::new()
-            .icon_name("bookmark-new-symbolic")
-            .margin_start(6)
-            .margin_end(6)
-            .build();
         let scroller = gtk::builders::ScrolledWindowBuilder::new()
             .hexpand(true)
             .vexpand(true)
@@ -165,5 +168,9 @@ impl Tab {
 
     pub fn viewer(&self) -> GemView {
         self.viewer.clone()
+    }
+
+    pub fn set_fonts(&self) {
+        let cfg = CONFIG.lock().unwrap().clone();
     }
 }

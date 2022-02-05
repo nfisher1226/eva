@@ -1,6 +1,5 @@
 #![warn(clippy::all, clippy::pedantic)]
 use clap::{App, Arg};
-use gtk::gio::File;
 use std::sync::Mutex;
 /// Handles getting the configuration data to and from disk
 mod config;
@@ -32,14 +31,6 @@ fn main() {
             .takes_value(true)
             .multiple_values(true)
         );
-    let matches = app.get_matches();
-    if let Some(addr) = matches.values_of("URI") {
-        let mut files = Vec::new();
-        for uri in addr {
-            files.push(String::from(uri));
-        }
-        gui::run(Some(files));
-    } else {
-        gui::run(None);
-    }
+    _ = app.get_matches();
+    gui::run();
 }

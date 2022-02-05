@@ -9,6 +9,7 @@ edition = "2021"
 clap = "~3.0"
 gmi = "0.2.1"
 lazy_static = "~1.4"
+fastrand = "~1.7"
 toml = "~0.5"
 gemview = { path = "../gemview" }
 

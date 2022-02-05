@@ -4,9 +4,8 @@ use serde::{Deserialize, Serialize};
 
 mod fonts;
 
-use std::{fmt, fs};
+use std::fs;
 use std::path::{Path, PathBuf};
-use std::str::FromStr;
 
 pub use fonts::{Font, FontStyle, Fonts};
 

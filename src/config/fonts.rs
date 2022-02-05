@@ -1,12 +1,20 @@
 #![warn(clippy::all, clippy::pedantic)]
 use serde::{Deserialize, Serialize};
 
-use std::{fmt, fs};
+use std::fmt;
 use std::str::FromStr;
 
-/// The weight, or style, of the font
+/// The style of the font
 #[derive(Clone, Copy, Deserialize, Debug, PartialEq, Serialize)]
 pub enum FontStyle {
+    Normal,
+    Oblique,
+    Italic,
+}
+
+/// The weight of the font
+#[derive(Clone, Copy, Deserialize, Debug, PartialEq, Serialize)]
+pub enum FontWeight {
     Thin,
     Ultralight,
     Light,
@@ -24,11 +32,9 @@ pub enum FontStyle {
 /// The font used to print the description in the output file
 #[derive(Clone, Deserialize, Debug, Serialize)]
 pub struct Font {
-    /// The *family* , eg *Sans* or *ComicSans*
     pub family: String,
-    /// The *style* of the given font
     pub style: FontStyle,
-    /// The size of the font
+    pub weight: FontWeight,
     pub size: usize,
 }
 
@@ -48,7 +54,19 @@ impl fmt::Display for FontStyle {
     }
 }
 
+impl fmt::Display for FontWeight {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:?}", self)
+    }
+}
+
 impl Default for FontStyle {
+    fn default() -> Self {
+        Self::Normal
+    }
+}
+
+impl Default for FontWeight {
     fn default() -> Self {
         Self::Normal
     }
@@ -60,20 +78,34 @@ impl FromStr for FontStyle {
     #[allow(clippy::must_use_candidate)]
     fn from_str(str: &str) -> Result<Self, Self::Err> {
         match str {
-            "Style::Thin" | "Style::thin" => Ok(FontStyle::Thin),
-            "Style::Ultralight" | "Style::ultralight" => Ok(FontStyle::Ultralight),
-            "Style::Light" | "Style::light" => Ok(FontStyle::Light),
-            "Style::Semilight" | "Style::semilight" => Ok(FontStyle::Semilight),
-            "Style::Book" | "Style::book" => Ok(FontStyle::Book),
-            "Style::Normal" | "Style::normal" | "Style::Regular" | "Style::regular" => {
-                Ok(FontStyle::Normal)
+            "Style::Normal" | "Style::normal" => Ok(FontStyle::Normal),
+            "Style::Oblique" | "Style::oblique" => Ok(FontStyle::Oblique),
+            "Style::Italic" | "Style::italic" => Ok(FontStyle::Italic),
+            _ => Err(ParseFontError),
+        }
+    }
+}
+
+impl FromStr for FontWeight {
+    type Err = ParseFontError;
+
+    #[allow(clippy::must_use_candidate)]
+    fn from_str(str: &str) -> Result<Self, Self::Err> {
+        match str {
+            "Weight::Thin" | "Weight::thin" => Ok(FontWeight::Thin),
+            "Weight::Ultralight" | "Weight::ultralight" => Ok(FontWeight::Ultralight),
+            "Weight::Light" | "Weight::light" => Ok(FontWeight::Light),
+            "Weight::Semilight" | "Weight::semilight" => Ok(FontWeight::Semilight),
+            "Weight::Book" | "Weight::book" => Ok(FontWeight::Book),
+            "Weight::Normal" | "Weight::normal" | "Weight::Regular" | "Weight::regular" => {
+                Ok(FontWeight::Normal)
             }
-            "Style::Medium" | "Style::medium" => Ok(FontStyle::Medium),
-            "Style::Semibold" | "Style::semibold" => Ok(FontStyle::Semibold),
-            "Style::Bold" | "Style::bold" => Ok(FontStyle::Bold),
-            "Style::Ultrabold" | "Style::ultrabold" => Ok(FontStyle::Ultrabold),
-            "Style::Heavy" | "Style::heavy" => Ok(FontStyle::Heavy),
-            "Style::Ultraheavy" | "Style::ultraheavy" => Ok(FontStyle::Ultraheavy),
+            "Weight::Medium" | "Weight::medium" => Ok(FontWeight::Medium),
+            "Weight::Semibold" | "Weight::semibold" => Ok(FontWeight::Semibold),
+            "Weight::Bold" | "Weight::bold" => Ok(FontWeight::Bold),
+            "Weight::Ultrabold" | "Weight::ultrabold" => Ok(FontWeight::Ultrabold),
+            "Weight::Heavy" | "Weight::heavy" => Ok(FontWeight::Heavy),
+            "Weight::Ultraheavy" | "Weight::ultraheavy" => Ok(FontWeight::Ultraheavy),
             _ => Err(ParseFontError),
         }
     }
@@ -85,6 +117,7 @@ impl Default for Font {
         Self {
             family: String::from("Sans"),
             style: FontStyle::default(),
+            weight: FontWeight::default(),
             size: 13,
         }
     }
@@ -101,7 +134,7 @@ impl Font {
         self.family = family;
     }
 
-    /// Get the *styleof the font
+    /// Get the *style of the font
     pub fn style(&self) -> FontStyle {
         self.style
     }
@@ -109,6 +142,14 @@ impl Font {
     /// Set the *style* or *style* of the font
     pub fn set_style(&mut self, style: FontStyle) {
         self.style = style;
+    }
+
+    pub fn weight(&self) -> FontWeight {
+        self.weight
+    }
+
+    pub fn set_weight(&mut self, weight: FontWeight) {
+        self.weight = weight;
     }
 
     /// Get the *size* of the font
@@ -137,11 +178,13 @@ impl Default for Fonts {
             pre: Font {
                 family: String::from("monospace"),
                 style: FontStyle::default(),
+                weight: FontWeight::default(),
                 size: 13,
             },
             heading: Font {
                 family: String::from("sans-serif"),
                 style: FontStyle::default(),
+                weight: FontWeight::Bold,
                 size: 18,
             },
             quote: Font::default(),
