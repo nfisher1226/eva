@@ -137,27 +137,27 @@ impl Actions {
             }));
 
         self.open_bookmarks.connect_activate(clone!(@weak gui => move |_,_| {
-            println!("Open Bookmarks");
+            println!("Not implemented yet");
         }));
 
         self.bookmark_page.connect_activate(clone!(@weak gui => move |_,_| {
-            println!("Bookmark page");
+            println!("Not implemented yet");
         }));
 
         self.open_history.connect_activate(clone!(@weak gui => move |_,_| {
-            println!("Open History");
+            println!("Not implemented yet");
         }));
 
         self.clear_history.connect_activate(clone!(@weak gui => move |_,_| {
-            println!("Clear History");
+            println!("Not implemented yet");
         }));
 
         self.open_prefs.connect_activate(clone!(@weak gui => move |_,_| {
-            println!("Open prefs");
+            println!("Not implemented yet");
         }));
 
         self.open_about.connect_activate(clone!(@weak gui => move |_,_| {
-            println!("Open about");
+            println!("Not implemented yet");
         }));
 
         self.quit.connect_activate(clone!(@weak gui => move |_,_| {
