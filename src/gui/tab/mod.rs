@@ -120,6 +120,7 @@ impl Default for Tab {
         let scroller = gtk::builders::ScrolledWindowBuilder::new()
             .hexpand(true)
             .vexpand(true)
+            .propagate_natural_width(true)
             .build();
         let viewer = GemView::new();
         viewer.set_margin_start(25);
