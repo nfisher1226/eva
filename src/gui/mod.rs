@@ -13,6 +13,9 @@ use std::rc::Rc;
 mod tab;
 use tab::Tab;
 
+mod dialogs;
+use dialogs::Dialogs;
+
 use crate::CONFIG;
 
 struct Actions {
@@ -153,11 +156,11 @@ impl Actions {
         }));
 
         self.open_prefs.connect_activate(clone!(@weak gui => move |_,_| {
-            println!("Not implemented yet");
+            gui.dialogs.preferences.show();
         }));
 
         self.open_about.connect_activate(clone!(@weak gui => move |_,_| {
-            println!("Not implemented yet");
+            gui.dialogs.about.show();
         }));
 
         self.quit.connect_activate(clone!(@weak gui => move |_,_| {
@@ -170,6 +173,7 @@ struct Gui {
     window: gtk::ApplicationWindow,
     notebook: gtk::Notebook,
     tabs: RefCell<HashMap<String, Tab>>,
+    dialogs: Dialogs,
 }
 
 impl Default for Gui {
@@ -178,11 +182,13 @@ impl Default for Gui {
         let window: gtk::ApplicationWindow = builder.object("mainWindow").unwrap();
         let notebook: gtk::Notebook = builder.object("mainNotebook").unwrap();
         let tabs: RefCell<HashMap<String, Tab>> = RefCell::new(HashMap::new());
+        let dialogs: Dialogs = Dialogs::init(&window, &builder);
 
         Self {
             window,
             notebook,
             tabs,
+            dialogs,
         }
     }
 }
