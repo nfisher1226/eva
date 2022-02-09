@@ -7,7 +7,7 @@ mod fonts;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-pub use fonts::{Font, FontStyle, Fonts};
+pub use fonts::{Font, Fonts};
 
 /// Returns an OS appropriate configuration directory path
 pub fn get_config_dir() -> PathBuf {

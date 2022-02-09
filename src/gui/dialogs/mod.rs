@@ -23,6 +23,11 @@ pub struct PrefWidgets {
     quote_fg_color: gtk::ColorButton,
     quote_bg_color: gtk::ColorButton,
     link_color: gtk::ColorButton,
+    pg_font: gtk::FontButton,
+    pre_font: gtk::FontButton,
+    h1_font: gtk::FontButton,
+    h2_font: gtk::FontButton,
+    h3_font: gtk::FontButton,
 }
 
 #[derive(Clone)]
@@ -110,6 +115,21 @@ impl PrefWidgets {
             link_color: builder
                 .object("link_color")
                 .expect("Error getting 'link_color'"),
+            pg_font: builder
+                .object("pg_font")
+                .expect("Error getting 'pg_font'"),
+            pre_font: builder
+                .object("pre_font")
+                .expect("Error getting 'pre_font'"),
+            h1_font: builder
+                .object("h1_font")
+                .expect("Error getting 'h1_font'"),
+            h2_font: builder
+                .object("h2_font")
+                .expect("Error getting 'h2_font'"),
+            h3_font: builder
+                .object("h3_font")
+                .expect("Error getting 'h3_font'"),
         }
     }
 
