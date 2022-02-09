@@ -1,4 +1,5 @@
 # Eva
+![Eva icon](data/eva.svg)
 Contents
 ========
 * [Introduction](#introduction)
