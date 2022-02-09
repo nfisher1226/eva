@@ -2,7 +2,7 @@
 use clap::{App, Arg};
 use std::sync::Mutex;
 /// Handles getting the configuration data to and from disk
-mod config;
+pub mod config;
 /// Starts the graphical interface
 mod gui;
 

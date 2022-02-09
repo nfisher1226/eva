@@ -29,32 +29,138 @@ pub fn get_config_file() -> PathBuf {
 
 #[derive(Clone, Deserialize, Debug, Serialize)]
 pub struct Colors {
-    background: Option<Color>,
-    text: Color,
-    link: Color,
+    pub fg: Color,
+    pub bg: Color,
+    pub quote_fg: Color,
+    pub quote_bg: Color,
+    pub link: Color,
 }
 
 impl Default for Colors {
     fn default() -> Self {
         Self {
-            background: None,
-            text: Color::Reduced(ReducedRGBA::primary(PrimaryColor::Black)),
+            fg: Color::Reduced(ReducedRGBA{ red: 24, green: 24, blue: 24, alpha: 255 }),
+            bg: Color::Reduced(ReducedRGBA{ red: 200, green: 200, blue: 200, alpha: 255 }),
+            quote_fg: Color::Reduced(ReducedRGBA{ red: 24, green: 24, blue: 24, alpha: 255 }),
+            quote_bg: Color::Reduced(ReducedRGBA{ red: 210, green: 175, blue: 95, alpha: 255 }),
             link: Color::Reduced(ReducedRGBA::primary(PrimaryColor::Blue)),
+        }
+    }
+}
+
+impl Colors {
+    pub fn fg(&self) -> Color {
+        self.fg.clone()
+    }
+
+    pub fn set_fg(&mut self, color: Color) {
+        self.fg = color;
+    }
+
+    pub fn bg(&self) -> Color {
+        self.bg.clone()
+    }
+
+    pub fn set_bg(&mut self, color: Color) {
+        self.bg = color;
+    }
+
+    pub fn quote_fg(&self) -> Color {
+        self.quote_fg.clone()
+    }
+
+    pub fn set_quote_fg(&mut self, color: Color) {
+        self.quote_fg = color;
+    }
+
+    pub fn quote_bg(&self) -> Color {
+        self.quote_bg.clone()
+    }
+
+    pub fn set_quote_bg(&mut self, color: Color) {
+        self.quote_bg = color;
+    }
+
+    pub fn link(&self) -> Color {
+        self.link.clone()
+    }
+
+    pub fn set_link(&mut self, color: Color) {
+        self.link = color;
+    }
+}
+
+#[derive(Clone, Deserialize, Debug, Serialize)]
+pub enum NewPage {
+    Home,
+    Blank,
+}
+
+impl Default for NewPage {
+    fn default() -> Self {
+        Self::Home
+    }
+}
+
+#[derive(Clone, Deserialize, Debug, Serialize)]
+pub enum ShowTabs {
+    Always,
+    Multiple,
+    Never,
+}
+
+impl Default for ShowTabs {
+    fn default() -> Self {
+        Self::Always
+    }
+}
+
+#[derive(Clone, Deserialize, Debug, Serialize)]
+pub enum TabPosition {
+    Top,
+    Bottom,
+    Left,
+    Right,
+}
+
+impl Default for TabPosition {
+    fn default() -> Self {
+        Self::Top
+    }
+}
+
+#[derive(Clone, Deserialize, Debug, Serialize)]
+pub struct General {
+    pub homepage: String,
+    pub new_page: NewPage,
+    pub show_tabs: ShowTabs,
+    pub tab_position: TabPosition,
+}
+
+impl Default for General {
+    fn default() -> Self {
+        Self {
+            homepage: String::from("gemini://gemini.circumlunar.space/"),
+            new_page: NewPage::default(),
+            show_tabs: ShowTabs::default(),
+            tab_position: TabPosition::default(),
         }
     }
 }
 
 #[derive(Clone, Deserialize, Debug, Serialize)]
 pub struct Config {
-    pub fonts: Fonts,
+    pub general: General,
     pub colors: Colors,
+    pub fonts: Fonts,
 }
 
 impl Default for Config {
     fn default() -> Self {
         Self {
-            fonts: Fonts::default(),
+            general: General::default(),
             colors: Colors::default(),
+            fonts: Fonts::default(),
         }
     }
 }

@@ -85,7 +85,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkComboBoxText" id="new_page_variant">
+                      <object class="GtkComboBoxText" id="new_page">
                         <property name="active-id">home</property>
                         <property name="tooltip-text">What to display when opening a new window or tab</property>
                         <layout>
@@ -110,7 +110,7 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkComboBoxText" id="show_tab_bar">
+                      <object class="GtkComboBoxText" id="show_tabs">
                         <property name="tooltip-text">When to show the tab bar</property>
                         <layout>
                           <property name="column">1</property>

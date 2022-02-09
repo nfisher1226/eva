@@ -165,27 +165,41 @@ impl Font {
 
 #[derive(Clone, Deserialize, Debug, Serialize)]
 pub struct Fonts {
-    paragraph: Font,
+    pg: Font,
     pre: Font,
-    heading: Font,
+    h1: Font,
+    h2: Font,
+    h3: Font,
     quote: Font,
 }
 
 impl Default for Fonts {
     fn default() -> Self {
         Self {
-            paragraph: Font::default(),
+            pg: Font::default(),
             pre: Font {
                 family: String::from("monospace"),
                 style: FontStyle::default(),
                 weight: FontWeight::default(),
-                size: 13,
+                size: 12,
             },
-            heading: Font {
+            h1: Font {
                 family: String::from("sans-serif"),
                 style: FontStyle::default(),
                 weight: FontWeight::Bold,
                 size: 18,
+            },
+            h2: Font {
+                family: String::from("sans-serif"),
+                style: FontStyle::default(),
+                weight: FontWeight::Bold,
+                size: 16,
+            },
+            h3: Font {
+                family: String::from("sans-serif"),
+                style: FontStyle::default(),
+                weight: FontWeight::Bold,
+                size: 14,
             },
             quote: Font::default(),
         }

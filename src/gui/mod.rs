@@ -288,11 +288,29 @@ impl Gui {
         newtab.viewer().connect_page_loaded(move |_,uri| {
             t.addr_bar().set_text(&uri);
             t.reload_button().set_sensitive(true);
+            t.back_button().set_sensitive(t.viewer().has_previous());
+            t.forward_button().set_sensitive(t.viewer().has_next());
         });
         let t = newtab.clone();
         newtab.viewer().connect_page_load_failed(move |_,uri| {
             t.addr_bar().set_text(&uri);
             t.reload_button().set_sensitive(true);
+            t.back_button().set_sensitive(t.viewer().has_previous());
+            t.forward_button().set_sensitive(t.viewer().has_next());
+        });
+        let t = newtab.clone();
+        newtab.back_button().connect_clicked(move |_| {
+            match t.viewer().go_previous() {
+                Ok(_) => {},
+                Err(e) => eprintln!("{:?}", e),
+            }
+        });
+        let t = newtab.clone();
+        newtab.forward_button().connect_clicked(move |_| {
+            match t.viewer().go_next() {
+                Ok(_) => {},
+                Err(e) => eprintln!("{:?}", e),
+            }
         });
         let t = newtab.clone();
         newtab.reload_button().connect_clicked(move |_| {
