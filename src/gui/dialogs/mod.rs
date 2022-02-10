@@ -5,7 +5,7 @@ use gtk::ResponseType;
 use rgba_simple::{Color, ColorError, Convert};
 
 use crate::CONFIG;
-use crate::config::{Colors, Config, General, NewPage, ShowTabs, TabPosition};
+use crate::config::{Colors, Config, Font, Fonts, General, NewPage, ShowTabs, TabPosition};
 
 use std::env;
 use std::path::PathBuf;
@@ -65,12 +65,22 @@ impl Dialogs {
 
     fn init_preferences(window: &gtk::ApplicationWindow, builder: &gtk::Builder) -> PrefWidgets {
         let dlg = PrefWidgets::init(builder);
+        match dlg.load_config() {
+            Ok(_) => {},
+            Err(e) => eprintln!("Error loading config: {}", e),
+        }
         dlg.window.set_transient_for(Some(window));
-        dlg.new_page.set_active_id(Some("home"));
-        dlg.show_tabs.set_active_id(Some("always"));
-        dlg.tab_position.set_active_id(Some("top"));
+        let dialog = dlg.clone();
         dlg.window.connect_response(move |dlg,res| {
             if res == ResponseType::Accept {
+                if let Some(cfg) = dialog.config() {
+                    *CONFIG.lock().unwrap() = cfg;
+                } else {
+                    match dialog.load_config() {
+                        Ok(_) => {},
+                        Err(e) => eprintln!("Error loading config: {}", e),
+                    }
+                }
             }
             dlg.hide();
         });
@@ -337,10 +347,116 @@ impl PrefWidgets {
         Ok(())
     }
 
+    pub fn pg_font(&self) -> Option<Font> {
+        match self.pg_font.font_desc() {
+            Some(font) => Some(Font::from_pango(font)),
+            None => None,
+        }
+    }
+
+    pub fn set_pg_font(&self, font: Font) {
+        self.pg_font.set_font_desc(&font.to_pango());
+    }
+
+    pub fn pre_font(&self) -> Option<Font> {
+        match self.pre_font.font_desc() {
+            Some(font) => Some(Font::from_pango(font)),
+            None => None,
+        }
+    }
+
+    pub fn set_pre_font(&self, font: Font) {
+        self.pre_font.set_font_desc(&font.to_pango());
+    }
+
+    pub fn h1_font(&self) -> Option<Font> {
+        match self.h1_font.font_desc() {
+            Some(font) => Some(Font::from_pango(font)),
+            None => None,
+        }
+    }
+
+    pub fn set_h1_font(&self, font: Font) {
+        self.h1_font.set_font_desc(&font.to_pango());
+    }
+
+    pub fn h2_font(&self) -> Option<Font> {
+        match self.h2_font.font_desc() {
+            Some(font) => Some(Font::from_pango(font)),
+            None => None,
+        }
+    }
+
+    pub fn set_h2_font(&self, font: Font) {
+        self.h2_font.set_font_desc(&font.to_pango());
+    }
+
+    pub fn h3_font(&self) -> Option<Font> {
+        match self.h3_font.font_desc() {
+            Some(font) => Some(Font::from_pango(font)),
+            None => None,
+        }
+    }
+
+    pub fn set_h3_font(&self, font: Font) {
+        self.h3_font.set_font_desc(&font.to_pango());
+    }
+
+    pub fn fonts(&self) -> Option<Fonts> {
+        Some(Fonts {
+            pg: match self.pg_font() {
+                Some(f) => f,
+                None => return None,
+            },
+            pre: match self.pre_font() {
+                Some(f) => f,
+                None => return None,
+            },
+            h1: match self.h1_font() {
+                Some(f) => f,
+                None => return None,
+            },
+            h2: match self.h2_font() {
+                Some(f) => f,
+                None => return None,
+            },
+            h3: match self.h3_font() {
+                Some(f) => f,
+                None => return None,
+            },
+        })
+    }
+
+    pub fn set_fonts(&self, fonts: Fonts) {
+        self.set_pg_font(fonts.pg);
+        self.set_pre_font(fonts.pre);
+        self.set_h1_font(fonts.h1);
+        self.set_h1_font(fonts.h2);
+        self.set_h1_font(fonts.h3);
+    }
+
+    pub fn config(&self) -> Option<Config> {
+        Some(Config {
+            general: match self.general() {
+                Some(g) => g,
+                None => return None,
+            },
+            colors: match self.colors() {
+                Ok(c) => c,
+                Err(_) => return None,
+            },
+            fonts: match self.fonts() {
+                Some(f) => f,
+                None => return None,
+            },
+        })
+    }
+
     fn load_config(&self) -> Result<(), ColorError> {
         let cfg = CONFIG.lock().unwrap();
         self.set_general(cfg.general.clone());
         self.set_colors(cfg.colors.clone())?;
+        self.set_fonts(cfg.fonts.clone());
         Ok(())
     }
 

@@ -223,7 +223,6 @@ impl Stretch {
     }
 }
 
-/// The font used to print the description in the output file
 #[derive(Clone, Deserialize, Debug, Serialize)]
 pub struct Font {
     pub family: String,
@@ -324,12 +323,11 @@ impl Font {
 
 #[derive(Clone, Deserialize, Debug, Serialize)]
 pub struct Fonts {
-    pg: Font,
-    pre: Font,
-    h1: Font,
-    h2: Font,
-    h3: Font,
-    quote: Font,
+    pub pg: Font,
+    pub pre: Font,
+    pub h1: Font,
+    pub h2: Font,
+    pub h3: Font,
 }
 
 impl Default for Fonts {
@@ -364,7 +362,6 @@ impl Default for Fonts {
                 stretch: Stretch::default(),
                 size: 14,
             },
-            quote: Font::default(),
         }
     }
 }
