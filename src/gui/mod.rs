@@ -157,6 +157,9 @@ impl Actions {
 
         self.open_prefs.connect_activate(clone!(@weak gui => move |_,_| {
             gui.dialogs.preferences.show();
+            for (_,tab) in gui.tabs.borrow().clone() {
+                tab.set_fonts();
+            }
         }));
 
         self.open_about.connect_activate(clone!(@weak gui => move |_,_| {
@@ -246,6 +249,7 @@ impl Gui {
 
     fn new_tab(&self, uri: Option<&str>) {
         let newtab = tab::Tab::default();
+        newtab.set_fonts();
         self.tabs.borrow_mut().insert(newtab.tab().widget_name().to_string(), newtab.clone());
         if let Some(uri) = uri {
             if let Ok(u) = gmi::url::Url::try_from(uri) {

@@ -25,5 +25,7 @@ cargo run -- gemini://gemini.circumlunar.space
 - [x] keyboard shortcuts
   - [ ] user configurable
 - [ ] user controlled styling
+  - [x] fonts
+  - [ ] colors
 - [x] back-forward list
 - [ ] history

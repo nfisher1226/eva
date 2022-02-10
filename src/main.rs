@@ -23,6 +23,8 @@
 //! - [x] keyboard shortcuts
 //!   - [ ] user configurable
 //! - [ ] user controlled styling
+//!   - [x] fonts
+//!   - [ ] colors
 //! - [x] back-forward list
 //! - [ ] history
 use clap::{App, Arg};

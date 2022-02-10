@@ -173,5 +173,10 @@ impl Tab {
 
     pub fn set_fonts(&self) {
         let cfg = CONFIG.lock().unwrap().clone();
+        self.viewer.set_font_paragraph(cfg.fonts.pg.to_pango());
+        self.viewer.set_font_pre(cfg.fonts.pre.to_pango());
+        self.viewer.set_font_h1(cfg.fonts.h1.to_pango());
+        self.viewer.set_font_h2(cfg.fonts.h2.to_pango());
+        self.viewer.set_font_h3(cfg.fonts.h3.to_pango());
     }
 }

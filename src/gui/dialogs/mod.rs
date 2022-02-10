@@ -1,5 +1,4 @@
 #![warn(clippy::all, clippy::pedantic)]
-use gtk::pango::FontDescription;
 use gtk::prelude::*;
 use gtk::ResponseType;
 use rgba_simple::{Color, ColorError, Convert};
@@ -9,8 +8,6 @@ use crate::config;
 use config::{Colors, Config, Font, Fonts, General, NewPage, ShowTabs, TabPosition};
 
 use std::env;
-use std::path::PathBuf;
-use std::str::FromStr;
 
 #[derive(Clone)]
 pub struct PrefWidgets {
@@ -433,8 +430,8 @@ impl PrefWidgets {
         self.set_pg_font(fonts.pg);
         self.set_pre_font(fonts.pre);
         self.set_h1_font(fonts.h1);
-        self.set_h1_font(fonts.h2);
-        self.set_h1_font(fonts.h3);
+        self.set_h2_font(fonts.h2);
+        self.set_h3_font(fonts.h3);
     }
 
     pub fn config(&self) -> Option<Config> {
