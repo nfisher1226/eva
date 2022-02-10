@@ -5,7 +5,8 @@ use gtk::ResponseType;
 use rgba_simple::{Color, ColorError, Convert};
 
 use crate::CONFIG;
-use crate::config::{Colors, Config, Font, Fonts, General, NewPage, ShowTabs, TabPosition};
+use crate::config;
+use config::{Colors, Config, Font, Fonts, General, NewPage, ShowTabs, TabPosition};
 
 use std::env;
 use std::path::PathBuf;
@@ -74,7 +75,8 @@ impl Dialogs {
         dlg.window.connect_response(move |dlg,res| {
             if res == ResponseType::Accept {
                 if let Some(cfg) = dialog.config() {
-                    *CONFIG.lock().unwrap() = cfg;
+                    *CONFIG.lock().unwrap() = cfg.clone();
+                    cfg.save_to_file(&config::get_config_file());
                 } else {
                     match dialog.load_config() {
                         Ok(_) => {},
