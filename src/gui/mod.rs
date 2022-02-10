@@ -4,7 +4,7 @@ use gtk::glib::char::Char;
 use gtk::glib;
 use gtk::glib::{clone, OptionArg, OptionFlags};
 use gtk::prelude::*;
-use gtk::Application;
+use gtk::{Application, ResponseType};
 
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -15,7 +15,7 @@ use tab::Tab;
 
 mod dialogs;
 use dialogs::Dialogs;
-
+use crate::config;
 use crate::CONFIG;
 
 struct Actions {
@@ -157,9 +157,6 @@ impl Actions {
 
         self.open_prefs.connect_activate(clone!(@weak gui => move |_,_| {
             gui.dialogs.preferences.show();
-            for (_,tab) in gui.tabs.borrow().clone() {
-                tab.set_fonts();
-            }
         }));
 
         self.open_about.connect_activate(clone!(@weak gui => move |_,_| {
@@ -444,6 +441,24 @@ fn build_ui(app: &Application) -> Rc<Gui> {
         if nb.n_pages() == 0 {
             gui.window.close();
         }
+    }));
+    gui.dialogs.preferences.window()
+        .connect_response(clone!(@weak gui => move |dlg,res| {
+        if res == ResponseType::Accept {
+            if let Some(cfg) = gui.dialogs.preferences.config() {
+                *CONFIG.lock().unwrap() = cfg.clone();
+                cfg.save_to_file(&config::get_config_file());
+                for (_,tab) in gui.tabs.borrow().clone() {
+                    tab.set_fonts();
+                }
+            } else {
+                match gui.dialogs.preferences.load_config() {
+                    Ok(_) => {},
+                    Err(e) => eprintln!("Error loading config: {}", e),
+                }
+            }
+        }
+        dlg.hide();
     }));
 
     gui.window.show();

@@ -1,6 +1,5 @@
 #![warn(clippy::all, clippy::pedantic)]
 use gtk::prelude::*;
-use gtk::ResponseType;
 use rgba_simple::{Color, ColorError, Convert};
 
 use crate::CONFIG;
@@ -68,22 +67,6 @@ impl Dialogs {
             Err(e) => eprintln!("Error loading config: {}", e),
         }
         dlg.window.set_transient_for(Some(window));
-        let dialog = dlg.clone();
-        dlg.window.connect_response(move |dlg,res| {
-            if res == ResponseType::Accept {
-                if let Some(cfg) = dialog.config() {
-                    *CONFIG.lock().unwrap() = cfg.clone();
-                    cfg.save_to_file(&config::get_config_file());
-                } else {
-                    match dialog.load_config() {
-                        Ok(_) => {},
-                        Err(e) => eprintln!("Error loading config: {}", e),
-                    }
-                }
-            }
-            dlg.hide();
-        });
-
         dlg
     }
 }
@@ -451,7 +434,7 @@ impl PrefWidgets {
         })
     }
 
-    fn load_config(&self) -> Result<(), ColorError> {
+    pub fn load_config(&self) -> Result<(), ColorError> {
         let cfg = CONFIG.lock().unwrap();
         self.set_general(cfg.general.clone());
         self.set_colors(cfg.colors.clone())?;
