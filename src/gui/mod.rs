@@ -34,6 +34,8 @@ struct Actions {
     tab9: SimpleAction,
     reload: SimpleAction,
     go_home: SimpleAction,
+    go_previous: SimpleAction,
+    go_next: SimpleAction,
     new_window: SimpleAction,
     open_bookmarks: SimpleAction,
     bookmark_page: SimpleAction,
@@ -62,6 +64,8 @@ impl Default for Actions {
             tab9: SimpleAction::new("tab9", None),
             reload: SimpleAction::new("reload", None),
             go_home: SimpleAction::new("go_home", None),
+            go_previous: SimpleAction::new("go_previous", None),
+            go_next: SimpleAction::new("go_next", None),
             new_window: SimpleAction::new("new_window", None),
             open_bookmarks: SimpleAction::new("open_bookmarks", None),
             bookmark_page: SimpleAction::new("bookmark_page", None),
@@ -137,6 +141,20 @@ impl Actions {
 
         self.go_home.connect_activate(clone!(@weak gui => move |_,_| {
             match gui.go_home() {
+                Ok(_) => {},
+                Err(e) => eprintln!("{}", e),
+            }
+        }));
+
+        self.go_previous.connect_activate(clone!(@weak gui => move |_,_| {
+            match gui.go_previous() {
+                Ok(_) => {},
+                Err(e) => eprintln!("{}", e),
+            }
+        }));
+
+        self.go_next.connect_activate(clone!(@weak gui => move |_,_| {
+            match gui.go_next() {
                 Ok(_) => {},
                 Err(e) => eprintln!("{}", e),
             }
@@ -221,6 +239,8 @@ impl Gui {
         app.set_accels_for_action("win.tab9", &["<Alt>9"]);
         app.set_accels_for_action("win.reload", &["<primary>R"]);
         app.set_accels_for_action("win.go_home", &["<Alt>Home"]);
+        app.set_accels_for_action("win.go_previous", &["<Alt>Left_Arrow"]);
+        app.set_accels_for_action("win.go_next", &["<Alt>Right_Arrow"]);
         app.set_accels_for_action("win.new_window", &["<primary>N"]);
         app.set_accels_for_action("win.open_bookmarks", &["<primary><Shift>O"]);
         app.set_accels_for_action("win.bookmark_page", &["<primary>D"]);
@@ -244,6 +264,8 @@ impl Gui {
         self.window.add_action(&actions.tab9);
         self.window.add_action(&actions.reload);
         self.window.add_action(&actions.go_home);
+        self.window.add_action(&actions.go_previous);
+        self.window.add_action(&actions.go_next);
         self.window.add_action(&actions.new_window);
         self.window.add_action(&actions.open_bookmarks);
         self.window.add_action(&actions.bookmark_page);
@@ -406,10 +428,8 @@ impl Gui {
 
     fn reload_current_tab(&self) -> Result<(), Box<dyn std::error::Error>> {
         if let Some(tab) = self.current_tab() {
-            match tab.viewer().reload() {
-                Ok(c) => Ok(c),
-                Err(e) => Err(e),
-            }
+            tab.viewer().reload()?;
+            Ok(())
         } else {
             Err(String::from("Error getting tab").into())
         }
@@ -418,10 +438,26 @@ impl Gui {
     fn go_home(&self) -> Result<(), Box<dyn std::error::Error>>  {
         let home = CONFIG.lock().unwrap().clone().general.homepage;
         if let Some(tab) = self.current_tab() {
-            match tab.viewer().visit(&home) {
-                Ok(c) => Ok(c),
-                Err(e) => Err(e),
-            }
+            tab.viewer().visit(&home)?;
+            Ok(())
+        } else {
+            Err(String::from("Error getting tab").into())
+        }
+    }
+
+    fn go_previous(&self) -> Result<(), Box<dyn std::error::Error>> {
+        if let Some(tab) = self.current_tab() {
+            tab.viewer().go_previous()?;
+            Ok(())
+        } else {
+            Err(String::from("Error getting tab").into())
+        }
+    }
+
+    fn go_next(&self) -> Result<(), Box<dyn std::error::Error>> {
+        if let Some(tab) = self.current_tab() {
+            tab.viewer().go_next()?;
+            Ok(())
         } else {
             Err(String::from("Error getting tab").into())
         }

@@ -32,6 +32,8 @@ missing features and may have bugs.
 | Ctrl/Q | Close window |
 | Ctrl/R | Reload page |
 | Alt/Home | Go to homepage |
+| Alt/Left | Go back |
+| Alt/Right | Go next |
 | Ctrl/PageDown | Next tab |
 | Ctrl/PageUp | Previous tab |
 | Alt/[1-9] | nth tab |
