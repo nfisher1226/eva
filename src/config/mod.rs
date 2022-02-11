@@ -90,7 +90,7 @@ impl Colors {
     }
 }
 
-#[derive(Clone, Deserialize, Debug, Serialize)]
+#[derive(Clone, Deserialize, Debug, PartialEq, Serialize)]
 pub enum NewPage {
     Home,
     Blank,
@@ -102,7 +102,7 @@ impl Default for NewPage {
     }
 }
 
-#[derive(Clone, Deserialize, Debug, Serialize)]
+#[derive(Clone, Deserialize, Debug, PartialEq, Serialize)]
 pub enum ShowTabs {
     Always,
     Multiple,
@@ -115,7 +115,7 @@ impl Default for ShowTabs {
     }
 }
 
-#[derive(Clone, Deserialize, Debug, Serialize)]
+#[derive(Clone, Deserialize, Debug, PartialEq, Serialize)]
 pub enum TabPosition {
     Top,
     Bottom,
@@ -126,6 +126,17 @@ pub enum TabPosition {
 impl Default for TabPosition {
     fn default() -> Self {
         Self::Top
+    }
+}
+
+impl TabPosition {
+    pub fn to_gtk(&self) -> gtk::PositionType {
+        match self {
+            Self::Top => gtk::PositionType::Top,
+            Self::Bottom => gtk::PositionType::Bottom,
+            Self::Left => gtk::PositionType::Left,
+            Self::Right => gtk::PositionType::Right,
+        }
     }
 }
 

@@ -248,6 +248,12 @@ impl Gui {
         let newtab = tab::Tab::default();
         newtab.set_fonts();
         self.tabs.borrow_mut().insert(newtab.tab().widget_name().to_string(), newtab.clone());
+        let cfg = CONFIG.lock().unwrap().clone();
+        let uri = if cfg.general.new_page == config::NewPage::Home && uri.is_none() {
+            Some(cfg.general.homepage.as_str())
+        } else {
+            uri
+        };
         if let Some(uri) = uri {
             if let Ok(u) = gmi::url::Url::try_from(uri) {
                 let host = u.authority.host;
@@ -378,7 +384,8 @@ impl Gui {
     }
 
     fn cleanup_tabs(&self) {
-        for (name, tab) in self.tabs.borrow().clone() {
+        let tabs = self.tabs.borrow_mut().clone();
+        for (name, tab) in tabs {
             match self.notebook.page_num(&tab.tab()) {
                 Some(_) => {},
                 None => _ = self.tabs.borrow_mut().remove(&name),
@@ -395,6 +402,29 @@ impl Gui {
         } else {
             Err(String::from("Error getting tab").into())
         }
+    }
+
+    fn set_show_tabs(&self, show: config::ShowTabs) {
+        self.notebook.set_show_tabs(match show {
+            config::ShowTabs::Always => true,
+            config::ShowTabs::Never => false,
+            config::ShowTabs::Multiple => {
+                if self.notebook.n_pages() > 1 {
+                    true
+                } else {
+                    false
+                }
+            },
+        });
+    }
+
+    fn set_tab_position(&self, pos: config::TabPosition) {
+        self.notebook.set_tab_pos(pos.to_gtk());
+    }
+
+    fn set_general(&self, gen: config::General) {
+        self.set_show_tabs(gen.show_tabs);
+        self.set_tab_position(gen.tab_position);
     }
 }
 
@@ -434,12 +464,20 @@ pub fn run() {
 fn build_ui(app: &Application) -> Rc<Gui> {
     let gui = Rc::new(Gui::default());
     gui.add_actions(app).connect(&gui, app);
-    let _cfg = CONFIG.lock().unwrap().clone();
+    let config = CONFIG.lock().unwrap().clone();
     gui.window.set_application(Some(app));
-    gui.notebook.connect_page_removed(clone!(@weak gui => move |nb,_page,_| {
+    gui.notebook.connect_page_removed(clone!(@weak gui, @strong config => move |nb,_page,_| {
         gui.cleanup_tabs();
-        if nb.n_pages() == 0 {
-            gui.window.close();
+        let multi = config.general.show_tabs == config::ShowTabs::Multiple;
+        match nb.n_pages() {
+            0 => gui.window.close(),
+            1 => if multi { nb.set_show_tabs(false); },
+            _ => if multi { nb.set_show_tabs(true); },
+        }
+    }));
+    gui.notebook.connect_page_added(clone!(@weak gui, @strong config => move |nb,_page,_| {
+        if nb.n_pages() > 1 && config.general.show_tabs == config::ShowTabs::Multiple {
+            nb.set_show_tabs(true);
         }
     }));
     gui.dialogs.preferences.window()
@@ -448,6 +486,7 @@ fn build_ui(app: &Application) -> Rc<Gui> {
             if let Some(cfg) = gui.dialogs.preferences.config() {
                 *CONFIG.lock().unwrap() = cfg.clone();
                 cfg.save_to_file(&config::get_config_file());
+                gui.set_general(cfg.general);
                 for (_,tab) in gui.tabs.borrow().clone() {
                     tab.set_fonts();
                 }
@@ -460,6 +499,7 @@ fn build_ui(app: &Application) -> Rc<Gui> {
         }
         dlg.hide();
     }));
+    gui.set_general(config.general);
 
     gui.window.show();
     gui
