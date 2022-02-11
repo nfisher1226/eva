@@ -5,6 +5,7 @@ Contents
 ========
 * [Introduction](#introduction)
 * [Features](#features)
+* [Keybindings](#keybindings)
 * [Building](#building)
 ## Introduction
 Eva is a [gemini protocol](https://gemini.circumlunar.space/) browser written in
