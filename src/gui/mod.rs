@@ -239,8 +239,8 @@ impl Gui {
         app.set_accels_for_action("win.tab9", &["<Alt>9"]);
         app.set_accels_for_action("win.reload", &["<primary>R"]);
         app.set_accels_for_action("win.go_home", &["<Alt>Home"]);
-        app.set_accels_for_action("win.go_previous", &["<Alt>Left_Arrow"]);
-        app.set_accels_for_action("win.go_next", &["<Alt>Right_Arrow"]);
+        app.set_accels_for_action("win.go_previous", &["<Alt>Left"]);
+        app.set_accels_for_action("win.go_next", &["<Alt>Right"]);
         app.set_accels_for_action("win.new_window", &["<primary>N"]);
         app.set_accels_for_action("win.open_bookmarks", &["<primary><Shift>O"]);
         app.set_accels_for_action("win.bookmark_page", &["<primary>D"]);
@@ -408,13 +408,13 @@ impl Gui {
         }
     }
 
-    fn close_tab_named(&self, name: &str) {
+    /* fn close_tab_named(&self, name: &str) {
         match self.tabs.borrow().get(name) {
             Some(tab) => self.notebook.detach_tab(&tab.tab()),
             None => {},
         }
         self.tabs.borrow_mut().remove(name);
-    }
+    } */
 
     fn cleanup_tabs(&self) {
         let tabs = self.tabs.borrow_mut().clone();
