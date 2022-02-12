@@ -1,4 +1,5 @@
 #![warn(clippy::all, clippy::pedantic)]
+use gmi::url::Url;
 use gtk::gio::{Cancellable, SimpleAction};
 use gtk::glib::char::Char;
 use gtk::glib;
@@ -325,11 +326,22 @@ impl Gui {
             t.addr_bar().set_text(&uri);
         });
         let t = newtab.clone();
+        let window = self.window.clone();
         newtab.viewer().connect_page_loaded(move |_,uri| {
             t.addr_bar().set_text(&uri);
             t.reload_button().set_sensitive(true);
             t.back_button().set_sensitive(t.viewer().has_previous());
             t.forward_button().set_sensitive(t.viewer().has_next());
+            let uri = t.viewer().uri();
+            if let Ok(url) = Url::try_from(uri.as_str()) {
+                window.set_title(Some(&format!(
+                    "{}-{} - {}",
+                    env!("CARGO_PKG_NAME"),
+                    env!("CARGO_PKG_VERSION"),
+                    url.authority.host,
+                )));
+                t.label().label().set_label(&url.authority.host);
+            } else {}
         });
         let t = newtab.clone();
         newtab.viewer().connect_page_load_failed(move |_,uri| {
@@ -367,6 +379,17 @@ impl Gui {
 
     fn current_tab(&self) -> Option<Tab> {
         if let Some(t) = self.notebook.nth_page(self.current_page()) {
+            match self.tabs.borrow().get(&t.widget_name().to_string()) {
+                Some(t) => Some(t.clone()),
+                None => None,
+            }
+        } else {
+            None
+        }
+    }
+
+    fn nth_tab(&self, num: u32) -> Option<Tab> {
+        if let Some(t) = self.notebook.nth_page(Some(num)) {
             match self.tabs.borrow().get(&t.widget_name().to_string()) {
                 Some(t) => Some(t.clone()),
                 None => None,
@@ -537,6 +560,19 @@ fn build_ui(app: &Application) -> Rc<Gui> {
     gui.notebook.connect_page_added(clone!(@weak gui, @strong config => move |nb,_page,_| {
         if nb.n_pages() > 1 && config.general.show_tabs == config::ShowTabs::Multiple {
             nb.set_show_tabs(true);
+        }
+    }));
+    gui.notebook.connect_switch_page(clone!(@weak gui => move |_,_,page| {
+        if let Some(tab) = gui.nth_tab(page) {
+            let uri = tab.viewer().uri();
+            if let Ok(url) = Url::try_from(uri.as_str()) {
+                gui.window.set_title(Some(&format!(
+                    "{}-{} - {}",
+                    env!("CARGO_PKG_NAME"),
+                    env!("CARGO_PKG_VERSION"),
+                    url.authority,
+                )));
+            } else {}
         }
     }));
     gui.dialogs.preferences.window()
