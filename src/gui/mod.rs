@@ -630,6 +630,7 @@ fn build_ui(app: &Application) -> Rc<Gui> {
                 *CONFIG.lock().unwrap() = cfg.clone();
                 cfg.save_to_file(&config::get_config_file());
                 gui.set_general(cfg.general);
+                gui.set_css(&cfg.colors);
                 for (_,tab) in gui.tabs.borrow().clone() {
                     tab.set_fonts();
                 }
