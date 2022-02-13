@@ -20,6 +20,7 @@ pub struct PrefWidgets {
     quote_fg_color: gtk::ColorButton,
     quote_bg_color: gtk::ColorButton,
     link_color: gtk::ColorButton,
+    hover_color: gtk::ColorButton,
     pg_font: gtk::FontButton,
     pre_font: gtk::FontButton,
     h1_font: gtk::FontButton,
@@ -107,6 +108,9 @@ impl PrefWidgets {
             link_color: builder
                 .object("link_color")
                 .expect("Error getting 'link_color'"),
+            hover_color: builder
+                .object("hover_color")
+                .expect("Error getting 'hover_color'"),
             pg_font: builder
                 .object("pg_font")
                 .expect("Error getting 'pg_font'"),
@@ -310,6 +314,23 @@ impl PrefWidgets {
         }
     }
 
+    pub fn hover_color(&self) -> Result<Color, ColorError> {
+        match self.hover_color.rgba().to_reduced_rgba() {
+            Ok(c) => Ok(Color::Reduced(c)),
+            Err(e) => Err(e),
+        }
+    }
+
+    pub fn set_hover_color(&self, color: Color) -> Result<(), ColorError> {
+        match color.to_gdk() {
+            Ok(c) => {
+                self.hover_color.set_rgba(&c);
+                Ok(())
+            },
+            Err(e) => Err(e),
+        }
+    }
+
     pub fn colors(&self) -> Result<Colors, ColorError> {
         Ok(Colors {
             fg: self.fg_color()?,
@@ -317,6 +338,7 @@ impl PrefWidgets {
             quote_fg: self.quote_fg_color()?,
             quote_bg: self.quote_bg_color()?,
             link: self.link_color()?,
+            hover: self.hover_color()?,
         })
     }
 
@@ -326,6 +348,7 @@ impl PrefWidgets {
         self.set_quote_fg_color(colors.quote_fg)?;
         self.set_quote_bg_color(colors.quote_bg)?;
         self.set_link_color(colors.link)?;
+        self.set_hover_color(colors.hover)?;
         Ok(())
     }
 

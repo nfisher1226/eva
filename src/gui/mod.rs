@@ -1,11 +1,13 @@
 #![warn(clippy::all, clippy::pedantic)]
 use gmi::url::Url;
+use gtk::gdk::Display;
 use gtk::gio::{Cancellable, SimpleAction};
 use gtk::glib::char::Char;
 use gtk::glib;
 use gtk::glib::{clone, OptionArg, OptionFlags};
 use gtk::prelude::*;
-use gtk::{Application, ResponseType};
+use gtk::{Application, CssProvider, ResponseType, StyleContext};
+use rgba_simple::Color;
 
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -508,6 +510,51 @@ impl Gui {
         self.set_show_tabs(gen.show_tabs);
         self.set_tab_position(gen.tab_position);
     }
+
+    fn set_css(&self, colors: &config::Colors) {
+        let provider = CssProvider::new();
+        let fg = format!(
+            "textview.gemview {{ color: {}; }}\n",
+            match &colors.fg {
+                Color::Hex(c) => c.color.clone(),
+                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
+                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
+            }
+        );
+        let bg = format!(
+            "textview.gemview text, scrolledwindow.gemview {{ background-color: {}; }}\n",
+            match &colors.bg {
+                Color::Hex(c) => c.color.clone(),
+                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
+                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
+            }
+        );
+        let links = format!(
+            "textview.gemview link {{ color: {}; }}\ntextview.gemview :hover {{ color: {}; }}\n",
+            match &colors.link {
+                Color::Hex(c) => c.color.clone(),
+                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
+                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
+            },
+            match &colors.hover {
+                Color::Hex(c) => c.color.clone(),
+                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
+                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
+            }
+        );
+        let css = format!(
+            "{}{}{}",
+            fg,
+            bg,
+            links,
+        );
+        provider.load_from_data(css.as_bytes());
+        StyleContext::add_provider_for_display(
+            &Display::default().expect("Cannot connect to display"),
+            &provider,
+            gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
+        );
+    }
 }
 
 pub fn run() {
@@ -547,6 +594,7 @@ fn build_ui(app: &Application) -> Rc<Gui> {
     let gui = Rc::new(Gui::default());
     gui.add_actions(app).connect(&gui, app);
     let config = CONFIG.lock().unwrap().clone();
+    gui.set_css(&config.colors);
     gui.window.set_application(Some(app));
     gui.notebook.connect_page_removed(clone!(@weak gui, @strong config => move |nb,_page,_| {
         gui.cleanup_tabs();

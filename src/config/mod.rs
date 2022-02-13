@@ -34,6 +34,7 @@ pub struct Colors {
     pub quote_fg: Color,
     pub quote_bg: Color,
     pub link: Color,
+    pub hover: Color,
 }
 
 impl Default for Colors {
@@ -44,6 +45,7 @@ impl Default for Colors {
             quote_fg: Color::Reduced(ReducedRGBA{ red: 24, green: 24, blue: 24, alpha: 255 }),
             quote_bg: Color::Reduced(ReducedRGBA{ red: 210, green: 175, blue: 95, alpha: 255 }),
             link: Color::Reduced(ReducedRGBA::primary(PrimaryColor::Blue)),
+            hover: Color::Reduced(ReducedRGBA::primary(PrimaryColor::Red)),
         }
     }
 }
@@ -87,6 +89,14 @@ impl Colors {
 
     pub fn set_link(&mut self, color: Color) {
         self.link = color;
+    }
+
+    pub fn hover(&self) -> Color {
+        self.hover.clone()
+    }
+
+    pub fn set_hover(&mut self, color: Color) {
+        self.hover = color;
     }
 }
 
