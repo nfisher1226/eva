@@ -23,6 +23,7 @@ pub struct PrefWidgets {
     hover_color: gtk::ColorButton,
     pg_font: gtk::FontButton,
     pre_font: gtk::FontButton,
+    quote_font: gtk::FontButton,
     h1_font: gtk::FontButton,
     h2_font: gtk::FontButton,
     h3_font: gtk::FontButton,
@@ -117,6 +118,9 @@ impl PrefWidgets {
             pre_font: builder
                 .object("pre_font")
                 .expect("Error getting 'pre_font'"),
+            quote_font: builder
+                .object("quote_font")
+                .expect("Error getting 'quote_font'"),
             h1_font: builder
                 .object("h1_font")
                 .expect("Error getting 'h1_font'"),
@@ -374,6 +378,17 @@ impl PrefWidgets {
         self.pre_font.set_font_desc(&font.to_pango());
     }
 
+    pub fn quote_font(&self) -> Option<Font> {
+        match self.quote_font.font_desc() {
+            Some(font) => Some(Font::from_pango(font)),
+            None => None,
+        }
+    }
+
+    pub fn set_quote_font(&self, font: Font) {
+        self.quote_font.set_font_desc(&font.to_pango());
+    }
+
     pub fn h1_font(&self) -> Option<Font> {
         match self.h1_font.font_desc() {
             Some(font) => Some(Font::from_pango(font)),
@@ -417,6 +432,10 @@ impl PrefWidgets {
                 Some(f) => f,
                 None => return None,
             },
+            quote: match self.quote_font() {
+                Some(f) => f,
+                None => return None,
+            },
             h1: match self.h1_font() {
                 Some(f) => f,
                 None => return None,
@@ -435,6 +454,7 @@ impl PrefWidgets {
     pub fn set_fonts(&self, fonts: Fonts) {
         self.set_pg_font(fonts.pg);
         self.set_pre_font(fonts.pre);
+        self.set_quote_font(fonts.quote);
         self.set_h1_font(fonts.h1);
         self.set_h2_font(fonts.h2);
         self.set_h3_font(fonts.h3);

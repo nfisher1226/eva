@@ -325,6 +325,7 @@ impl Font {
 pub struct Fonts {
     pub pg: Font,
     pub pre: Font,
+    pub quote: Font,
     pub h1: Font,
     pub h2: Font,
     pub h3: Font,
@@ -337,6 +338,13 @@ impl Default for Fonts {
             pre: Font {
                 family: String::from("Monospace"),
                 style: Style::default(),
+                weight: Weight::default(),
+                stretch: Stretch::default(),
+                size: 12288,
+            },
+            quote: Font {
+                family: String::from("Sans"),
+                style: Style::Italic,
                 weight: Weight::default(),
                 stretch: Stretch::default(),
                 size: 12288,

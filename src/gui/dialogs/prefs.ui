@@ -358,7 +358,7 @@
                     <child>
                       <object class="GtkLabel">
                         <property name="can-focus">0</property>
-                        <property name="label" translatable="1">Heading 1 font:</property>
+                        <property name="label" translatable="1">Blockquote font:</property>
                         <property name="halign">start</property>
                         <layout>
                           <property name="column">0</property>
@@ -367,11 +367,31 @@
                       </object>
                     </child>
                     <child>
+                      <object class="GtkFontButton" id="quote_font">
+                        <property name="font">Sans Italic 12</property>
+                        <layout>
+                          <property name="column">1</property>
+                          <property name="row">2</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="can-focus">0</property>
+                        <property name="label" translatable="1">Heading 1 font:</property>
+                        <property name="halign">start</property>
+                        <layout>
+                          <property name="column">0</property>
+                          <property name="row">3</property>
+                        </layout>
+                      </object>
+                    </child>
+                    <child>
                       <object class="GtkFontButton" id="h1_font">
                         <property name="font">Sans Bold 18</property>
                         <layout>
                           <property name="column">1</property>
-                          <property name="row">2</property>
+                          <property name="row">3</property>
                         </layout>
                       </object>
                     </child>
@@ -382,7 +402,7 @@
                         <property name="halign">start</property>
                         <layout>
                           <property name="column">0</property>
-                          <property name="row">3</property>
+                          <property name="row">4</property>
                         </layout>
                       </object>
                     </child>
@@ -391,7 +411,7 @@
                         <property name="font">Sans Bold 16</property>
                         <layout>
                           <property name="column">1</property>
-                          <property name="row">3</property>
+                          <property name="row">4</property>
                         </layout>
                       </object>
                     </child>
@@ -402,7 +422,7 @@
                         <property name="halign">start</property>
                         <layout>
                           <property name="column">0</property>
-                          <property name="row">4</property>
+                          <property name="row">5</property>
                         </layout>
                       </object>
                     </child>
@@ -411,7 +431,7 @@
                         <property name="font">Sans Bold 14</property>
                         <layout>
                           <property name="column">1</property>
-                          <property name="row">4</property>
+                          <property name="row">5</property>
                         </layout>
                       </object>
                     </child>
