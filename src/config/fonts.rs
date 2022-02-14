@@ -250,7 +250,7 @@ impl Default for Font {
             style: Style::default(),
             weight: Weight::default(),
             stretch: Stretch::default(),
-            size: 13,
+            size: 12288,
         }
     }
 }
@@ -311,7 +311,7 @@ impl Font {
         Self {
             family: match font.family() {
                 Some(f) => f.to_string(),
-                None => "sans-serif".to_string(),
+                None => "Sans".to_string(),
             },
             style: Style::from_pango(font.style()),
             weight: Weight::from_pango(font.weight()),
@@ -335,32 +335,32 @@ impl Default for Fonts {
         Self {
             pg: Font::default(),
             pre: Font {
-                family: String::from("monospace"),
+                family: String::from("Monospace"),
                 style: Style::default(),
                 weight: Weight::default(),
                 stretch: Stretch::default(),
-                size: 12,
+                size: 12288,
             },
             h1: Font {
-                family: String::from("sans-serif"),
+                family: String::from("Sans"),
                 style: Style::default(),
                 weight: Weight::Bold,
                 stretch: Stretch::default(),
-                size: 18,
+                size: 18432,
             },
             h2: Font {
-                family: String::from("sans-serif"),
+                family: String::from("Sans"),
                 style: Style::default(),
                 weight: Weight::Bold,
                 stretch: Stretch::default(),
-                size: 16,
+                size: 16384,
             },
             h3: Font {
-                family: String::from("sans-serif"),
+                family: String::from("Sans"),
                 style: Style::default(),
                 weight: Weight::Bold,
                 stretch: Stretch::default(),
-                size: 14,
+                size: 14336,
             },
         }
     }
