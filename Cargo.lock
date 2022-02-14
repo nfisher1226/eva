@@ -263,7 +263,7 @@ dependencies = [
 [[package]]
 name = "gemview"
 version = "0.1.0"
-source = "git+https://codeberg.org/jeang3nie/gemview#174b460ed554ecfe1c289bb0a8d1864ea007c6d5"
+source = "git+https://codeberg.org/jeang3nie/gemview#19fd77dfcf867beaa3a964e000f4f6342a33ad8e"
 dependencies = [
  "gmi",
  "gtk4",
@@ -759,9 +759,9 @@ dependencies = [
 
 [[package]]
 name = "rustls"
-version = "0.20.2"
+version = "0.20.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d37e5e2290f3e040b594b1a9e04377c2c671f1a1cfd9bfdef82106ac1c113f84"
+checksum = "b323592e3164322f5b193dc4302e4e36cd8d37158a712d664efae1a5c2791700"
 dependencies = [
  "log",
  "ring",

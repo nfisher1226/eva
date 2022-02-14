@@ -529,6 +529,20 @@ impl Gui {
                 Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
             }
         );
+        let quotebox = "textview.gemview box.blockquote { border-radius: 8px;\n box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.6); }\n";
+        let quote = format!(
+            "textview .blockquote {{ color: {};\n background-color: {};\n padding: 8px;\n }}\n",
+            match &colors.quote_fg {
+                Color::Hex(c) => c.color.clone(),
+                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
+                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
+            },
+            match &colors.quote_bg {
+                Color::Hex(c) => c.color.clone(),
+                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
+                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
+            },
+        );
         let links = format!(
             "textview.gemview link {{ color: {}; }}\ntextview.gemview :hover {{ color: {}; }}\n",
             match &colors.link {
@@ -543,9 +557,11 @@ impl Gui {
             }
         );
         let css = format!(
-            "{}{}{}",
+            "{}{}{}{}{}",
             fg,
             bg,
+            quotebox,
+            quote,
             links,
         );
         provider.load_from_data(css.as_bytes());
