@@ -529,7 +529,14 @@ impl Gui {
                 Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
             }
         );
-        let quotebox = "textview.gemview box.blockquote { border-radius: 8px;\n box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.6); }\n";
+        let quotebox = format!(
+            "textview.gemview box.blockquote {{ border-radius: 8px;\n border-width: 1px;\n border-style: solid;\n  border-color: {};\n box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.6); }}\n",
+            match &colors.quote_fg {
+                Color::Hex(c) => c.color.clone(),
+                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
+                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
+            },
+        );
         let quote = format!(
             "textview .blockquote {{ color: {};\n background-color: {};\n padding: 8px;\n }}\n",
             match &colors.quote_fg {

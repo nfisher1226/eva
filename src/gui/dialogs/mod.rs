@@ -17,6 +17,8 @@ pub struct PrefWidgets {
     tab_position: gtk::ComboBoxText,
     fg_color: gtk::ColorButton,
     bg_color: gtk::ColorButton,
+    pre_fg_color: gtk::ColorButton,
+    pre_bg_color: gtk::ColorButton,
     quote_fg_color: gtk::ColorButton,
     quote_bg_color: gtk::ColorButton,
     link_color: gtk::ColorButton,
@@ -100,6 +102,12 @@ impl PrefWidgets {
             bg_color: builder
                 .object("bg_color")
                 .expect("Error getting 'bg_color'"),
+            pre_fg_color: builder
+                .object("pre_fg_color")
+                .expect("Error getting 'pre_fg_color'"),
+            pre_bg_color: builder
+                .object("pre_bg_color")
+                .expect("Error getting 'pre_bg_color'"),
             quote_fg_color: builder
                 .object("quote_fg_color")
                 .expect("Error getting 'quote_fg_color'"),
@@ -267,6 +275,40 @@ impl PrefWidgets {
         }
     }
 
+    pub fn pre_fg_color(&self) -> Result<Color, ColorError> {
+        match self.pre_fg_color.rgba().to_reduced_rgba() {
+            Ok(c) => Ok(Color::Reduced(c)),
+            Err(e) => Err(e),
+        }
+    }
+
+    pub fn set_pre_fg_color(&self, color: Color) -> Result<(), ColorError> {
+        match color.to_gdk() {
+            Ok(c) => {
+                self.pre_fg_color.set_rgba(&c);
+                Ok(())
+            },
+            Err(e) => Err(e),
+        }
+    }
+
+    pub fn pre_bg_color(&self) -> Result<Color, ColorError> {
+        match self.pre_bg_color.rgba().to_reduced_rgba() {
+            Ok(c) => Ok(Color::Reduced(c)),
+            Err(e) => Err(e),
+        }
+    }
+
+    pub fn set_pre_bg_color(&self, color: Color) -> Result<(), ColorError> {
+        match color.to_gdk() {
+            Ok(c) => {
+                self.pre_bg_color.set_rgba(&c);
+                Ok(())
+            },
+            Err(e) => Err(e),
+        }
+    }
+
     pub fn quote_fg_color(&self) -> Result<Color, ColorError> {
         match self.quote_fg_color.rgba().to_reduced_rgba() {
             Ok(c) => Ok(Color::Reduced(c)),
@@ -339,6 +381,8 @@ impl PrefWidgets {
         Ok(Colors {
             fg: self.fg_color()?,
             bg: self.bg_color()?,
+            pre_fg: self.pre_fg_color()?,
+            pre_bg: self.pre_bg_color()?,
             quote_fg: self.quote_fg_color()?,
             quote_bg: self.quote_bg_color()?,
             link: self.link_color()?,
@@ -349,6 +393,8 @@ impl PrefWidgets {
     pub fn set_colors(&self, colors: Colors) -> Result<(), ColorError> {
         self.set_fg_color(colors.fg)?;
         self.set_bg_color(colors.bg)?;
+        self.set_pre_fg_color(colors.pre_fg)?;
+        self.set_pre_bg_color(colors.pre_bg)?;
         self.set_quote_fg_color(colors.quote_fg)?;
         self.set_quote_bg_color(colors.quote_bg)?;
         self.set_link_color(colors.link)?;

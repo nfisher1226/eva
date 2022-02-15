@@ -15,9 +15,9 @@
 //! - [ ] bookmarks
 //! - [x] keyboard shortcuts
 //!   - [ ] user configurable
-//! - [ ] user controlled styling
+//! - [x] user controlled styling
 //!   - [x] fonts
-//!   - [ ] colors
+//!   - [x] colors
 //! - [x] back-forward list
 //! - [ ] history
 //!

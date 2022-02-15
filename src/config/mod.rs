@@ -31,6 +31,8 @@ pub fn get_config_file() -> PathBuf {
 pub struct Colors {
     pub fg: Color,
     pub bg: Color,
+    pub pre_fg: Color,
+    pub pre_bg: Color,
     pub quote_fg: Color,
     pub quote_bg: Color,
     pub link: Color,
@@ -42,6 +44,8 @@ impl Default for Colors {
         Self {
             fg: Color::Reduced(ReducedRGBA{ red: 24, green: 24, blue: 24, alpha: 255 }),
             bg: Color::Reduced(ReducedRGBA{ red: 200, green: 200, blue: 200, alpha: 255 }),
+            pre_fg: Color::Reduced(ReducedRGBA{ red: 200, green: 200, blue: 200, alpha: 255 }),
+            pre_bg: Color::Reduced(ReducedRGBA{ red: 35, green: 35, blue: 35, alpha: 255 }),
             quote_fg: Color::Reduced(ReducedRGBA{ red: 24, green: 24, blue: 24, alpha: 255 }),
             quote_bg: Color::Reduced(ReducedRGBA{ red: 210, green: 175, blue: 95, alpha: 255 }),
             link: Color::Reduced(ReducedRGBA::primary(PrimaryColor::Blue)),
@@ -65,6 +69,22 @@ impl Colors {
 
     pub fn set_bg(&mut self, color: Color) {
         self.bg = color;
+    }
+
+    pub fn pre_fg(&self) -> Color {
+        self.pre_fg.clone()
+    }
+
+    pub fn set_pre_fg(&mut self, color: Color) {
+        self.pre_fg = color;
+    }
+
+    pub fn pre_bg(&self) -> Color {
+        self.pre_bg.clone()
+    }
+
+    pub fn set_pre_bg(&mut self, color: Color) {
+        self.pre_bg = color;
     }
 
     pub fn quote_fg(&self) -> Color {

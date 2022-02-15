@@ -263,7 +263,7 @@ dependencies = [
 [[package]]
 name = "gemview"
 version = "0.1.0"
-source = "git+https://codeberg.org/jeang3nie/gemview#19fd77dfcf867beaa3a964e000f4f6342a33ad8e"
+source = "git+https://codeberg.org/jeang3nie/gemview#fca8de8d72ecd73df7d4ce8413935061f403b9ed"
 dependencies = [
  "gmi",
  "gtk4",
