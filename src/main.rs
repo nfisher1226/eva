@@ -11,11 +11,11 @@
 //! is focused on delivering a simple yet powerful interface and clear, readable
 //! and beautiful page rendering. It has no designs on being the most fully featured
 //! Gemini browser, but instead wants to be the most polished native Gtk+ Gemini
-//! client that does the job transparently and statys out of the user's way.
+//! client that stays out of the user's way.
 //!
 //! Eva's gemtext rendering has been designed to be clean yet visually appealing,
 //! using modern css styling to visually separate elements such as block quotes and
-//! preformatted sections using colored cards with rounded edges and box shadows.
+//! preformatted sections, using colored cards with rounded edges and box shadows.
 //! The default color scheme has been chosen to provide great readability, while
 //! giving the user a great deal of control over appearance.
 //!
@@ -71,27 +71,27 @@ mod gui;
 extern crate lazy_static;
 
 lazy_static! {
-    static ref CONFIG: Mutex<config::Config> = Mutex::new(
-        config::Config::from_file()
-        .unwrap_or_default()
-    );
+    static ref CONFIG: Mutex<config::Config> =
+        Mutex::new(config::Config::from_file().unwrap_or_default());
 }
 
 fn main() {
     let app = App::new("eva")
         .about("A simple Gemini protocol browser")
         .author("The JenG3nie <jeang3nie@hitchhiker-linux.org>")
-        .arg(Arg::new("PRIVATE")
-            .help("Do not save history")
-            .short('p')
-            .long("private")
-            .takes_value(false)
+        .arg(
+            Arg::new("PRIVATE")
+                .help("Do not save history")
+                .short('p')
+                .long("private")
+                .takes_value(false),
         )
-        .arg(Arg::new("URI")
-            .help("A uri to open")
-            .takes_value(true)
-            .multiple_values(true)
+        .arg(
+            Arg::new("URI")
+                .help("A uri to open")
+                .takes_value(true)
+                .multiple_values(true),
         );
-    _ = app.get_matches();
+    let _matches = app.get_matches();
     gui::run();
 }

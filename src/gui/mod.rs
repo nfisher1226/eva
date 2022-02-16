@@ -7,7 +7,6 @@ use gtk::glib;
 use gtk::glib::{clone, OptionArg, OptionFlags};
 use gtk::prelude::*;
 use gtk::{Application, CssProvider, ResponseType, StyleContext};
-use rgba_simple::Color;
 
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -136,30 +135,26 @@ impl Actions {
         }));
 
         self.reload.connect_activate(clone!(@weak gui => move |_,_| {
-            match gui.reload_current_tab() {
-                Ok(_) => {},
-                Err(e) => eprintln!("{}", e),
+            if let Err(e) = gui.reload_current_tab() {
+                eprintln!("{}", e);
             }
         }));
 
         self.go_home.connect_activate(clone!(@weak gui => move |_,_| {
-            match gui.go_home() {
-                Ok(_) => {},
-                Err(e) => eprintln!("{}", e),
+            if let Err(e) = gui.go_home() {
+                eprintln!("{}", e);
             }
         }));
 
         self.go_previous.connect_activate(clone!(@weak gui => move |_,_| {
-            match gui.go_previous() {
-                Ok(_) => {},
-                Err(e) => eprintln!("{}", e),
+            if let Err(e) = gui.go_previous() {
+                eprintln!("{}", e);
             }
         }));
 
         self.go_next.connect_activate(clone!(@weak gui => move |_,_| {
-            match gui.go_next() {
-                Ok(_) => {},
-                Err(e) => eprintln!("{}", e),
+            if let Err(e) = gui.go_next() {
+                eprintln!("{}", e);
             }
         }));
 
@@ -308,7 +303,7 @@ impl Gui {
         let notebook = self.notebook.clone();
         newtab.label().close_button().connect_clicked(move |_| {
             let _name = tab.tab().widget_name().to_string();
-            notebook.detach_tab(&tab.tab())
+            notebook.detach_tab(&tab.tab());
         });
         let t = newtab.clone();
         newtab.addr_bar().connect_activate(move |bar| {
@@ -381,10 +376,7 @@ impl Gui {
 
     fn current_tab(&self) -> Option<Tab> {
         if let Some(t) = self.notebook.nth_page(self.current_page()) {
-            match self.tabs.borrow().get(&t.widget_name().to_string()) {
-                Some(t) => Some(t.clone()),
-                None => None,
-            }
+            self.tabs.borrow().get(&t.widget_name().to_string()).cloned()
         } else {
             None
         }
@@ -392,10 +384,7 @@ impl Gui {
 
     fn nth_tab(&self, num: u32) -> Option<Tab> {
         if let Some(t) = self.notebook.nth_page(Some(num)) {
-            match self.tabs.borrow().get(&t.widget_name().to_string()) {
-                Some(t) => Some(t.clone()),
-                None => None,
-            }
+            self.tabs.borrow().get(&t.widget_name().to_string()).cloned()
         } else {
             None
         }
@@ -446,7 +435,9 @@ impl Gui {
         for (name, tab) in tabs {
             match self.notebook.page_num(&tab.tab()) {
                 Some(_) => {},
-                None => _ = self.tabs.borrow_mut().remove(&name),
+                None => {
+                    let _rem = self.tabs.borrow_mut().remove(&name);
+                },
             }
         }
     }
@@ -488,112 +479,38 @@ impl Gui {
         }
     }
 
-    fn set_show_tabs(&self, show: config::ShowTabs) {
+    fn set_show_tabs(&self, show: &config::ShowTabs) {
         self.notebook.set_show_tabs(match show {
             config::ShowTabs::Always => true,
             config::ShowTabs::Never => false,
             config::ShowTabs::Multiple => {
-                if self.notebook.n_pages() > 1 {
-                    true
-                } else {
-                    false
-                }
+                self.notebook.n_pages() > 1
             },
         });
     }
 
-    fn set_tab_position(&self, pos: config::TabPosition) {
+    fn set_tab_position(&self, pos: &config::TabPosition) {
         self.notebook.set_tab_pos(pos.to_gtk());
     }
 
-    fn set_general(&self, gen: config::General) {
-        self.set_show_tabs(gen.show_tabs);
-        self.set_tab_position(gen.tab_position);
+    fn set_general(&self, gen: &config::General) {
+        self.set_show_tabs(&gen.show_tabs);
+        self.set_tab_position(&gen.tab_position);
     }
 
-    fn set_css(&self, colors: &config::Colors) {
+    fn set_css(colors: &config::Colors) {
         let provider = CssProvider::new();
-        let fg = format!(
-            "textview.gemview {{ color: {}; }}\n",
-            match &colors.fg {
-                Color::Hex(c) => c.color.clone(),
-                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
-                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
-            }
-        );
-        let bg = format!(
-            "textview.gemview text, scrolledwindow.gemview {{ background-color: {}; }}\n",
-            match &colors.bg {
-                Color::Hex(c) => c.color.clone(),
-                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
-                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
-            }
-        );
-        let quotebox = format!(
-            "textview.gemview box.blockquote {{ border-radius: 8px;\n border-width: 1px;\n border-style: solid;\n  border-color: {};\n box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.6); }}\n",
-            match &colors.quote_fg {
-                Color::Hex(c) => c.color.clone(),
-                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
-                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
-            },
-        );
-        let quote = format!(
-            "textview.gemview .blockquote {{ color: {};\n background-color: {};\n padding: 8px;\n }}\n",
-            match &colors.quote_fg {
-                Color::Hex(c) => c.color.clone(),
-                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
-                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
-            },
-            match &colors.quote_bg {
-                Color::Hex(c) => c.color.clone(),
-                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
-                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
-            },
-        );
-        let prebox = format!(
-            "textview.gemview box.preformatted {{ border-radius: 8px;\n border-width: 1px;\n border-style: solid;\n  border-color: {};\n box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.6); }}\n",
-            match &colors.pre_fg {
-                Color::Hex(c) => c.color.clone(),
-                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
-                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
-            },
-        );
-        let pre = format!(
-            "textview.gemview .preformatted {{ color: {};\n background-color: {};\n padding: 8px;\n }}\n",
-            match &colors.pre_fg {
-                Color::Hex(c) => c.color.clone(),
-                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
-                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
-            },
-            match &colors.pre_bg {
-                Color::Hex(c) => c.color.clone(),
-                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
-                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
-            },
-        );
-        let links = format!(
-            "textview.gemview link {{ color: {}; }}\ntextview.gemview :hover {{ color: {}; }}\n",
-            match &colors.link {
-                Color::Hex(c) => c.color.clone(),
-                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
-                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
-            },
-            match &colors.hover {
-                Color::Hex(c) => c.color.clone(),
-                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
-                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
-            }
-        );
-        let css = format!(
-            "{}{}{}{}{}{}{}",
-            fg,
-            bg,
-            quotebox,
-            quote,
-            prebox,
-            pre,
-            links,
-        );
+        let css = include_str!("gemview.css")
+            .replace("NORMAL_FG_COLOR", &colors.fg.to_string())
+            .replace("NORMAL_BG_COLOR", &colors.bg.to_string())
+            .replace("QUOTE_FG_COLOR", &colors.quote_fg.to_string())
+            .replace("QUOTE_BG_COLOR", &colors.quote_bg.to_string())
+            .replace("PRE_FG_COLOR", &colors.pre_fg.to_string())
+            .replace("PRE_BG_COLOR", &colors.pre_bg.to_string())
+            .replace("LINK_COLOR", &colors.link.to_string())
+            .replace("HOVER_COLOR", &colors.hover.to_string())
+            .replace("ReducedRGBA", "rgba")
+            .replace("RGBA", "rgba");
         provider.load_from_data(css.as_bytes());
         StyleContext::add_provider_for_display(
             &Display::default().expect("Cannot connect to display"),
@@ -624,13 +541,13 @@ pub fn run() {
     };
 
     application.connect_open(move |app,addr,_| {
-        let gui = build_ui(&app);
+        let gui = build_ui(app);
         for uri in addr {
             gui.new_tab(Some(&uri.uri()));
         }
     });
     application.connect_activate(|app| {
-        let gui = build_ui(&app);
+        let gui = build_ui(app);
         gui.new_tab(None);
     });
     application.run();
@@ -640,7 +557,7 @@ fn build_ui(app: &Application) -> Rc<Gui> {
     let gui = Rc::new(Gui::default());
     gui.add_actions(app).connect(&gui, app);
     let config = CONFIG.lock().unwrap().clone();
-    gui.set_css(&config.colors);
+    Gui::set_css(&config.colors);
     gui.window.set_application(Some(app));
     gui.notebook.connect_page_removed(clone!(@weak gui, @strong config => move |nb,_page,_| {
         gui.cleanup_tabs();
@@ -675,8 +592,8 @@ fn build_ui(app: &Application) -> Rc<Gui> {
             if let Some(cfg) = gui.dialogs.preferences.config() {
                 *CONFIG.lock().unwrap() = cfg.clone();
                 cfg.save_to_file(&config::get_config_file());
-                gui.set_general(cfg.general);
-                gui.set_css(&cfg.colors);
+                gui.set_general(&cfg.general);
+                Gui::set_css(&cfg.colors);
                 for (_,tab) in gui.tabs.borrow().clone() {
                     tab.set_fonts();
                 }
@@ -689,7 +606,7 @@ fn build_ui(app: &Application) -> Rc<Gui> {
         }
         dlg.hide();
     }));
-    gui.set_general(config.general);
+    gui.set_general(&config.general);
 
     gui.window.show();
     gui

@@ -1,17 +1,16 @@
-use fastrand;
-use gtk::prelude::*;
 use gemview::GemView;
+use gtk::prelude::*;
 
 use crate::CONFIG;
 
 #[derive(Clone, Debug)]
-pub struct TabLabel {
+pub struct Label {
     handle: gtk::Box,
     label: gtk::Label,
     close_button: gtk::Button,
 }
 
-impl Default for TabLabel {
+impl Default for Label {
     fn default() -> Self {
         let handle = gtk::builders::BoxBuilder::new()
             .orientation(gtk::Orientation::Horizontal)
@@ -32,7 +31,7 @@ impl Default for TabLabel {
     }
 }
 
-impl TabLabel {
+impl Label {
     pub fn handle(&self) -> gtk::Box {
         self.handle.clone()
     }
@@ -49,7 +48,7 @@ impl TabLabel {
 #[derive(Clone, Debug)]
 pub struct Tab {
     tab: gtk::Box,
-    label: TabLabel,
+    label: Label,
     back_button: gtk::Button,
     forward_button: gtk::Button,
     reload_button: gtk::Button,
@@ -75,13 +74,13 @@ impl Default for Tab {
             .margin_bottom(3)
             .build();
         tab.append(&hbox);
-        let bbox = gtk::builders::BoxBuilder::new()
+        let button_box = gtk::builders::BoxBuilder::new()
             .orientation(gtk::Orientation::Horizontal)
             .homogeneous(true)
             .css_classes(vec![String::from("linked")])
             .margin_end(15)
             .build();
-        hbox.append(&bbox);
+        hbox.append(&button_box);
         let image = gtk::builders::ImageBuilder::new()
             .icon_name("go-previous-symbolic")
             .build();
@@ -90,7 +89,7 @@ impl Default for Tab {
             .tooltip_text("Go back")
             .sensitive(false)
             .build();
-        bbox.append(&back_button);
+        button_box.append(&back_button);
         let image = gtk::builders::ImageBuilder::new()
             .icon_name("go-next-symbolic")
             .build();
@@ -99,7 +98,7 @@ impl Default for Tab {
             .tooltip_text("Go forward")
             .sensitive(false)
             .build();
-        bbox.append(&forward_button);
+        button_box.append(&forward_button);
         let image = gtk::builders::ImageBuilder::new()
             .icon_name("view-refresh-symbolic")
             .margin_start(6)
@@ -111,7 +110,7 @@ impl Default for Tab {
             .sensitive(false)
             .name("reload_button")
             .build();
-        bbox.append(&reload_button);
+        button_box.append(&reload_button);
         let addr_bar = gtk::builders::SearchEntryBuilder::new()
             .placeholder_text("Search or enter an address")
             .hexpand(true)
@@ -121,20 +120,20 @@ impl Default for Tab {
             .hexpand(true)
             .vexpand(true)
             .propagate_natural_width(true)
-            .css_classes(vec!("gemview".to_string()))
+            .css_classes(vec!["gemview".to_string()])
             .build();
         let viewer = GemView::new();
         viewer.set_margin_start(25);
         viewer.set_margin_end(25);
         viewer.set_margin_top(25);
         viewer.set_margin_bottom(25);
-        viewer.set_css_classes(&vec!("gemview"));
+        viewer.set_css_classes(&["gemview"]);
         scroller.set_child(Some(&viewer));
         tab.append(&scroller);
 
         Self {
             tab,
-            label: TabLabel::default(),
+            label: Label::default(),
             back_button,
             forward_button,
             reload_button,
@@ -149,7 +148,7 @@ impl Tab {
         self.tab.clone()
     }
 
-    pub fn label(&self) -> TabLabel {
+    pub fn label(&self) -> Label {
         self.label.clone()
     }
 

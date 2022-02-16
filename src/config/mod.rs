@@ -10,6 +10,11 @@ use std::path::{Path, PathBuf};
 pub use fonts::{Font, Fonts};
 
 /// Returns an OS appropriate configuration directory path
+///
+/// # Panics
+/// Can panic if the string returned from [`glib::user_config_dir`] is not valid
+/// unicode (unlikely)
+#[must_use]
 pub fn get_config_dir() -> PathBuf {
     let mut configdir: PathBuf = gtk::glib::user_config_dir();
     let progname = env!("CARGO_PKG_NAME");
@@ -21,6 +26,7 @@ pub fn get_config_dir() -> PathBuf {
 }
 
 /// Returns the path to config.toml
+#[allow(clippy::must_use_candidate)]
 pub fn get_config_file() -> PathBuf {
     let mut file = get_config_dir();
     file.push("config.toml");
@@ -55,6 +61,7 @@ impl Default for Colors {
 }
 
 impl Colors {
+    #[must_use]
     pub fn fg(&self) -> Color {
         self.fg.clone()
     }
@@ -63,6 +70,7 @@ impl Colors {
         self.fg = color;
     }
 
+    #[must_use]
     pub fn bg(&self) -> Color {
         self.bg.clone()
     }
@@ -71,6 +79,7 @@ impl Colors {
         self.bg = color;
     }
 
+    #[must_use]
     pub fn pre_fg(&self) -> Color {
         self.pre_fg.clone()
     }
@@ -79,6 +88,7 @@ impl Colors {
         self.pre_fg = color;
     }
 
+    #[must_use]
     pub fn pre_bg(&self) -> Color {
         self.pre_bg.clone()
     }
@@ -87,6 +97,7 @@ impl Colors {
         self.pre_bg = color;
     }
 
+    #[must_use]
     pub fn quote_fg(&self) -> Color {
         self.quote_fg.clone()
     }
@@ -95,6 +106,7 @@ impl Colors {
         self.quote_fg = color;
     }
 
+    #[must_use]
     pub fn quote_bg(&self) -> Color {
         self.quote_bg.clone()
     }
@@ -103,6 +115,7 @@ impl Colors {
         self.quote_bg = color;
     }
 
+    #[must_use]
     pub fn link(&self) -> Color {
         self.link.clone()
     }
@@ -111,6 +124,7 @@ impl Colors {
         self.link = color;
     }
 
+    #[must_use]
     pub fn hover(&self) -> Color {
         self.hover.clone()
     }
@@ -160,6 +174,7 @@ impl Default for TabPosition {
 }
 
 impl TabPosition {
+    #[must_use]
     pub fn to_gtk(&self) -> gtk::PositionType {
         match self {
             Self::Top => gtk::PositionType::Top,
@@ -189,31 +204,22 @@ impl Default for General {
     }
 }
 
-#[derive(Clone, Deserialize, Debug, Serialize)]
+#[derive(Clone, Default, Deserialize, Debug, Serialize)]
 pub struct Config {
     pub general: General,
     pub colors: Colors,
     pub fonts: Fonts,
 }
 
-impl Default for Config {
-    fn default() -> Self {
-        Self {
-            general: General::default(),
-            colors: Colors::default(),
-            fonts: Fonts::default(),
-        }
-    }
-}
-
 impl Config {
     /// Saves Config struct as a .toml file
     pub fn save_to_file(&self, file: &Path) {
         let toml_string = toml::to_string(&self).expect("Could not encode TOML value");
-        fs::write(file.clone(), toml_string).expect("Could not write to file!");
+        fs::write(file, toml_string).expect("Could not write to file!");
     }
 
     /// Deserializes config.toml into a `GfretConfig` struct
+    #[must_use]
     pub fn from_file() -> Option<Self> {
         let config_file = get_config_file();
         let config_file = if config_file.exists() {

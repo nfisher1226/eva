@@ -2,8 +2,8 @@
 use gtk::prelude::*;
 use rgba_simple::{Color, ColorError, Convert};
 
-use crate::CONFIG;
 use crate::config;
+use crate::CONFIG;
 use config::{Colors, Config, Font, Fonts, General, NewPage, ShowTabs, TabPosition};
 
 use std::env;
@@ -39,19 +39,16 @@ pub struct Dialogs {
 
 impl Dialogs {
     pub fn init(window: &gtk::ApplicationWindow, builder: &gtk::Builder) -> Self {
-        let prefs = Self::init_preferences(window, builder);
-
-        let dialogs = Self {
+        Self {
             about: Self::init_about(window),
-            preferences: prefs,
-        };
-        dialogs
+            preferences: Self::init_preferences(window, builder),
+        }
     }
 
     fn init_about(window: &gtk::ApplicationWindow) -> gtk::AboutDialog {
-        let dlg = gtk::AboutDialog::builder()
+        gtk::AboutDialog::builder()
             .program_name("Eva")
-            .authors(vec!("Nathan Fisher".to_string()))
+            .authors(vec!["Nathan Fisher".to_string()])
             .version(env!("CARGO_PKG_VERSION"))
             .license(include_str!(r"../../../LICENSE.md"))
             .wrap_license(true)
@@ -60,14 +57,13 @@ impl Dialogs {
             .copyright("©2020 by Nathan Fisher (the JeanG3nie)")
             .website("https://codeberg.org/jeang3nie/eva")
             .transient_for(window)
-            .build();
-        dlg
+            .build()
     }
 
     fn init_preferences(window: &gtk::ApplicationWindow, builder: &gtk::Builder) -> PrefWidgets {
         let dlg = PrefWidgets::init(builder);
         match dlg.load_config() {
-            Ok(_) => {},
+            Ok(_) => {}
             Err(e) => eprintln!("Error loading config: {}", e),
         }
         dlg.window.set_transient_for(Some(window));
@@ -120,24 +116,16 @@ impl PrefWidgets {
             hover_color: builder
                 .object("hover_color")
                 .expect("Error getting 'hover_color'"),
-            pg_font: builder
-                .object("pg_font")
-                .expect("Error getting 'pg_font'"),
+            pg_font: builder.object("pg_font").expect("Error getting 'pg_font'"),
             pre_font: builder
                 .object("pre_font")
                 .expect("Error getting 'pre_font'"),
             quote_font: builder
                 .object("quote_font")
                 .expect("Error getting 'quote_font'"),
-            h1_font: builder
-                .object("h1_font")
-                .expect("Error getting 'h1_font'"),
-            h2_font: builder
-                .object("h2_font")
-                .expect("Error getting 'h2_font'"),
-            h3_font: builder
-                .object("h3_font")
-                .expect("Error getting 'h3_font'"),
+            h1_font: builder.object("h1_font").expect("Error getting 'h1_font'"),
+            h2_font: builder.object("h2_font").expect("Error getting 'h2_font'"),
+            h3_font: builder.object("h3_font").expect("Error getting 'h3_font'"),
         }
     }
 
@@ -165,7 +153,7 @@ impl PrefWidgets {
         }
     }
 
-    pub fn set_new_page(&self, page: NewPage) {
+    pub fn set_new_page(&self, page: &NewPage) {
         self.new_page.set_active_id(match page {
             NewPage::Home => Some("home"),
             NewPage::Blank => Some("blank"),
@@ -185,7 +173,7 @@ impl PrefWidgets {
         }
     }
 
-    pub fn set_show_tabs(&self, show: ShowTabs) {
+    pub fn set_show_tabs(&self, show: &ShowTabs) {
         self.show_tabs.set_active_id(match show {
             ShowTabs::Always => Some("always"),
             ShowTabs::Multiple => Some("multiple"),
@@ -207,7 +195,7 @@ impl PrefWidgets {
         }
     }
 
-    pub fn set_tab_position(&self, pos: TabPosition) {
+    pub fn set_tab_position(&self, pos: &TabPosition) {
         self.tab_position.set_active_id(match pos {
             TabPosition::Top => Some("top"),
             TabPosition::Bottom => Some("bottom"),
@@ -234,11 +222,11 @@ impl PrefWidgets {
         })
     }
 
-    pub fn set_general(&self, gen: General) {
+    pub fn set_general(&self, gen: &General) {
         self.set_homepage(&gen.homepage);
-        self.set_new_page(gen.new_page);
-        self.set_show_tabs(gen.show_tabs);
-        self.set_tab_position(gen.tab_position);
+        self.set_new_page(&gen.new_page);
+        self.set_show_tabs(&gen.show_tabs);
+        self.set_tab_position(&gen.tab_position);
     }
 
     pub fn fg_color(&self) -> Result<Color, ColorError> {
@@ -248,12 +236,12 @@ impl PrefWidgets {
         }
     }
 
-    pub fn set_fg_color(&self, color: Color) -> Result<(), ColorError> {
+    pub fn set_fg_color(&self, color: &Color) -> Result<(), ColorError> {
         match color.to_gdk() {
             Ok(c) => {
                 self.fg_color.set_rgba(&c);
                 Ok(())
-            },
+            }
             Err(e) => Err(e),
         }
     }
@@ -265,12 +253,12 @@ impl PrefWidgets {
         }
     }
 
-    pub fn set_bg_color(&self, color: Color) -> Result<(), ColorError> {
+    pub fn set_bg_color(&self, color: &Color) -> Result<(), ColorError> {
         match color.to_gdk() {
             Ok(c) => {
                 self.bg_color.set_rgba(&c);
                 Ok(())
-            },
+            }
             Err(e) => Err(e),
         }
     }
@@ -282,12 +270,12 @@ impl PrefWidgets {
         }
     }
 
-    pub fn set_pre_fg_color(&self, color: Color) -> Result<(), ColorError> {
+    pub fn set_pre_fg_color(&self, color: &Color) -> Result<(), ColorError> {
         match color.to_gdk() {
             Ok(c) => {
                 self.pre_fg_color.set_rgba(&c);
                 Ok(())
-            },
+            }
             Err(e) => Err(e),
         }
     }
@@ -299,12 +287,12 @@ impl PrefWidgets {
         }
     }
 
-    pub fn set_pre_bg_color(&self, color: Color) -> Result<(), ColorError> {
+    pub fn set_pre_bg_color(&self, color: &Color) -> Result<(), ColorError> {
         match color.to_gdk() {
             Ok(c) => {
                 self.pre_bg_color.set_rgba(&c);
                 Ok(())
-            },
+            }
             Err(e) => Err(e),
         }
     }
@@ -316,12 +304,12 @@ impl PrefWidgets {
         }
     }
 
-    pub fn set_quote_fg_color(&self, color: Color) -> Result<(), ColorError> {
+    pub fn set_quote_fg_color(&self, color: &Color) -> Result<(), ColorError> {
         match color.to_gdk() {
             Ok(c) => {
                 self.quote_fg_color.set_rgba(&c);
                 Ok(())
-            },
+            }
             Err(e) => Err(e),
         }
     }
@@ -333,12 +321,12 @@ impl PrefWidgets {
         }
     }
 
-    pub fn set_quote_bg_color(&self, color: Color) -> Result<(), ColorError> {
+    pub fn set_quote_bg_color(&self, color: &Color) -> Result<(), ColorError> {
         match color.to_gdk() {
             Ok(c) => {
                 self.quote_bg_color.set_rgba(&c);
                 Ok(())
-            },
+            }
             Err(e) => Err(e),
         }
     }
@@ -350,12 +338,12 @@ impl PrefWidgets {
         }
     }
 
-    pub fn set_link_color(&self, color: Color) -> Result<(), ColorError> {
+    pub fn set_link_color(&self, color: &Color) -> Result<(), ColorError> {
         match color.to_gdk() {
             Ok(c) => {
                 self.link_color.set_rgba(&c);
                 Ok(())
-            },
+            }
             Err(e) => Err(e),
         }
     }
@@ -367,12 +355,12 @@ impl PrefWidgets {
         }
     }
 
-    pub fn set_hover_color(&self, color: Color) -> Result<(), ColorError> {
+    pub fn set_hover_color(&self, color: &Color) -> Result<(), ColorError> {
         match color.to_gdk() {
             Ok(c) => {
                 self.hover_color.set_rgba(&c);
                 Ok(())
-            },
+            }
             Err(e) => Err(e),
         }
     }
@@ -390,81 +378,63 @@ impl PrefWidgets {
         })
     }
 
-    pub fn set_colors(&self, colors: Colors) -> Result<(), ColorError> {
-        self.set_fg_color(colors.fg)?;
-        self.set_bg_color(colors.bg)?;
-        self.set_pre_fg_color(colors.pre_fg)?;
-        self.set_pre_bg_color(colors.pre_bg)?;
-        self.set_quote_fg_color(colors.quote_fg)?;
-        self.set_quote_bg_color(colors.quote_bg)?;
-        self.set_link_color(colors.link)?;
-        self.set_hover_color(colors.hover)?;
+    pub fn set_colors(&self, colors: &Colors) -> Result<(), ColorError> {
+        self.set_fg_color(&colors.fg)?;
+        self.set_bg_color(&colors.bg)?;
+        self.set_pre_fg_color(&colors.pre_fg)?;
+        self.set_pre_bg_color(&colors.pre_bg)?;
+        self.set_quote_fg_color(&colors.quote_fg)?;
+        self.set_quote_bg_color(&colors.quote_bg)?;
+        self.set_link_color(&colors.link)?;
+        self.set_hover_color(&colors.hover)?;
         Ok(())
     }
 
     pub fn pg_font(&self) -> Option<Font> {
-        match self.pg_font.font_desc() {
-            Some(font) => Some(Font::from_pango(font)),
-            None => None,
-        }
+        self.pg_font.font_desc().map(Font::from_pango)
     }
 
-    pub fn set_pg_font(&self, font: Font) {
+    pub fn set_pg_font(&self, font: &Font) {
         self.pg_font.set_font_desc(&font.to_pango());
     }
 
     pub fn pre_font(&self) -> Option<Font> {
-        match self.pre_font.font_desc() {
-            Some(font) => Some(Font::from_pango(font)),
-            None => None,
-        }
+        self.pre_font.font_desc().map(Font::from_pango)
     }
 
-    pub fn set_pre_font(&self, font: Font) {
+    pub fn set_pre_font(&self, font: &Font) {
         self.pre_font.set_font_desc(&font.to_pango());
     }
 
     pub fn quote_font(&self) -> Option<Font> {
-        match self.quote_font.font_desc() {
-            Some(font) => Some(Font::from_pango(font)),
-            None => None,
-        }
+        self.quote_font.font_desc().map(Font::from_pango)
     }
 
-    pub fn set_quote_font(&self, font: Font) {
+    pub fn set_quote_font(&self, font: &Font) {
         self.quote_font.set_font_desc(&font.to_pango());
     }
 
     pub fn h1_font(&self) -> Option<Font> {
-        match self.h1_font.font_desc() {
-            Some(font) => Some(Font::from_pango(font)),
-            None => None,
-        }
+        self.h1_font.font_desc().map(Font::from_pango)
     }
 
-    pub fn set_h1_font(&self, font: Font) {
+    pub fn set_h1_font(&self, font: &Font) {
         self.h1_font.set_font_desc(&font.to_pango());
     }
 
     pub fn h2_font(&self) -> Option<Font> {
-        match self.h2_font.font_desc() {
-            Some(font) => Some(Font::from_pango(font)),
-            None => None,
-        }
+        self.h2_font.font_desc().map(Font::from_pango)
     }
 
-    pub fn set_h2_font(&self, font: Font) {
+    pub fn set_h2_font(&self, font: &Font) {
         self.h2_font.set_font_desc(&font.to_pango());
     }
 
     pub fn h3_font(&self) -> Option<Font> {
-        match self.h3_font.font_desc() {
-            Some(font) => Some(Font::from_pango(font)),
-            None => None,
-        }
+        self.h3_font.font_desc().map(Font::from_pango)
     }
 
-    pub fn set_h3_font(&self, font: Font) {
+    pub fn set_h3_font(&self, font: &Font) {
         self.h3_font.set_font_desc(&font.to_pango());
     }
 
@@ -497,13 +467,13 @@ impl PrefWidgets {
         })
     }
 
-    pub fn set_fonts(&self, fonts: Fonts) {
-        self.set_pg_font(fonts.pg);
-        self.set_pre_font(fonts.pre);
-        self.set_quote_font(fonts.quote);
-        self.set_h1_font(fonts.h1);
-        self.set_h2_font(fonts.h2);
-        self.set_h3_font(fonts.h3);
+    pub fn set_fonts(&self, fonts: &Fonts) {
+        self.set_pg_font(&fonts.pg);
+        self.set_pre_font(&fonts.pre);
+        self.set_quote_font(&fonts.quote);
+        self.set_h1_font(&fonts.h1);
+        self.set_h2_font(&fonts.h2);
+        self.set_h3_font(&fonts.h3);
     }
 
     pub fn config(&self) -> Option<Config> {
@@ -525,9 +495,9 @@ impl PrefWidgets {
 
     pub fn load_config(&self) -> Result<(), ColorError> {
         let cfg = CONFIG.lock().unwrap();
-        self.set_general(cfg.general.clone());
-        self.set_colors(cfg.colors.clone())?;
-        self.set_fonts(cfg.fonts.clone());
+        self.set_general(&cfg.general);
+        self.set_colors(&cfg.colors)?;
+        self.set_fonts(&cfg.fonts);
         Ok(())
     }
 

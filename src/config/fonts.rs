@@ -1,4 +1,7 @@
 #![warn(clippy::all, clippy::pedantic)]
+#![allow(clippy::wrong_self_convention)]
+#![allow(clippy::trivially_copy_pass_by_ref)]
+#![allow(clippy::needless_pass_by_value)]
 use gtk::pango;
 use serde::{Deserialize, Serialize};
 
@@ -257,6 +260,7 @@ impl Default for Font {
 
 impl Font {
     /// Get the *family* of the font
+    #[must_use]
     pub fn family(&self) -> String {
         String::from(&self.family)
     }
@@ -267,6 +271,7 @@ impl Font {
     }
 
     /// Get the *style* of the font
+    #[must_use]
     pub fn style(&self) -> Style {
         self.style
     }
@@ -277,6 +282,7 @@ impl Font {
     }
 
     /// Get the *weight* of the font
+    #[must_use]
     pub fn weight(&self) -> Weight {
         self.weight
     }
@@ -287,6 +293,7 @@ impl Font {
     }
 
     /// Get the *size* of the font
+    #[must_use]
     pub fn size(&self) -> i32 {
         self.size
     }
@@ -296,7 +303,8 @@ impl Font {
         self.size = size;
     }
 
-    /// Convert to a [pango::FontDescription]
+    /// Convert to a [`pango::FontDescription`]
+    #[must_use]
     pub fn to_pango(&self) -> pango::FontDescription {
         let mut font = pango::FontDescription::new();
         font.set_family(&self.family);
@@ -307,6 +315,7 @@ impl Font {
         font
     }
 
+    #[must_use]
     pub fn from_pango(font: pango::FontDescription) -> Self {
         Self {
             family: match font.family() {
