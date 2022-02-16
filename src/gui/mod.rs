@@ -538,13 +538,34 @@ impl Gui {
             },
         );
         let quote = format!(
-            "textview .blockquote {{ color: {};\n background-color: {};\n padding: 8px;\n }}\n",
+            "textview.gemview .blockquote {{ color: {};\n background-color: {};\n padding: 8px;\n }}\n",
             match &colors.quote_fg {
                 Color::Hex(c) => c.color.clone(),
                 Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
                 Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
             },
             match &colors.quote_bg {
+                Color::Hex(c) => c.color.clone(),
+                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
+                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
+            },
+        );
+        let prebox = format!(
+            "textview.gemview box.preformatted {{ border-radius: 8px;\n border-width: 1px;\n border-style: solid;\n  border-color: {};\n box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.6); }}\n",
+            match &colors.pre_fg {
+                Color::Hex(c) => c.color.clone(),
+                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
+                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
+            },
+        );
+        let pre = format!(
+            "textview.gemview .preformatted {{ color: {};\n background-color: {};\n padding: 8px;\n }}\n",
+            match &colors.pre_fg {
+                Color::Hex(c) => c.color.clone(),
+                Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
+                Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
+            },
+            match &colors.pre_bg {
                 Color::Hex(c) => c.color.clone(),
                 Color::Reduced(c) => c.to_string().replace("ReducedRGBA", "rgba"),
                 Color::Rgba(c) => c.to_string().replace("RGBA", "rgba"),
@@ -564,11 +585,13 @@ impl Gui {
             }
         );
         let css = format!(
-            "{}{}{}{}{}",
+            "{}{}{}{}{}{}{}",
             fg,
             bg,
             quotebox,
             quote,
+            prebox,
+            pre,
             links,
         );
         provider.load_from_data(css.as_bytes());

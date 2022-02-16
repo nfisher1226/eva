@@ -81,6 +81,7 @@
                     <property name="margin-bottom">3</property>
                     <property name="margin-start">3</property>
                     <property name="margin-end">3</property>
+                    <property name="tooltip-text">New tab</property>
                     <property name="action-name">win.new_tab</property>
                     <child>
                       <object class="GtkImage">
@@ -95,6 +96,7 @@
                     <property name="margin-bottom">3</property>
                     <property name="margin-start">3</property>
                     <property name="margin-end">3</property>
+                    <property name="tooltip-text">Open application menu</property>
                     <property name="menu-model">actionMenu</property>
                     <child>
                       <object class="GtkImage">

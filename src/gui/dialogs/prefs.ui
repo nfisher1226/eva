@@ -166,7 +166,7 @@
                     <child>
                       <object class="GtkLabel">
                         <property name="can-focus">0</property>
-                        <property name="label" translatable="1">Foreground:</property>
+                        <property name="label" translatable="1">Regular Text:</property>
                         <property name="halign">start</property>
                         <layout>
                           <property name="column">0</property>
@@ -189,7 +189,7 @@
                     <child>
                       <object class="GtkLabel">
                         <property name="can-focus">0</property>
-                        <property name="label" translatable="1">Background:</property>
+                        <property name="label" translatable="1">Page Background:</property>
                         <property name="halign">start</property>
                         <layout>
                           <property name="column">2</property>
@@ -212,7 +212,7 @@
                     <child>
                       <object class="GtkLabel">
                         <property name="can-focus">0</property>
-                        <property name="label" translatable="1">Preformatted foreground:</property>
+                        <property name="label" translatable="1">Preformatted Text:</property>
                         <property name="halign">start</property>
                         <layout>
                           <property name="column">0</property>
@@ -235,7 +235,7 @@
                     <child>
                       <object class="GtkLabel">
                         <property name="can-focus">0</property>
-                        <property name="label" translatable="1">Preformatted background:</property>
+                        <property name="label" translatable="1">Preformatted Background:</property>
                         <property name="halign">start</property>
                         <layout>
                           <property name="column">2</property>
@@ -258,7 +258,7 @@
                     <child>
                       <object class="GtkLabel">
                         <property name="can-focus">0</property>
-                        <property name="label" translatable="1">Quote foreground:</property>
+                        <property name="label" translatable="1">Quote Text:</property>
                         <property name="halign">start</property>
                         <layout>
                           <property name="column">0</property>
@@ -281,7 +281,7 @@
                     <child>
                       <object class="GtkLabel">
                         <property name="can-focus">0</property>
-                        <property name="label" translatable="1">Quote background:</property>
+                        <property name="label" translatable="1">Quote Background:</property>
                         <property name="halign">start</property>
                         <layout>
                           <property name="column">2</property>
@@ -304,7 +304,7 @@
                     <child>
                       <object class="GtkLabel">
                         <property name="can-focus">0</property>
-                        <property name="label" translatable="1">Link normal:</property>
+                        <property name="label" translatable="1">Link Normal:</property>
                         <property name="halign">start</property>
                         <layout>
                           <property name="column">0</property>
@@ -327,7 +327,7 @@
                     <child>
                       <object class="GtkLabel">
                         <property name="can-focus">0</property>
-                        <property name="label" translatable="1">Link hover:</property>
+                        <property name="label" translatable="1">Link Hover:</property>
                         <property name="halign">start</property>
                         <layout>
                           <property name="column">2</property>

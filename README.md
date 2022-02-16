@@ -10,8 +10,20 @@ Contents
 ## Introduction
 Eva is a [gemini protocol](https://gemini.circumlunar.space/) browser written in
 [Rust](https://rust-lang.org) using the [gtk+](https://gtk-rs.org/) toolkit. Eva
-is currently alpha quality software under heavy development and as such is
-missing features and may have bugs.
+is focused on delivering a simple yet powerful interface and clear, readable
+and beautiful page rendering. It has no designs on being the most fully featured
+Gemini browser, but instead wants to be the most polished native Gtk+ Gemini
+client that does the job transparently and statys out of the user's way.
+
+Eva's gemtext rendering has been designed to be clean yet visually appealing,
+using modern css styling to visually separate elements such as block quotes and
+preformatted sections using colored cards with rounded edges and box shadows.
+The default color scheme has been chosen to provide great readability, while
+giving the user a great deal of control over appearance.
+
+Eva is currently alpha quality software and is under heavy development. Some
+features are not yet implemented and there may be bugs. However, rest assured
+that when Eva sees an official release it will be a polished user experience.
 ## Features
 - [x] tabbed interface
 - [ ] bookmarks
