@@ -3,6 +3,7 @@ use gtk::prelude::*;
 use rgba_simple::{Color, ColorError, Convert};
 
 use crate::config;
+use crate::BOOKMARKS;
 use crate::CONFIG;
 use config::{Colors, Config, Font, Fonts, General, NewPage, ShowTabs, TabPosition};
 

@@ -2,8 +2,8 @@
 use gmi::url::Url;
 use gtk::gdk::Display;
 use gtk::gio::{Cancellable, SimpleAction};
-use gtk::glib::char::Char;
 use gtk::glib;
+use gtk::glib::char::Char;
 use gtk::glib::{clone, OptionArg, OptionFlags};
 use gtk::prelude::*;
 use gtk::{Application, CssProvider, ResponseType, StyleContext};
@@ -16,9 +16,9 @@ mod tab;
 use tab::Tab;
 
 mod dialogs;
-use dialogs::Dialogs;
 use crate::config;
-use crate::CONFIG;
+use crate::{BOOKMARKS, CONFIG};
+use dialogs::Dialogs;
 
 struct Actions {
     new_tab: SimpleAction,
@@ -82,21 +82,25 @@ impl Default for Actions {
 
 impl Actions {
     fn connect(&self, gui: &Rc<Gui>, app: &Application) {
-        self.new_tab.connect_activate(clone!(@strong gui => move |_, _| {
-            gui.new_tab(None);
-        }));
+        self.new_tab
+            .connect_activate(clone!(@strong gui => move |_, _| {
+                gui.new_tab(None);
+            }));
 
-        self.close_tab.connect_activate(clone!(@weak gui => move |_,_| {
-            gui.close_current_tab();
-        }));
+        self.close_tab
+            .connect_activate(clone!(@weak gui => move |_,_| {
+                gui.close_current_tab();
+            }));
 
-        self.next_tab.connect_activate(clone!(@weak gui => move |_,_| {
-            gui.next_tab();
-        }));
+        self.next_tab
+            .connect_activate(clone!(@weak gui => move |_,_| {
+                gui.next_tab();
+            }));
 
-        self.prev_tab.connect_activate(clone!(@weak gui => move |_,_| {
-            gui.prev_tab();
-        }));
+        self.prev_tab
+            .connect_activate(clone!(@weak gui => move |_,_| {
+                gui.prev_tab();
+            }));
 
         self.tab1.connect_activate(clone!(@weak gui => move |_,_| {
             gui.notebook.set_page(0);
@@ -134,29 +138,33 @@ impl Actions {
             gui.notebook.set_page(8);
         }));
 
-        self.reload.connect_activate(clone!(@weak gui => move |_,_| {
-            if let Err(e) = gui.reload_current_tab() {
-                eprintln!("{}", e);
-            }
-        }));
+        self.reload
+            .connect_activate(clone!(@weak gui => move |_,_| {
+                if let Err(e) = gui.reload_current_tab() {
+                    eprintln!("{}", e);
+                }
+            }));
 
-        self.go_home.connect_activate(clone!(@weak gui => move |_,_| {
-            if let Err(e) = gui.go_home() {
-                eprintln!("{}", e);
-            }
-        }));
+        self.go_home
+            .connect_activate(clone!(@weak gui => move |_,_| {
+                if let Err(e) = gui.go_home() {
+                    eprintln!("{}", e);
+                }
+            }));
 
-        self.go_previous.connect_activate(clone!(@weak gui => move |_,_| {
-            if let Err(e) = gui.go_previous() {
-                eprintln!("{}", e);
-            }
-        }));
+        self.go_previous
+            .connect_activate(clone!(@weak gui => move |_,_| {
+                if let Err(e) = gui.go_previous() {
+                    eprintln!("{}", e);
+                }
+            }));
 
-        self.go_next.connect_activate(clone!(@weak gui => move |_,_| {
-            if let Err(e) = gui.go_next() {
-                eprintln!("{}", e);
-            }
-        }));
+        self.go_next
+            .connect_activate(clone!(@weak gui => move |_,_| {
+                if let Err(e) = gui.go_next() {
+                    eprintln!("{}", e);
+                }
+            }));
 
         self.new_window
             .connect_activate(clone!(@weak gui, @strong app => move |_,_| {
@@ -164,29 +172,37 @@ impl Actions {
                 new_gui.new_tab(None);
             }));
 
-        self.open_bookmarks.connect_activate(clone!(@weak gui => move |_,_| {
-            println!("Not implemented yet");
-        }));
+        self.open_bookmarks
+            .connect_activate(clone!(@weak gui => move |_,_| {
+                if let Some(tab) = gui.current_tab() {
+                    let button = tab.bookmark_button();
+                }
+            }));
 
-        self.bookmark_page.connect_activate(clone!(@weak gui => move |_,_| {
-            println!("Not implemented yet");
-        }));
+        self.bookmark_page
+            .connect_activate(clone!(@weak gui => move |_,_| {
+                println!("Not implemented yet");
+            }));
 
-        self.open_history.connect_activate(clone!(@weak gui => move |_,_| {
-            println!("Not implemented yet");
-        }));
+        self.open_history
+            .connect_activate(clone!(@weak gui => move |_,_| {
+                println!("Not implemented yet");
+            }));
 
-        self.clear_history.connect_activate(clone!(@weak gui => move |_,_| {
-            println!("Not implemented yet");
-        }));
+        self.clear_history
+            .connect_activate(clone!(@weak gui => move |_,_| {
+                println!("Not implemented yet");
+            }));
 
-        self.open_prefs.connect_activate(clone!(@weak gui => move |_,_| {
-            gui.dialogs.preferences.show();
-        }));
+        self.open_prefs
+            .connect_activate(clone!(@weak gui => move |_,_| {
+                gui.dialogs.preferences.show();
+            }));
 
-        self.open_about.connect_activate(clone!(@weak gui => move |_,_| {
-            gui.dialogs.about.show();
-        }));
+        self.open_about
+            .connect_activate(clone!(@weak gui => move |_,_| {
+                gui.dialogs.about.show();
+            }));
 
         self.quit.connect_activate(clone!(@weak gui => move |_,_| {
             gui.window.close();
@@ -278,7 +294,9 @@ impl Gui {
     fn new_tab(&self, uri: Option<&str>) {
         let newtab = tab::Tab::default();
         newtab.set_fonts();
-        self.tabs.borrow_mut().insert(newtab.tab().widget_name().to_string(), newtab.clone());
+        self.tabs
+            .borrow_mut()
+            .insert(newtab.tab().widget_name().to_string(), newtab.clone());
         let cfg = CONFIG.lock().unwrap().clone();
         let uri = if cfg.general.new_page == config::NewPage::Home && uri.is_none() {
             Some(cfg.general.homepage.as_str())
@@ -293,12 +311,16 @@ impl Gui {
             newtab.addr_bar().set_text(uri);
             newtab.reload_button().set_sensitive(true);
             match newtab.viewer().visit(uri) {
-                Ok(_) => {},
+                Ok(_) => {}
                 Err(e) => eprintln!("{:?}", e),
             }
         }
-        self.notebook.append_page(&newtab.tab(), Some(&newtab.label().handle()));
+        newtab.update_bookmark_editor();
+        self.notebook
+            .append_page(&newtab.tab(), Some(&newtab.label().handle()));
         self.notebook.set_tab_reorderable(&newtab.tab(), true);
+        newtab.back_button().set_sensitive(false);
+        newtab.forward_button().set_sensitive(false);
         let tab = newtab.clone();
         let notebook = self.notebook.clone();
         newtab.label().close_button().connect_clicked(move |_| {
@@ -309,27 +331,28 @@ impl Gui {
         newtab.addr_bar().connect_activate(move |bar| {
             let uri = String::from(bar.text());
             match t.viewer().visit(&uri) {
-                Ok(_) => {},
+                Ok(_) => {}
                 Err(e) => eprintln!("{:?}", e),
             }
         });
         let t = newtab.clone();
-        newtab.viewer().connect_page_load_started(move |_,uri| {
+        newtab.viewer().connect_page_load_started(move |_, uri| {
             t.addr_bar().set_text(&uri);
             t.reload_button().set_sensitive(false);
         });
         let t = newtab.clone();
-        newtab.viewer().connect_page_load_redirect(move |_,uri| {
+        newtab.viewer().connect_page_load_redirect(move |_, uri| {
             t.addr_bar().set_text(&uri);
         });
         let t = newtab.clone();
         let window = self.window.clone();
-        newtab.viewer().connect_page_loaded(move |_,uri| {
+        newtab.viewer().connect_page_loaded(move |_, uri| {
             t.addr_bar().set_text(&uri);
             t.reload_button().set_sensitive(true);
             t.back_button().set_sensitive(t.viewer().has_previous());
             t.forward_button().set_sensitive(t.viewer().has_next());
             let uri = t.viewer().uri();
+            t.update_bookmark_editor();
             if let Ok(url) = Url::try_from(uri.as_str()) {
                 window.set_title(Some(&format!(
                     "{}-{} - {}",
@@ -338,35 +361,14 @@ impl Gui {
                     url.authority.host,
                 )));
                 t.label().label().set_label(&url.authority.host);
-            } else {}
+            }
         });
         let t = newtab.clone();
-        newtab.viewer().connect_page_load_failed(move |_,uri| {
+        newtab.viewer().connect_page_load_failed(move |_, uri| {
             t.addr_bar().set_text(&uri);
             t.reload_button().set_sensitive(true);
             t.back_button().set_sensitive(t.viewer().has_previous());
             t.forward_button().set_sensitive(t.viewer().has_next());
-        });
-        let t = newtab.clone();
-        newtab.back_button().connect_clicked(move |_| {
-            match t.viewer().go_previous() {
-                Ok(_) => {},
-                Err(e) => eprintln!("{:?}", e),
-            }
-        });
-        let t = newtab.clone();
-        newtab.forward_button().connect_clicked(move |_| {
-            match t.viewer().go_next() {
-                Ok(_) => {},
-                Err(e) => eprintln!("{:?}", e),
-            }
-        });
-        let t = newtab.clone();
-        newtab.reload_button().connect_clicked(move |_| {
-            match t.viewer().reload() {
-                Ok(_) => {},
-                Err(e) => eprintln!("{:?}", e),
-            }
         });
     }
 
@@ -376,7 +378,10 @@ impl Gui {
 
     fn current_tab(&self) -> Option<Tab> {
         if let Some(t) = self.notebook.nth_page(self.current_page()) {
-            self.tabs.borrow().get(&t.widget_name().to_string()).cloned()
+            self.tabs
+                .borrow()
+                .get(&t.widget_name().to_string())
+                .cloned()
         } else {
             None
         }
@@ -384,7 +389,10 @@ impl Gui {
 
     fn nth_tab(&self, num: u32) -> Option<Tab> {
         if let Some(t) = self.notebook.nth_page(Some(num)) {
-            self.tabs.borrow().get(&t.widget_name().to_string()).cloned()
+            self.tabs
+                .borrow()
+                .get(&t.widget_name().to_string())
+                .cloned()
         } else {
             None
         }
@@ -434,10 +442,10 @@ impl Gui {
         let tabs = self.tabs.borrow_mut().clone();
         for (name, tab) in tabs {
             match self.notebook.page_num(&tab.tab()) {
-                Some(_) => {},
+                Some(_) => {}
                 None => {
                     let _rem = self.tabs.borrow_mut().remove(&name);
-                },
+                }
             }
         }
     }
@@ -451,7 +459,7 @@ impl Gui {
         }
     }
 
-    fn go_home(&self) -> Result<(), Box<dyn std::error::Error>>  {
+    fn go_home(&self) -> Result<(), Box<dyn std::error::Error>> {
         let home = CONFIG.lock().unwrap().clone().general.homepage;
         if let Some(tab) = self.current_tab() {
             tab.viewer().visit(&home)?;
@@ -479,13 +487,25 @@ impl Gui {
         }
     }
 
+    fn switch_tab(&self, page: u32) {
+        if let Some(tab) = self.nth_tab(page) {
+            let uri = tab.viewer().uri();
+            if let Ok(url) = Url::try_from(uri.as_str()) {
+                self.window.set_title(Some(&format!(
+                    "{}-{} - {}",
+                    env!("CARGO_PKG_NAME"),
+                    env!("CARGO_PKG_VERSION"),
+                    url.authority,
+                )));
+            }
+        }
+    }
+
     fn set_show_tabs(&self, show: &config::ShowTabs) {
         self.notebook.set_show_tabs(match show {
             config::ShowTabs::Always => true,
             config::ShowTabs::Never => false,
-            config::ShowTabs::Multiple => {
-                self.notebook.n_pages() > 1
-            },
+            config::ShowTabs::Multiple => self.notebook.n_pages() > 1,
         });
     }
 
@@ -536,11 +556,11 @@ pub fn run() {
     );
 
     match application.register(Some(&Cancellable::new())) {
-        Ok(_) => {},
+        Ok(_) => {}
         Err(e) => eprintln!("{}", e),
     };
 
-    application.connect_open(move |app,addr,_| {
+    application.connect_open(move |app, addr, _| {
         let gui = build_ui(app);
         for uri in addr {
             gui.new_tab(Some(&uri.uri()));
@@ -559,53 +579,48 @@ fn build_ui(app: &Application) -> Rc<Gui> {
     let config = CONFIG.lock().unwrap().clone();
     Gui::set_css(&config.colors);
     gui.window.set_application(Some(app));
-    gui.notebook.connect_page_removed(clone!(@weak gui, @strong config => move |nb,_page,_| {
-        gui.cleanup_tabs();
-        let multi = config.general.show_tabs == config::ShowTabs::Multiple;
-        match nb.n_pages() {
-            0 => gui.window.close(),
-            1 => if multi { nb.set_show_tabs(false); },
-            _ => if multi { nb.set_show_tabs(true); },
-        }
-    }));
-    gui.notebook.connect_page_added(clone!(@weak gui, @strong config => move |nb,_page,_| {
-        if nb.n_pages() > 1 && config.general.show_tabs == config::ShowTabs::Multiple {
-            nb.set_show_tabs(true);
-        }
-    }));
-    gui.notebook.connect_switch_page(clone!(@weak gui => move |_,_,page| {
-        if let Some(tab) = gui.nth_tab(page) {
-            let uri = tab.viewer().uri();
-            if let Ok(url) = Url::try_from(uri.as_str()) {
-                gui.window.set_title(Some(&format!(
-                    "{}-{} - {}",
-                    env!("CARGO_PKG_NAME"),
-                    env!("CARGO_PKG_VERSION"),
-                    url.authority,
-                )));
-            } else {}
-        }
-    }));
-    gui.dialogs.preferences.window()
+    gui.notebook
+        .connect_page_removed(clone!(@weak gui, @strong config => move |nb,_page,_| {
+            gui.cleanup_tabs();
+            let multi = config.general.show_tabs == config::ShowTabs::Multiple;
+            match nb.n_pages() {
+                0 => gui.window.close(),
+                1 => if multi { nb.set_show_tabs(false); },
+                _ => if multi { nb.set_show_tabs(true); },
+            }
+        }));
+    gui.notebook
+        .connect_page_added(clone!(@weak gui, @strong config => move |nb,_page,_| {
+            if nb.n_pages() > 1 && config.general.show_tabs == config::ShowTabs::Multiple {
+                nb.set_show_tabs(true);
+            }
+        }));
+    gui.notebook
+        .connect_switch_page(clone!(@weak gui => move |_,_,page| {
+            gui.switch_tab(page);
+        }));
+    gui.dialogs
+        .preferences
+        .window()
         .connect_response(clone!(@weak gui => move |dlg,res| {
-        if res == ResponseType::Accept {
-            if let Some(cfg) = gui.dialogs.preferences.config() {
-                *CONFIG.lock().unwrap() = cfg.clone();
-                cfg.save_to_file(&config::get_config_file());
-                gui.set_general(&cfg.general);
-                Gui::set_css(&cfg.colors);
-                for (_,tab) in gui.tabs.borrow().clone() {
-                    tab.set_fonts();
-                }
-            } else {
-                match gui.dialogs.preferences.load_config() {
-                    Ok(_) => {},
-                    Err(e) => eprintln!("Error loading config: {}", e),
+            if res == ResponseType::Accept {
+                if let Some(cfg) = gui.dialogs.preferences.config() {
+                    *CONFIG.lock().unwrap() = cfg.clone();
+                    cfg.save_to_file(&config::get_config_file());
+                    gui.set_general(&cfg.general);
+                    Gui::set_css(&cfg.colors);
+                    for (_,tab) in gui.tabs.borrow().clone() {
+                        tab.set_fonts();
+                    }
+                } else {
+                    match gui.dialogs.preferences.load_config() {
+                        Ok(_) => {},
+                        Err(e) => eprintln!("Error loading config: {}", e),
+                    }
                 }
             }
-        }
-        dlg.hide();
-    }));
+            dlg.hide();
+        }));
     gui.set_general(&config.general);
 
     gui.window.show();

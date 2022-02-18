@@ -1,6 +1,9 @@
+#![warn(clippy::all, clippy::pedantic)]
 use gemview::GemView;
 use gtk::prelude::*;
 
+use crate::bookmarks;
+use crate::BOOKMARKS;
 use crate::CONFIG;
 
 #[derive(Clone, Debug)]
@@ -46,13 +49,134 @@ impl Label {
 }
 
 #[derive(Clone, Debug)]
+pub struct BookmarkEditor {
+    popover: gtk::Popover,
+    label: gtk::Label,
+    name: gtk::Entry,
+    description: gtk::Entry,
+    url: gtk::Entry,
+    tags: gtk::Entry,
+}
+
+impl Default for BookmarkEditor {
+    fn default() -> Self {
+        let grid = gtk::builders::GridBuilder::new()
+            .row_spacing(5)
+            .column_spacing(5)
+            .build();
+        let popover = gtk::builders::PopoverBuilder::new().child(&grid).build();
+        let label = gtk::builders::LabelBuilder::new()
+            .use_markup(true)
+            .halign(gtk::Align::Center)
+            .label("<b>New Bookmark</b>")
+            .build();
+        grid.attach(&label, 0, 0, 2, 1);
+        let name_label = gtk::Label::new(Some("Name"));
+        grid.attach(&name_label, 0, 1, 1, 1);
+        let name = gtk::Entry::new();
+        grid.attach(&name, 1, 1, 1, 1);
+        let desc_label = gtk::Label::new(Some("Description"));
+        grid.attach(&desc_label, 0, 2, 1, 1);
+        let description = gtk::Entry::new();
+        grid.attach(&description, 1, 2, 1, 1);
+        let url_label = gtk::Label::new(Some("Url"));
+        grid.attach(&url_label, 0, 3, 1, 1);
+        let url = gtk::Entry::new();
+        grid.attach(&url, 1, 3, 1, 1);
+        let tag_label = gtk::Label::new(Some("Tags"));
+        tag_label.set_valign(gtk::Align::Center);
+        grid.attach(&tag_label, 0, 4, 1, 1);
+        let tags = gtk::Entry::new();
+        grid.attach(&tags, 1, 4, 1, 1);
+        let cancel = gtk::builders::ButtonBuilder::new()
+            .hexpand(false)
+            .halign(gtk::Align::Start)
+            .label("Cancel")
+            .build();
+        grid.attach(&cancel, 0, 5, 1, 1);
+        let accept = gtk::builders::ButtonBuilder::new()
+            .hexpand(false)
+            .halign(gtk::Align::End)
+            .label("Accept")
+            .css_classes(vec![String::from("suggested-action")])
+            .build();
+        grid.attach(&accept, 1, 5, 1, 1);
+        let pop = popover.clone();
+        cancel.connect_clicked(move |_| pop.popdown());
+        let editor = Self {
+            popover,
+            label,
+            name,
+            description,
+            url,
+            tags,
+        };
+        let ed = editor.clone();
+        accept.connect_clicked(move |_| {
+            let bm = ed.to_bookmark();
+            let mut bmarks = BOOKMARKS.lock().unwrap();
+            bmarks.update(bm);
+            match bmarks.save() {
+                Ok(_) => println!("Bookmarks saved"),
+                Err(e) => eprintln!("Error: {e}"),
+            }
+            ed.popover.popdown();
+        });
+        editor
+    }
+}
+
+impl BookmarkEditor {
+    pub fn popover(&self) -> gtk::Popover {
+        self.popover.clone()
+    }
+
+    pub fn name(&self) -> gtk::Entry {
+        self.name.clone()
+    }
+
+    pub fn description(&self) -> gtk::Entry {
+        self.description.clone()
+    }
+
+    pub fn url(&self) -> gtk::Entry {
+        self.url.clone()
+    }
+
+    pub fn tags(&self) -> gtk::Entry {
+        self.tags.clone()
+    }
+
+    pub fn to_bookmark(&self) -> bookmarks::Bookmark {
+        bookmarks::BookmarkBuilder::new()
+            .name(self.name.text().as_str())
+            .description(match self.description.text().as_str() {
+                "" => None,
+                s => Some(s),
+            })
+            .url(self.url.text().as_str())
+            .tags(
+                self.tags
+                    .text()
+                    .to_string()
+                    .split_whitespace()
+                    .map(|x| x.to_string())
+                    .collect(),
+            )
+            .build()
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct Tab {
     tab: gtk::Box,
     label: Label,
+    bookmark_editor: BookmarkEditor,
     back_button: gtk::Button,
     forward_button: gtk::Button,
     reload_button: gtk::Button,
     addr_bar: gtk::SearchEntry,
+    bookmark_button: gtk::MenuButton,
     viewer: GemView,
 }
 
@@ -87,6 +211,7 @@ impl Default for Tab {
         let back_button = gtk::builders::ButtonBuilder::new()
             .child(&image)
             .tooltip_text("Go back")
+            .action_name("win.go_previous")
             .sensitive(false)
             .build();
         button_box.append(&back_button);
@@ -96,19 +221,18 @@ impl Default for Tab {
         let forward_button = gtk::builders::ButtonBuilder::new()
             .child(&image)
             .tooltip_text("Go forward")
+            .action_name("win.go_next")
             .sensitive(false)
             .build();
         button_box.append(&forward_button);
         let image = gtk::builders::ImageBuilder::new()
             .icon_name("view-refresh-symbolic")
-            .margin_start(6)
-            .margin_end(6)
             .build();
         let reload_button = gtk::builders::ButtonBuilder::new()
             .child(&image)
             .tooltip_text("Reload page")
+            .action_name("win.reload")
             .sensitive(false)
-            .name("reload_button")
             .build();
         button_box.append(&reload_button);
         let addr_bar = gtk::builders::SearchEntryBuilder::new()
@@ -116,6 +240,11 @@ impl Default for Tab {
             .hexpand(true)
             .build();
         hbox.append(&addr_bar);
+        let bookmark_button = gtk::builders::MenuButtonBuilder::new()
+            .icon_name("bookmark-new-symbolic")
+            .tooltip_text("Bookmark current page")
+            .build();
+        hbox.append(&bookmark_button);
         let scroller = gtk::builders::ScrolledWindowBuilder::new()
             .hexpand(true)
             .vexpand(true)
@@ -130,14 +259,18 @@ impl Default for Tab {
         viewer.set_css_classes(&["gemview"]);
         scroller.set_child(Some(&viewer));
         tab.append(&scroller);
+        let bookmark_editor = BookmarkEditor::default();
+        bookmark_button.set_popover(Some(&bookmark_editor.popover));
 
         Self {
             tab,
             label: Label::default(),
+            bookmark_editor,
             back_button,
             forward_button,
             reload_button,
             addr_bar,
+            bookmark_button,
             viewer,
         }
     }
@@ -150,6 +283,10 @@ impl Tab {
 
     pub fn label(&self) -> Label {
         self.label.clone()
+    }
+
+    pub fn bookmark_editor(&self) -> BookmarkEditor {
+        self.bookmark_editor.clone()
     }
 
     pub fn back_button(&self) -> gtk::Button {
@@ -168,6 +305,10 @@ impl Tab {
         self.addr_bar.clone()
     }
 
+    pub fn bookmark_button(&self) -> gtk::MenuButton {
+        self.bookmark_button.clone()
+    }
+
     pub fn viewer(&self) -> GemView {
         self.viewer.clone()
     }
@@ -180,5 +321,14 @@ impl Tab {
         self.viewer.set_font_h1(cfg.fonts.h1.to_pango());
         self.viewer.set_font_h2(cfg.fonts.h2.to_pango());
         self.viewer.set_font_h3(cfg.fonts.h3.to_pango());
+    }
+
+    pub fn update_bookmark_editor(&self) {
+        if let Ok(url) = gmi::url::Url::try_from(self.viewer.uri().as_str()) {
+            self.bookmark_editor.name.set_text(&url.authority.host);
+            self.bookmark_editor.description.set_text("");
+            self.bookmark_editor.url.set_text(self.viewer.uri().as_str());
+            self.bookmark_editor.tags.set_text("");
+        }
     }
 }

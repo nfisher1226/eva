@@ -48,12 +48,42 @@ pub struct Colors {
 impl Default for Colors {
     fn default() -> Self {
         Self {
-            fg: Color::Reduced(ReducedRGBA{ red: 24, green: 24, blue: 24, alpha: 255 }),
-            bg: Color::Reduced(ReducedRGBA{ red: 200, green: 200, blue: 200, alpha: 255 }),
-            pre_fg: Color::Reduced(ReducedRGBA{ red: 200, green: 200, blue: 200, alpha: 255 }),
-            pre_bg: Color::Reduced(ReducedRGBA{ red: 35, green: 35, blue: 35, alpha: 255 }),
-            quote_fg: Color::Reduced(ReducedRGBA{ red: 24, green: 24, blue: 24, alpha: 255 }),
-            quote_bg: Color::Reduced(ReducedRGBA{ red: 210, green: 175, blue: 95, alpha: 255 }),
+            fg: Color::Reduced(ReducedRGBA {
+                red: 24,
+                green: 24,
+                blue: 24,
+                alpha: 255,
+            }),
+            bg: Color::Reduced(ReducedRGBA {
+                red: 200,
+                green: 200,
+                blue: 200,
+                alpha: 255,
+            }),
+            pre_fg: Color::Reduced(ReducedRGBA {
+                red: 200,
+                green: 200,
+                blue: 200,
+                alpha: 255,
+            }),
+            pre_bg: Color::Reduced(ReducedRGBA {
+                red: 35,
+                green: 35,
+                blue: 35,
+                alpha: 255,
+            }),
+            quote_fg: Color::Reduced(ReducedRGBA {
+                red: 24,
+                green: 24,
+                blue: 24,
+                alpha: 255,
+            }),
+            quote_bg: Color::Reduced(ReducedRGBA {
+                red: 210,
+                green: 175,
+                blue: 95,
+                alpha: 255,
+            }),
             link: Color::Reduced(ReducedRGBA::primary(PrimaryColor::Blue)),
             hover: Color::Reduced(ReducedRGBA::primary(PrimaryColor::Red)),
         }
