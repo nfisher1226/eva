@@ -325,10 +325,22 @@ impl Tab {
 
     pub fn update_bookmark_editor(&self) {
         if let Ok(url) = gmi::url::Url::try_from(self.viewer.uri().as_str()) {
-            self.bookmark_editor.name.set_text(&url.authority.host);
-            self.bookmark_editor.description.set_text("");
-            self.bookmark_editor.url.set_text(self.viewer.uri().as_str());
-            self.bookmark_editor.tags.set_text("");
+            let bmarks = BOOKMARKS.lock().unwrap();
+            let editor = &self.bookmark_editor;
+            match bmarks.all.get(&self.viewer.uri()) {
+                Some(b) => {
+                    editor.name.set_text(&b.name());
+                    editor.description.set_text(&b.description().unwrap_or(String::new()));
+                    editor.url.set_text(&b.url());
+                    editor.tags.set_text(&b.tags().join(" "));
+                },
+                None => {
+                    editor.name.set_text(&url.authority.host);
+                    editor.description.set_text("");
+                    editor.url.set_text(self.viewer.uri().as_str());
+                    editor.tags.set_text("");
+                },
+            }
         }
     }
 }
