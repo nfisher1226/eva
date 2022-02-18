@@ -38,9 +38,9 @@ pub struct BookmarkBuilder {
 #[derive(Clone, Debug, Default, Deserialize, Serialize)]
 pub struct Bookmarks {
     /// key is url string
-    all: HashMap<String, Bookmark>,
+    pub all: HashMap<String, Bookmark>,
     /// map tag name to vec of url strings
-    tags: HashMap<String, Vec<String>>,
+    pub tags: HashMap<String, Vec<String>>,
 }
 
 impl BookmarkBuilder {
@@ -131,7 +131,7 @@ impl Bookmark {
 }
 
 impl Bookmarks {
-    pub fn update(&mut self, bookmark: Bookmark) {
+    pub fn update(&mut self, bookmark: &Bookmark) {
         self.all.insert(bookmark.url.clone(), bookmark.clone());
         for tag in &bookmark.tags {
             match self.tags.get(tag) {
@@ -151,6 +151,9 @@ impl Bookmarks {
             let mut u = urls.clone();
             u.sort();
             u.dedup();
+            if !bookmark.has_tag(&tag) {
+                u.retain(|x| x != &bookmark.url);
+            }
             self.tags.insert(tag.to_string(), u);
         }
     }

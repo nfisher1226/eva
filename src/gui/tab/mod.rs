@@ -115,10 +115,9 @@ impl Default for BookmarkEditor {
         accept.connect_clicked(move |_| {
             let bm = ed.to_bookmark();
             let mut bmarks = BOOKMARKS.lock().unwrap();
-            bmarks.update(bm);
-            match bmarks.save() {
-                Ok(_) => println!("Bookmarks saved"),
-                Err(e) => eprintln!("Error: {e}"),
+            bmarks.update(&bm);
+            if let Err(e) = bmarks.save() {
+                eprintln!("Error: {}", e);
             }
             ed.popover.popdown();
         });
