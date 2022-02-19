@@ -1,5 +1,6 @@
 #![warn(clippy::all, clippy::pedantic)]
 use gemview::GemView;
+use gmi::url::Url;
 use gtk::prelude::*;
 
 use crate::bookmarks;
@@ -68,7 +69,7 @@ impl Default for BookmarkEditor {
         let label = gtk::builders::LabelBuilder::new()
             .use_markup(true)
             .halign(gtk::Align::Center)
-            .label("<b>New Bookmark</b>")
+            .label("<b>Create Bookmark</b>")
             .build();
         grid.attach(&label, 0, 0, 2, 1);
         let name_label = gtk::Label::new(Some("Name"));
@@ -328,12 +329,14 @@ impl Tab {
             let editor = &self.bookmark_editor;
             match bmarks.all.get(&self.viewer.uri()) {
                 Some(b) => {
+                    editor.label.set_label("<b>Edit Bookmark</b>");
                     editor.name.set_text(&b.name());
                     editor.description.set_text(&b.description().unwrap_or(String::new()));
                     editor.url.set_text(&b.url());
                     editor.tags.set_text(&b.tags().join(" "));
                 },
                 None => {
+                    editor.label.set_label("<b>Create Bookmark</b>");
                     editor.name.set_text(&url.authority.host);
                     editor.description.set_text("");
                     editor.url.set_text(self.viewer.uri().as_str());
@@ -341,5 +344,39 @@ impl Tab {
                 },
             }
         }
+    }
+
+    pub fn request_eva_page(&self, uri: &str) {
+        if let Ok(url) = Url::try_from(uri) {
+            match url.authority.host.as_str() {
+                "bookmarks" => {
+                    match url.path {
+                        None => self.open_bookmarks(),
+                        Some(p) if p.raw_path == "/" => self.open_bookmarks(),
+                        Some(p) => {
+                            let mut maybe_tag = p.raw_path;
+                            let maybe_tag = maybe_tag.replace("/tags/", "");
+                            let bookmarks = BOOKMARKS.lock().unwrap();
+                            if let Some(page) = bookmarks.tag_to_gmi(&maybe_tag) {
+                                self.viewer.render_gmi(&page);
+                                self.viewer.set_uri(uri);
+                                self.addr_bar.set_text("uri");
+                            }
+                        }
+                    }
+                },
+                "history" => {
+                },
+                _ => {},
+            }
+        }
+    }
+
+    pub fn open_bookmarks(&self) {
+        let bookmarks = BOOKMARKS.lock().unwrap();
+        let page = bookmarks.to_gmi();
+        self.viewer.render_gmi(&page);
+        self.viewer.set_uri("eva://bookmarks");
+        self.addr_bar.set_text("eva://bookmarks");
     }
 }

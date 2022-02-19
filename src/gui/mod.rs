@@ -174,14 +174,14 @@ impl Actions {
 
         self.open_bookmarks
             .connect_activate(clone!(@weak gui => move |_,_| {
-                if let Some(tab) = gui.current_tab() {
-                    let button = tab.bookmark_button();
-                }
+                gui.open_bookmarks();
             }));
 
         self.bookmark_page
             .connect_activate(clone!(@weak gui => move |_,_| {
-                println!("Not implemented yet");
+                if let Some(tab) = gui.current_tab() {
+                    tab.bookmark_editor().popover().popup();
+                }
             }));
 
         self.open_history
@@ -370,6 +370,15 @@ impl Gui {
             t.back_button().set_sensitive(t.viewer().has_previous());
             t.forward_button().set_sensitive(t.viewer().has_next());
         });
+        let t = newtab.clone();
+        newtab.viewer().connect_request_unsupported_scheme(move |_, uri| {
+            if let Some((scheme,_)) = uri.split_once(":") {
+                match scheme {
+                    "eva" => t.request_eva_page(&uri),
+                    s => eprintln!("Unsupported scheme: {}", s),
+                }
+            }
+        });
     }
 
     fn current_page(&self) -> Option<u32> {
@@ -537,6 +546,12 @@ impl Gui {
             &provider,
             gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
         );
+    }
+
+    fn open_bookmarks(&self) {
+        if let Some(tab) = self.current_tab() {
+            tab.open_bookmarks();
+        }
     }
 }
 

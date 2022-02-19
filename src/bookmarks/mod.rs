@@ -131,6 +131,51 @@ impl Bookmark {
 }
 
 impl Bookmarks {
+    pub fn to_gmi(&self) -> String {
+        let mut page = String::from("# Bookmarks\n\n## Tags\n");
+        for (tag, _) in &self.tags {
+            page.push_str(&format!("=> eva://bookmarks/tags/{} {}\n", &tag, &tag));
+        }
+        page.push_str("## All Bookmarks\n\n");
+        for (_, bookmark) in &self.all {
+            page.push_str(&format!(
+                "### Name: {}\nDescription:\n> {}\nTags: {}\n=> {}\n",
+                &bookmark.name,
+                match &bookmark.description {
+                    Some(d) => &d,
+                    None => "none",
+                },
+                &bookmark.tags.join(", "),
+                &bookmark.url,
+            ));
+        }
+        page
+    }
+
+    pub fn tag_to_gmi(&self, tag: &str) -> Option<String> {
+        if let Some(keys) = self.tags.get(tag) {
+            let mut page = format!("# Bookmarks tagged {}\n\n", tag);
+            for key in keys {
+                if let Some(bookmark) = self.all.get(key) {
+                    page.push_str(&format!(
+                        "### Name: {}\nDescription:\n> {}\nTags: {}\n=> {}\n",
+                        &bookmark.name,
+                        match &bookmark.description {
+                            Some(d) => &d,
+                            None => "none",
+                        },
+                        &bookmark.tags.join(", "),
+                        &bookmark.url,
+                    ));
+                }
+            }
+            page.push_str("=> eva://bookmarks back");
+            Some(page)
+        } else {
+            None
+        }
+    }
+
     pub fn update(&mut self, bookmark: &Bookmark) {
         self.all.insert(bookmark.url.clone(), bookmark.clone());
         for tag in &bookmark.tags {
