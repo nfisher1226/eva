@@ -13,6 +13,7 @@ lazy_static = "~1.4"
 fastrand = "~1.7"
 toml = "~0.5"
 gemview = { git = "https://codeberg.org/jeang3nie/gemview" }
+webbrowser = "~0.5"
 
 [dependencies.gtk]
 version = "~0.4"

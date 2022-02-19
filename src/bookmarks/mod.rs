@@ -132,10 +132,7 @@ impl Bookmark {
 
 impl Bookmarks {
     pub fn to_gmi(&self) -> String {
-        let mut page = String::from("# Bookmarks\n\n## Tags\n");
-        for (tag, _) in &self.tags {
-            page.push_str(&format!("=> eva://bookmarks/tags/{} {}\n", &tag, &tag));
-        }
+        let mut page = String::from("# Bookmarks\n\n=> eva://bookmarks/tags All Tags\n");
         page.push_str("## All Bookmarks\n\n");
         for (_, bookmark) in &self.all {
             page.push_str(&format!(
@@ -149,6 +146,15 @@ impl Bookmarks {
                 &bookmark.url,
             ));
         }
+        page
+    }
+
+    pub fn tags_to_gmi(&self) -> String {
+        let mut page = String::from("# Bookmark Tags\n");
+        for (tag, _) in &self.tags {
+            page.push_str(&format!("=> eva://bookmarks/tags/{} {}\n", &tag, &tag));
+        }
+        page.push_str("--\n=> eva://bookmarks back");
         page
     }
 
@@ -169,7 +175,7 @@ impl Bookmarks {
                     ));
                 }
             }
-            page.push_str("=> eva://bookmarks back");
+            page.push_str("--\n=> eva://bookmarks/tags back");
             Some(page)
         } else {
             None

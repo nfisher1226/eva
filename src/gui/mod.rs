@@ -375,6 +375,9 @@ impl Gui {
             if let Some((scheme,_)) = uri.split_once(":") {
                 match scheme {
                     "eva" => t.request_eva_page(&uri),
+                    "http" | "https" => if let Err(e) = webbrowser::open(&uri) {
+                        eprintln!("Error opening page in browser: {}", e);
+                    },
                     s => eprintln!("Unsupported scheme: {}", s),
                 }
             }

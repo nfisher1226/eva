@@ -24,7 +24,7 @@
 //! that when Eva sees an official release it will be a polished user experience.
 //! ## Features
 //! - [x] tabbed interface
-//! - [ ] bookmarks
+//! - [x] bookmarks
 //! - [x] keyboard shortcuts
 //!   - [ ] user configurable
 //! - [x] user controlled styling

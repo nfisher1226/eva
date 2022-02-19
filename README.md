@@ -26,7 +26,7 @@ features are not yet implemented and there may be bugs. However, rest assured
 that when Eva sees an official release it will be a polished user experience.
 ## Features
 - [x] tabbed interface
-- [ ] bookmarks
+- [x] bookmarks
 - [x] keyboard shortcuts
   - [ ] user configurable
 - [x] user controlled styling

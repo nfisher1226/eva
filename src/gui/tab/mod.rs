@@ -353,9 +353,10 @@ impl Tab {
                     match url.path {
                         None => self.open_bookmarks(),
                         Some(p) if p.raw_path == "/" => self.open_bookmarks(),
+                        Some(p) if p.raw_path == "/tags" ||
+                            p.raw_path == "/tags/" => self.open_bookmark_tags(),
                         Some(p) => {
-                            let mut maybe_tag = p.raw_path;
-                            let maybe_tag = maybe_tag.replace("/tags/", "");
+                            let maybe_tag = p.raw_path.replace("/tags/", "");
                             let bookmarks = BOOKMARKS.lock().unwrap();
                             if let Some(page) = bookmarks.tag_to_gmi(&maybe_tag) {
                                 self.viewer.render_gmi(&page);
@@ -378,5 +379,13 @@ impl Tab {
         self.viewer.render_gmi(&page);
         self.viewer.set_uri("eva://bookmarks");
         self.addr_bar.set_text("eva://bookmarks");
+    }
+
+    fn open_bookmark_tags(&self) {
+        let bookmarks = BOOKMARKS.lock().unwrap();
+        let page = bookmarks.tags_to_gmi();
+        self.viewer.render_gmi(&page);
+        self.viewer.set_uri("eva://bookmarks/tags");
+        self.addr_bar.set_text("eva://bookmarks/tags");
     }
 }
