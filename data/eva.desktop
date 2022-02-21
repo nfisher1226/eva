@@ -7,5 +7,4 @@ Icon=eva
 Exec=eva %u
 Terminal=false
 Type=Application
-MimeType=x-scheme-handler/gemini;x-scheme-handler/gopher;x-scheme-handler/finger;
-
+MimeType=x-scheme-handler/gemini;

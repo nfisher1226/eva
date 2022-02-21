@@ -17,7 +17,7 @@ use tab::Tab;
 
 mod dialogs;
 use crate::config;
-use crate::{BOOKMARKS, CONFIG};
+use crate::CONFIG;
 use dialogs::Dialogs;
 
 struct Actions {
@@ -375,10 +375,9 @@ impl Gui {
             if let Some((scheme,_)) = uri.split_once(":") {
                 match scheme {
                     "eva" => t.request_eva_page(&uri),
-                    "http" | "https" => if let Err(e) = webbrowser::open(&uri) {
-                        eprintln!("Error opening page in browser: {}", e);
+                    _ => if let Err(e) = crate::mime::open(&uri) {
+                        eprintln!("Error opening {}: {}", uri, e);
                     },
-                    s => eprintln!("Unsupported scheme: {}", s),
                 }
             }
         });

@@ -131,7 +131,7 @@ impl BookmarkEditor {
         self.popover.clone()
     }
 
-    pub fn name(&self) -> gtk::Entry {
+    /*pub fn name(&self) -> gtk::Entry {
         self.name.clone()
     }
 
@@ -145,7 +145,7 @@ impl BookmarkEditor {
 
     pub fn tags(&self) -> gtk::Entry {
         self.tags.clone()
-    }
+    }*/
 
     pub fn to_bookmark(&self) -> bookmarks::Bookmark {
         bookmarks::BookmarkBuilder::new()
@@ -305,9 +305,9 @@ impl Tab {
         self.addr_bar.clone()
     }
 
-    pub fn bookmark_button(&self) -> gtk::MenuButton {
+    /*pub fn bookmark_button(&self) -> gtk::MenuButton {
         self.bookmark_button.clone()
-    }
+    }*/
 
     pub fn viewer(&self) -> GemView {
         self.viewer.clone()
@@ -334,6 +334,7 @@ impl Tab {
                     editor.description.set_text(&b.description().unwrap_or(String::new()));
                     editor.url.set_text(&b.url());
                     editor.tags.set_text(&b.tags().join(" "));
+                    self.bookmark_button.set_icon_name("user-bookmarks-symbolic");
                 },
                 None => {
                     editor.label.set_label("<b>Create Bookmark</b>");
@@ -341,6 +342,7 @@ impl Tab {
                     editor.description.set_text("");
                     editor.url.set_text(self.viewer.uri().as_str());
                     editor.tags.set_text("");
+                    self.bookmark_button.set_icon_name("bookmark-new-symbolic");
                 },
             }
         }
@@ -379,6 +381,7 @@ impl Tab {
         self.viewer.render_gmi(&page);
         self.viewer.set_uri("eva://bookmarks");
         self.addr_bar.set_text("eva://bookmarks");
+        self.bookmark_button.set_icon_name("bookmark-new-symbolic");
     }
 
     fn open_bookmark_tags(&self) {
@@ -387,5 +390,6 @@ impl Tab {
         self.viewer.render_gmi(&page);
         self.viewer.set_uri("eva://bookmarks/tags");
         self.addr_bar.set_text("eva://bookmarks/tags");
+        self.bookmark_button.set_icon_name("bookmark-new-symbolic");
     }
 }

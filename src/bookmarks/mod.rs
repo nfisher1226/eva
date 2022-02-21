@@ -4,8 +4,6 @@ use std::collections::HashMap;
 use std::error::Error;
 use std::path::PathBuf;
 
-use crate::BOOKMARKS;
-
 pub fn get_data_dir() -> PathBuf {
     let mut datadir = gtk::glib::user_data_dir();
     let progname = env!("CARGO_PKG_NAME");
@@ -132,8 +130,7 @@ impl Bookmark {
 
 impl Bookmarks {
     pub fn to_gmi(&self) -> String {
-        let mut page = String::from("# Bookmarks\n\n=> eva://bookmarks/tags All Tags\n");
-        page.push_str("## All Bookmarks\n\n");
+        let mut page = String::from("# Bookmarks\n\n=> eva://bookmarks/tags Tags\n\n");
         for (_, bookmark) in &self.all {
             page.push_str(&format!(
                 "### Name: {}\nDescription:\n> {}\nTags: {}\n=> {}\n",
@@ -150,7 +147,7 @@ impl Bookmarks {
     }
 
     pub fn tags_to_gmi(&self) -> String {
-        let mut page = String::from("# Bookmark Tags\n");
+        let mut page = String::from("# Bookmark Tags\n\n");
         for (tag, _) in &self.tags {
             page.push_str(&format!("=> eva://bookmarks/tags/{} {}\n", &tag, &tag));
         }
@@ -199,13 +196,17 @@ impl Bookmarks {
             }
         }
         for (tag, urls) in &self.tags.clone() {
-            let mut u = urls.clone();
-            u.sort();
-            u.dedup();
-            if !bookmark.has_tag(&tag) {
-                u.retain(|x| x != &bookmark.url);
+            if urls.is_empty() {
+                let _t = self.tags.remove(tag);
+            } else {
+                let mut u = urls.clone();
+                u.sort();
+                u.dedup();
+                if !bookmark.has_tag(&tag) {
+                    u.retain(|x| x != &bookmark.url);
+                }
+                self.tags.insert(tag.to_string(), u);
             }
-            self.tags.insert(tag.to_string(), u);
         }
     }
 
