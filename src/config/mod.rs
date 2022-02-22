@@ -12,7 +12,7 @@ pub use fonts::{Font, Fonts};
 /// Returns an OS appropriate configuration directory path
 ///
 /// # Panics
-/// Can panic if the string returned from [`glib::user_config_dir`] is not valid
+/// Can panic if the string returned from [`gtk::glib::user_config_dir`] is not valid
 /// unicode (unlikely)
 #[must_use]
 pub fn get_config_dir() -> PathBuf {

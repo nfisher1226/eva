@@ -6,13 +6,18 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-chrono = "~0.4"
+base64 = "~0.13"
 getopts = "~0.2"
 gmi = "0.2.1"
 lazy_static = "~1.4"
 fastrand = "~1.7"
 toml = "~0.5"
+urlencoding = "~2.1"
 gemview = { git = "https://codeberg.org/jeang3nie/gemview" }
+
+[dependencies.chrono]
+version = "~0.4"
+features = ["std"]
 
 [dependencies.gtk]
 version = "~0.4"
