@@ -4,7 +4,7 @@ use rgba_simple::{Color, ColorError, Convert};
 
 use crate::config;
 use crate::CONFIG;
-use config::{Colors, Config, Font, Fonts, General, NewPage, ShowTabs, TabPosition};
+use config::{Colors, Config, DownloadScheme, Font, Fonts, General, NewPage, ShowTabs, TabPosition};
 
 use std::env;
 
@@ -15,6 +15,9 @@ pub struct PrefWidgets {
     new_page: gtk::ComboBoxText,
     show_tabs: gtk::ComboBoxText,
     tab_position: gtk::ComboBoxText,
+    download_scheme: gtk::ComboBoxText,
+    download_location_label: gtk::Label,
+    download_location: gtk::Button,
     fg_color: gtk::ColorButton,
     bg_color: gtk::ColorButton,
     pre_fg_color: gtk::ColorButton,
@@ -39,9 +42,29 @@ pub struct Dialogs {
 
 impl Dialogs {
     pub fn init(window: &gtk::ApplicationWindow, builder: &gtk::Builder) -> Self {
+        let preferences = Self::init_preferences(window, builder);
+        let dl_location = Self::init_dl_location(&preferences.window);
+        dl_location.add_button("Accept", gtk::ResponseType::Accept);
+        let dlg = dl_location.clone();
+        preferences.download_location.connect_clicked(move |_| {
+            dlg.show();
+        });
+        let button = preferences.download_location.clone();
+        dl_location.connect_response(move |dlg,res| {
+            if res == gtk::ResponseType::Accept {
+                if let Some(file) = dlg.file() {
+                    if let Some(path) = file.path() {
+                        if let Some(path) = path.to_str() {
+                            button.set_label(path);
+                        }
+                    }
+                }
+            }
+            dlg.hide();
+        });
         Self {
             about: Self::init_about(window),
-            preferences: Self::init_preferences(window, builder),
+            preferences,
         }
     }
 
@@ -67,7 +90,24 @@ impl Dialogs {
             Err(e) => eprintln!("Error loading config: {}", e),
         }
         dlg.window.set_transient_for(Some(window));
+        let dialog = dlg.clone();
+        dlg.download_scheme.connect_changed(move |_| {
+            if let Some(scheme) = dialog.download_scheme() {
+                dialog.toggle_download_location(&scheme);
+            }
+        });
         dlg
+    }
+
+    fn init_dl_location(window: &gtk::Dialog) -> gtk::FileChooserDialog {
+        gtk::FileChooserDialog::builder()
+            .use_header_bar(1)
+            .modal(true)
+            .title("Set download location")
+            .transient_for(window)
+            .action(gtk::FileChooserAction::SelectFolder)
+            .create_folders(true)
+            .build()
     }
 }
 
@@ -89,6 +129,15 @@ impl PrefWidgets {
             show_tabs: builder
                 .object("show_tabs")
                 .expect("Error getting 'show_tabs'"),
+            download_scheme: builder
+                .object("download_scheme")
+                .expect("Error getting 'download_scheme'"),
+            download_location_label: builder
+                .object("download_location_label")
+                .expect("Error getting 'download_location_label'"),
+            download_location: builder
+                .object("download_location")
+                .expect("Error getting 'download_location'"),
             tab_position: builder
                 .object("tab_position")
                 .expect("Error getting 'tab_position'"),
@@ -204,6 +253,55 @@ impl PrefWidgets {
         });
     }
 
+    pub fn download_scheme(&self) -> Option<DownloadScheme> {
+        if let Some(scm) = self.download_scheme.active_id() {
+            match scm.as_str() {
+                "auto" => Some(DownloadScheme::Auto),
+                "ask" => Some(DownloadScheme::Ask),
+                _ => None,
+            }
+        } else {
+            None
+        }
+    }
+
+    pub fn set_download_scheme(&self, scheme: &DownloadScheme) {
+        match scheme {
+            DownloadScheme::Ask => {
+                self.download_scheme.set_active_id(Some("ask"));
+            },
+            DownloadScheme::Auto => {
+                self.download_scheme.set_active_id(Some("auto"));
+            }
+        }
+        self.toggle_download_location(scheme);
+    }
+
+    fn toggle_download_location(&self, scheme: &DownloadScheme) {
+        match scheme {
+            DownloadScheme::Ask => {
+                self.download_location_label.hide();
+                self.download_location.hide();
+            },
+            DownloadScheme::Auto => {
+                self.download_location_label.show();
+                self.download_location.show();
+            },
+        }
+    }
+
+    fn download_location(&self) -> Option<String> {
+        if let Some(loc) = self.download_location.label() {
+            Some(loc.to_string())
+        } else {
+            None
+        }
+    }
+
+    fn set_download_location(&self, location: &str) {
+        self.download_location.set_label(location);
+    }
+
     pub fn general(&self) -> Option<General> {
         Some(General {
             homepage: self.homepage(),
@@ -219,6 +317,11 @@ impl PrefWidgets {
                 Some(tp) => tp,
                 None => return None,
             },
+            download_scheme: match self.download_scheme() {
+                Some(sc) => sc,
+                None => return None,
+            },
+            download_location: self.download_location(),
         })
     }
 
@@ -227,6 +330,11 @@ impl PrefWidgets {
         self.set_new_page(&gen.new_page);
         self.set_show_tabs(&gen.show_tabs);
         self.set_tab_position(&gen.tab_position);
+        self.set_download_scheme(&gen.download_scheme);
+        self.set_download_location(match &gen.download_location {
+            Some(loc) => &loc,
+            None => "~/Downloads",
+        });
     }
 
     pub fn fg_color(&self) -> Result<Color, ColorError> {

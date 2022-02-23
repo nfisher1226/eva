@@ -215,12 +215,26 @@ impl TabPosition {
     }
 }
 
+#[derive(Clone, Deserialize, Debug, PartialEq, Serialize)]
+pub enum DownloadScheme {
+    Ask,
+    Auto,
+}
+
+impl Default for DownloadScheme {
+    fn default() -> Self {
+        Self::Ask
+    }
+}
+
 #[derive(Clone, Deserialize, Debug, Serialize)]
 pub struct General {
     pub homepage: String,
     pub new_page: NewPage,
     pub show_tabs: ShowTabs,
     pub tab_position: TabPosition,
+    pub download_scheme: DownloadScheme,
+    pub download_location: Option<String>,
 }
 
 impl Default for General {
@@ -230,6 +244,8 @@ impl Default for General {
             new_page: NewPage::default(),
             show_tabs: ShowTabs::default(),
             tab_position: TabPosition::default(),
+            download_scheme: DownloadScheme::default(),
+            download_location: None,
         }
     }
 }
