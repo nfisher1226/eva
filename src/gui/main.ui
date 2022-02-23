@@ -22,6 +22,14 @@
         <attribute name="label">Open History</attribute>
         <attribute name="action">win.open_history</attribute>
       </item>
+      <item>
+        <attribute name="label">View source</attribute>
+        <attribute name="action">win.view_source</attribute>
+      </item>
+      <item>
+        <attribute name="label">Save page</attribute>
+        <attribute name="action">win.save_page</attribute>
+      </item>
     </section>
     <section>
       <item>

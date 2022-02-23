@@ -43,6 +43,8 @@ struct Actions {
     bookmark_page: SimpleAction,
     open_history: SimpleAction,
     clear_history: SimpleAction,
+    view_source: SimpleAction,
+    save_page: SimpleAction,
     open_prefs: SimpleAction,
     open_about: SimpleAction,
     quit: SimpleAction,
@@ -73,6 +75,8 @@ impl Default for Actions {
             bookmark_page: SimpleAction::new("bookmark_page", None),
             open_history: SimpleAction::new("open_history", None),
             clear_history: SimpleAction::new("clear_history", None),
+            view_source: SimpleAction::new("view_source", None),
+            save_page: SimpleAction::new("save_page", None),
             open_prefs: SimpleAction::new("open_prefs", None),
             open_about: SimpleAction::new("open_about", None),
             quit: SimpleAction::new("quit", None),
@@ -189,6 +193,18 @@ impl Actions {
                 println!("Not implemented yet");
             }));
 
+        self.view_source
+            .connect_activate(clone!(@weak gui => move |_,_| {
+                if let Some(tab) = gui.current_tab() {
+                    tab.view_source();
+                }
+            }));
+
+        self.save_page
+            .connect_activate(clone!(@weak gui => move |_,_| {
+                gui.save_page();
+            }));
+
         self.clear_history
             .connect_activate(clone!(@weak gui => move |_,_| {
                 println!("Not implemented yet");
@@ -259,6 +275,8 @@ impl Gui {
         app.set_accels_for_action("win.open_bookmarks", &["<primary><Shift>O"]);
         app.set_accels_for_action("win.bookmark_page", &["<primary>D"]);
         app.set_accels_for_action("win.open_history", &["<primary>H"]);
+        app.set_accels_for_action("win.view_source", &["<primary>U"]);
+        app.set_accels_for_action("win.save_page", &["<primary>S"]);
         app.set_accels_for_action("win.open_prefs", &["<primary><Shift>P"]);
         app.set_accels_for_action("win.open_about", &["<primary><Shift>A"]);
         app.set_accels_for_action("win.quit", &["<primary>Q"]);
@@ -285,6 +303,8 @@ impl Gui {
         self.window.add_action(&actions.bookmark_page);
         self.window.add_action(&actions.open_history);
         self.window.add_action(&actions.clear_history);
+        self.window.add_action(&actions.view_source);
+        self.window.add_action(&actions.save_page);
         self.window.add_action(&actions.open_prefs);
         self.window.add_action(&actions.open_about);
         self.window.add_action(&actions.quit);
@@ -557,6 +577,10 @@ impl Gui {
         if let Some(tab) = self.current_tab() {
             tab.open_bookmarks();
         }
+    }
+
+    fn save_page(&self) {
+        println!("Unimplemented");
     }
 }
 

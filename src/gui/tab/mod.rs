@@ -373,6 +373,9 @@ impl Tab {
                 },
                 "history" => {
                 },
+                "source" => {
+                    self.view_source();
+                },
                 _ => {},
             }
         }
@@ -431,24 +434,35 @@ impl Tab {
                     if let Ok(Data::Bytes(payload)) = data.decode() {
                         let bytes = gtk::glib::Bytes::from(&payload);
                         let stream = MemoryInputStream::from_bytes(&bytes);
-                        let pixbuf = Pixbuf::from_stream(
+                        if let Ok(pixbuf) = Pixbuf::from_stream(
                             &stream, Option::<&Cancellable>::None,
-                        ).unwrap();
-                        self.viewer.append_history(&self.viewer.uri());
-                        self.viewer.set_uri(&uri);
-                        let image = self.viewer.render_pixbuf(&pixbuf);
-                        image.set_pixel_size(self.viewer.height() - 50);
-                        self.addr_bar.set_text(
-                            &if uri.len() < 80 {
-                                uri.to_string()
-                            } else {
-                                format!("{}...", &uri[..80])
-                            }
-                        );
+                        ) {
+                            self.viewer.append_history(&self.viewer.uri());
+                            self.viewer.set_uri(&uri);
+                            let image = self.viewer.render_pixbuf(&pixbuf);
+                            image.set_pixel_size(self.viewer.height() - 50);
+                            self.addr_bar.set_text(
+                                &if uri.len() < 80 {
+                                    uri.to_string()
+                                } else {
+                                    format!("{}...", &uri[..80])
+                                }
+                            );
+                        }
                     }
                 },
                 _ => {},
             }
+        }
+    }
+
+    pub fn view_source(&self) {
+        let mime = self.viewer.buffer_mime();
+        let content = self.viewer.buffer_content();
+        if mime.starts_with("text") {
+            let content = String::from_utf8_lossy(&content);
+            self.viewer.render_text(&content);
+            self.addr_bar.set_text("eva://source");
         }
     }
 }
