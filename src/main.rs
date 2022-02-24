@@ -72,7 +72,6 @@ mod gui;
 /// Handles history creation and deletion
 pub mod history;
 pub mod mime;
-pub mod scheme;
 
 #[macro_use]
 extern crate lazy_static;

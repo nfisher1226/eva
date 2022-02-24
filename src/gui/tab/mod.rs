@@ -2,13 +2,10 @@
 use gemview::GemView;
 use gmi::url::Url;
 use gtk::prelude::*;
-use gtk::gdk_pixbuf::Pixbuf;
-use gtk::gio::{Cancellable, MemoryInputStream};
 
 use crate::bookmarks;
 use crate::BOOKMARKS;
 use crate::CONFIG;
-use crate::scheme::data::{Data, DataUrl, MimeType};
 
 #[derive(Clone, Debug)]
 pub struct Label {
@@ -397,63 +394,6 @@ impl Tab {
         self.viewer.set_uri("eva://bookmarks/tags");
         self.addr_bar.set_text("eva://bookmarks/tags");
         self.bookmark_button.set_icon_name("bookmark-new-symbolic");
-    }
-
-    pub fn load_data(&self, uri: &str) {
-        if let Ok(data) = DataUrl::try_from(uri) {
-            match data.mime() {
-                MimeType::TextPlain => {
-                    if let Ok(Data::Text(payload)) = data.decode() {
-                        self.viewer.append_history(&self.viewer.uri());
-                        self.viewer.set_uri(&uri);
-                        self.viewer.render_text(&payload);
-                        self.addr_bar.set_text(
-                            &if uri.len() < 80 {
-                                uri.to_string()
-                            } else {
-                                format!("{}...", &uri[..80])
-                            }
-                        );
-                    }
-                },
-                MimeType::TextGemini => {
-                    if let Ok(Data::Text(payload)) = data.decode() {
-                        self.viewer.append_history(&self.viewer.uri());
-                        self.viewer.set_uri(&uri);
-                        self.viewer.render_gmi(&payload);
-                        self.addr_bar.set_text(
-                            &if uri.len() < 80 {
-                                uri.to_string()
-                            } else {
-                                format!("{}...", &uri[..80])
-                            }
-                        );
-                    }
-                },
-                MimeType::ImagePng | MimeType::ImageJpeg | MimeType::ImageSvg => {
-                    if let Ok(Data::Bytes(payload)) = data.decode() {
-                        let bytes = gtk::glib::Bytes::from(&payload);
-                        let stream = MemoryInputStream::from_bytes(&bytes);
-                        if let Ok(pixbuf) = Pixbuf::from_stream(
-                            &stream, Option::<&Cancellable>::None,
-                        ) {
-                            self.viewer.append_history(&self.viewer.uri());
-                            self.viewer.set_uri(&uri);
-                            let image = self.viewer.render_pixbuf(&pixbuf);
-                            image.set_pixel_size(self.viewer.height() - 50);
-                            self.addr_bar.set_text(
-                                &if uri.len() < 80 {
-                                    uri.to_string()
-                                } else {
-                                    format!("{}...", &uri[..80])
-                                }
-                            );
-                        }
-                    }
-                },
-                _ => {},
-            }
-        }
     }
 
     pub fn view_source(&self) {
