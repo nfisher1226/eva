@@ -32,6 +32,27 @@
 //!   - [x] user specified colors
 //! - [x] back-forward list
 //! - [ ] history
+//! - [ ] Gemini protocol
+//!   - [x] Render gmi pages
+//!   - [x] Display text
+//!   - [x] Display images
+//!   - [x] View gemtext source
+//!   - [ ] Tofu
+//!   - [ ] Client certificates
+//!   - [ ] Send user input
+//!   - [ ] Downloads
+//! - [ ] Titan protocol
+//! - [ ] Gopher protocol
+//!   - [x] Render gophermaps
+//!   - [x] Display text
+//!   - [x] Display images
+//!   - [x] Downloads
+//! - [ ] Finger protocol
+//! - [ ] Data url's
+//!   - [x] Display text
+//!   - [x] Render gemtext
+//!   - [x] Display images
+//!   - [ ] Save content
 //!
 //! ## Keybindings
 //! | Key | Action |

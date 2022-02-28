@@ -25,15 +25,36 @@ Eva is currently alpha quality software and is under heavy development. Some
 features are not yet implemented and there may be bugs. However, rest assured
 that when Eva sees an official release it will be a polished user experience.
 ## Features
-- [x] tabbed interface
-- [x] bookmarks
-- [x] keyboard shortcuts
-  - [ ] user configurable
-- [x] user controlled styling
-  - [x] fonts
-  - [x] colors
-- [x] back-forward list
-- [ ] history
+ - [x] tabbed interface
+ - [x] bookmarks
+ - [x] keyboard shortcuts
+   - [ ] user configurable
+ - [x] user controlled styling
+   - [x] user specified fonts
+   - [x] user specified colors
+ - [x] back-forward list
+ - [ ] history
+ - [ ] Gemini protocol
+   - [x] Render gmi pages
+   - [x] Display text
+   - [x] Display images
+   - [x] View gemtext source
+   - [ ] Tofu
+   - [ ] Client certificates
+   - [ ] Send user input
+   - [ ] Downloads
+ - [ ] Titan protocol
+ - [ ] Gopher protocol
+   - [x] Render gophermaps
+   - [x] Display text
+   - [x] Display images
+   - [x] Downloads
+ - [ ] Finger protocol
+ - [ ] Data url's
+   - [x] Display text
+   - [x] Render gemtext
+   - [x] Display images
+   - [ ] Save content
 
 ## Keybindings
 | Key | Action |
