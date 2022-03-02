@@ -410,6 +410,12 @@ impl Gui {
         newtab.viewer().connect_request_new_tab(move |_,uri| {
             gui.new_tab(Some(&uri));
         });
+        if let Some(app) = self.window.application() {
+            newtab.viewer().connect_request_new_window(move |_,uri| {
+                let gui = build_ui(&app);
+                gui.new_tab(Some(&uri));
+            });
+        }
     }
 
     fn current_page(&self) -> Option<u32> {
