@@ -401,6 +401,15 @@ impl Gui {
                 }
             }
         });
+        let gui = Gui {
+            window: self.window.clone(),
+            notebook: self.notebook.clone(),
+            tabs: self.tabs.clone(),
+            dialogs: self.dialogs.clone(),
+        };
+        newtab.viewer().connect_request_new_tab(move |_,uri| {
+            gui.new_tab(Some(&uri));
+        });
     }
 
     fn current_page(&self) -> Option<u32> {

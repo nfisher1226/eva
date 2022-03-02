@@ -47,6 +47,10 @@ textview.gemview :hover {
   color: HOVER_COLOR;
 }
 
+/* textview.gemview popover :hover {
+  color: PRE_FG_COLOR;
+} */
+
 textview.gemview box.blockquote :hover {
   color: QUOTE_FG_COLOR;
 }
