@@ -564,8 +564,9 @@ impl Gui {
         self.set_tab_position(&gen.tab_position);
     }
 
-    fn set_css(colors: &config::Colors) {
+    fn set_css(&self, colors: &config::Colors) {
         let provider = CssProvider::new();
+        let context = self.window.style_context();
         let css = include_str!("gemview.css")
             .replace("NORMAL_FG_COLOR", &colors.fg.to_string())
             .replace("NORMAL_BG_COLOR", &colors.bg.to_string())
@@ -575,6 +576,7 @@ impl Gui {
             .replace("PRE_BG_COLOR", &colors.pre_bg.to_string())
             .replace("LINK_COLOR", &colors.link.to_string())
             .replace("HOVER_COLOR", &colors.hover.to_string())
+            .replace("DEFAULT_FG_COLOR", &context.color().to_string())
             .replace("ReducedRGBA", "rgba")
             .replace("RGBA", "rgba");
         provider.load_from_data(css.as_bytes());
@@ -633,7 +635,7 @@ fn build_ui(app: &Application) -> Rc<Gui> {
     let gui = Rc::new(Gui::default());
     gui.add_actions(app).connect(&gui, app);
     let config = CONFIG.lock().unwrap().clone();
-    Gui::set_css(&config.colors);
+    gui.set_css(&config.colors);
     gui.window.set_application(Some(app));
     gui.notebook
         .connect_page_removed(clone!(@weak gui, @strong config => move |nb,_page,_| {
@@ -664,7 +666,7 @@ fn build_ui(app: &Application) -> Rc<Gui> {
                     *CONFIG.lock().unwrap() = cfg.clone();
                     cfg.save_to_file(&config::get_config_file());
                     gui.set_general(&cfg.general);
-                    Gui::set_css(&cfg.colors);
+                    gui.set_css(&cfg.colors);
                     for (_,tab) in gui.tabs.borrow().clone() {
                         tab.set_fonts();
                     }
