@@ -18,6 +18,7 @@ use tab::Tab;
 mod dialogs;
 use crate::config;
 use crate::CONFIG;
+use crate::keys::Keys;
 use dialogs::Dialogs;
 
 struct Actions {
@@ -253,33 +254,34 @@ impl Default for Gui {
 impl Gui {
     fn add_actions(&self, app: &gtk::Application) -> Actions {
         let actions = Actions::default();
+        let keys = Keys::from_file().unwrap_or_default();
 
-        app.set_accels_for_action("win.new_tab", &["<primary>T"]);
-        app.set_accels_for_action("win.close_tab", &["<primary>W"]);
-        app.set_accels_for_action("win.next_tab", &["<primary>Page_Down"]);
-        app.set_accels_for_action("win.prev_tab", &["<primary>Page_Up"]);
-        app.set_accels_for_action("win.tab1", &["<Alt>1"]);
-        app.set_accels_for_action("win.tab2", &["<Alt>2"]);
-        app.set_accels_for_action("win.tab3", &["<Alt>3"]);
-        app.set_accels_for_action("win.tab4", &["<Alt>4"]);
-        app.set_accels_for_action("win.tab5", &["<Alt>5"]);
-        app.set_accels_for_action("win.tab6", &["<Alt>6"]);
-        app.set_accels_for_action("win.tab7", &["<Alt>7"]);
-        app.set_accels_for_action("win.tab8", &["<Alt>8"]);
-        app.set_accels_for_action("win.tab9", &["<Alt>9"]);
-        app.set_accels_for_action("win.reload", &["<primary>R"]);
-        app.set_accels_for_action("win.go_home", &["<Alt>Home"]);
-        app.set_accels_for_action("win.go_previous", &["<Alt>Left"]);
-        app.set_accels_for_action("win.go_next", &["<Alt>Right"]);
-        app.set_accels_for_action("win.new_window", &["<primary>N"]);
-        app.set_accels_for_action("win.open_bookmarks", &["<primary><Shift>O"]);
-        app.set_accels_for_action("win.bookmark_page", &["<primary>D"]);
-        app.set_accels_for_action("win.open_history", &["<primary>H"]);
-        app.set_accels_for_action("win.view_source", &["<primary>U"]);
-        app.set_accels_for_action("win.save_page", &["<primary>S"]);
-        app.set_accels_for_action("win.open_prefs", &["<primary><Shift>P"]);
-        app.set_accels_for_action("win.open_about", &["<primary><Shift>A"]);
-        app.set_accels_for_action("win.quit", &["<primary>Q"]);
+        app.set_accels_for_action("win.new_tab", &[keys.new_tab()]);
+        app.set_accels_for_action("win.close_tab", &[keys.close_tab()]);
+        app.set_accels_for_action("win.next_tab", &[keys.next_tab()]);
+        app.set_accels_for_action("win.prev_tab", &[keys.prev_tab()]);
+        app.set_accels_for_action("win.tab1", &[keys.tab1()]);
+        app.set_accels_for_action("win.tab2", &[keys.tab2()]);
+        app.set_accels_for_action("win.tab3", &[keys.tab3()]);
+        app.set_accels_for_action("win.tab4", &[keys.tab4()]);
+        app.set_accels_for_action("win.tab5", &[keys.tab5()]);
+        app.set_accels_for_action("win.tab6", &[keys.tab6()]);
+        app.set_accels_for_action("win.tab7", &[keys.tab7()]);
+        app.set_accels_for_action("win.tab8", &[keys.tab8()]);
+        app.set_accels_for_action("win.tab9", &[keys.tab9()]);
+        app.set_accels_for_action("win.reload", &[keys.reload()]);
+        app.set_accels_for_action("win.go_home", &[keys.go_home()]);
+        app.set_accels_for_action("win.go_previous", &[keys.go_previous()]);
+        app.set_accels_for_action("win.go_next", &[keys.go_next()]);
+        app.set_accels_for_action("win.new_window", &[keys.new_window()]);
+        app.set_accels_for_action("win.open_bookmarks", &[keys.open_bookmarks()]);
+        app.set_accels_for_action("win.bookmark_page", &[keys.bookmark_page()]);
+        app.set_accels_for_action("win.open_history", &[keys.open_history()]);
+        app.set_accels_for_action("win.view_source", &[keys.view_source()]);
+        app.set_accels_for_action("win.save_page", &[keys.save_page()]);
+        app.set_accels_for_action("win.open_prefs", &[keys.open_prefs()]);
+        app.set_accels_for_action("win.open_about", &[keys.open_about()]);
+        app.set_accels_for_action("win.quit", &[keys.quit()]);
 
         self.window.add_action(&actions.new_tab);
         self.window.add_action(&actions.close_tab);
