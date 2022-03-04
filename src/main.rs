@@ -92,6 +92,7 @@ pub mod config;
 mod gui;
 /// Handles history creation and deletion
 pub mod history;
+pub mod keys;
 pub mod mime;
 
 #[macro_use]
