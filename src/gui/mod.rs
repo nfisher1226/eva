@@ -365,7 +365,6 @@ impl Gui {
             t.reload_button().set_sensitive(true);
             t.back_button().set_sensitive(t.viewer().has_previous());
             t.forward_button().set_sensitive(t.viewer().has_next());
-            let uri = t.viewer().uri();
             t.update_bookmark_editor();
             if let Ok(url) = Url::parse(uri.as_str()) {
                 window.set_title(Some(&format!(
