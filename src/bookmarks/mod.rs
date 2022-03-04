@@ -133,7 +133,7 @@ impl Bookmarks {
         let mut page = String::from("# Bookmarks\n\n=> eva://bookmarks/tags Tags\n\n");
         for (_, bookmark) in &self.all {
             page.push_str(&format!(
-                "### Name: {}\nDescription:\n> {}\nTags: {}\n=> {}\n",
+                "### Name: {}\nDescription:\n> {}\nTags: {}\n=> {}\n\n",
                 &bookmark.name,
                 match &bookmark.description {
                     Some(d) => &d,
@@ -161,7 +161,7 @@ impl Bookmarks {
             for key in keys {
                 if let Some(bookmark) = self.all.get(key) {
                     page.push_str(&format!(
-                        "### Name: {}\nDescription:\n> {}\nTags: {}\n=> {}\n",
+                        "### Name: {}\nDescription:\n> {}\nTags: {}\n=> {}\n\n",
                         &bookmark.name,
                         match &bookmark.description {
                             Some(d) => &d,

@@ -1,5 +1,4 @@
 #![warn(clippy::all, clippy::pedantic)]
-use gmi::url::Url;
 use gtk::gdk::Display;
 use gtk::gio::{Cancellable, SimpleAction};
 use gtk::glib;
@@ -7,6 +6,7 @@ use gtk::glib::char::Char;
 use gtk::glib::{clone, OptionArg, OptionFlags};
 use gtk::prelude::*;
 use gtk::{Application, CssProvider, ResponseType, StyleContext};
+use url::Url;
 
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -324,16 +324,13 @@ impl Gui {
             uri
         };
         if let Some(uri) = uri {
-            if let Ok(u) = gmi::url::Url::try_from(uri) {
-                let host = u.authority.host;
+            if let Ok(u) = Url::parse(uri) {
+                let host = u.host_str().unwrap_or("Unknown host");
                 newtab.label().label().set_label(&host);
             }
             newtab.addr_bar().set_text(uri);
             newtab.reload_button().set_sensitive(true);
-            match newtab.viewer().visit(uri) {
-                Ok(_) => {}
-                Err(e) => eprintln!("{:?}", e),
-            }
+            newtab.viewer().visit(uri);
         }
         newtab.update_bookmark_editor();
         self.notebook
@@ -350,10 +347,7 @@ impl Gui {
         let t = newtab.clone();
         newtab.addr_bar().connect_activate(move |bar| {
             let uri = String::from(bar.text());
-            match t.viewer().visit(&uri) {
-                Ok(_) => {}
-                Err(e) => eprintln!("{:?}", e),
-            }
+            t.viewer().visit(&uri);
         });
         let t = newtab.clone();
         newtab.viewer().connect_page_load_started(move |_, uri| {
@@ -373,14 +367,14 @@ impl Gui {
             t.forward_button().set_sensitive(t.viewer().has_next());
             let uri = t.viewer().uri();
             t.update_bookmark_editor();
-            if let Ok(url) = Url::try_from(uri.as_str()) {
+            if let Ok(url) = Url::parse(uri.as_str()) {
                 window.set_title(Some(&format!(
                     "{}-{} - {}",
                     env!("CARGO_PKG_NAME"),
                     env!("CARGO_PKG_VERSION"),
-                    url.authority.host,
+                    url.host_str().unwrap_or("Unknown host"),
                 )));
-                t.label().label().set_label(&url.authority.host);
+                t.label().label().set_label(&url.host_str().unwrap_or("Unknown host"));
             }
         });
         let t = newtab.clone();
@@ -498,7 +492,7 @@ impl Gui {
 
     fn reload_current_tab(&self) -> Result<(), Box<dyn std::error::Error>> {
         if let Some(tab) = self.current_tab() {
-            tab.viewer().reload()?;
+            tab.viewer().reload();
             Ok(())
         } else {
             Err(String::from("Error getting tab").into())
@@ -508,7 +502,7 @@ impl Gui {
     fn go_home(&self) -> Result<(), Box<dyn std::error::Error>> {
         let home = CONFIG.lock().unwrap().clone().general.homepage;
         if let Some(tab) = self.current_tab() {
-            tab.viewer().visit(&home)?;
+            tab.viewer().visit(&home);
             Ok(())
         } else {
             Err(String::from("Error getting tab").into())
@@ -517,7 +511,7 @@ impl Gui {
 
     fn go_previous(&self) -> Result<(), Box<dyn std::error::Error>> {
         if let Some(tab) = self.current_tab() {
-            tab.viewer().go_previous()?;
+            tab.viewer().go_previous();
             Ok(())
         } else {
             Err(String::from("Error getting tab").into())
@@ -526,7 +520,7 @@ impl Gui {
 
     fn go_next(&self) -> Result<(), Box<dyn std::error::Error>> {
         if let Some(tab) = self.current_tab() {
-            tab.viewer().go_next()?;
+            tab.viewer().go_next();
             Ok(())
         } else {
             Err(String::from("Error getting tab").into())
@@ -536,12 +530,12 @@ impl Gui {
     fn switch_tab(&self, page: u32) {
         if let Some(tab) = self.nth_tab(page) {
             let uri = tab.viewer().uri();
-            if let Ok(url) = Url::try_from(uri.as_str()) {
+            if let Ok(url) = Url::parse(uri.as_str()) {
                 self.window.set_title(Some(&format!(
                     "{}-{} - {}",
                     env!("CARGO_PKG_NAME"),
                     env!("CARGO_PKG_VERSION"),
-                    url.authority,
+                    url.host_str().unwrap_or("Unknown host"),
                 )));
             }
         }

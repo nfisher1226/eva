@@ -113,12 +113,12 @@ dependencies = [
  "fastrand",
  "gemview",
  "getopts",
- "gmi",
  "gtk4",
  "lazy_static",
  "rgba_simple",
  "serde",
  "toml",
+ "url",
 ]
 
 [[package]]
@@ -275,12 +275,12 @@ dependencies = [
 [[package]]
 name = "gemview"
 version = "0.2.0"
-source = "git+https://codeberg.org/jeang3nie/gemview#8afcd0e632a46dd4aac89a45c3398c9edf5b0e53"
+source = "git+https://codeberg.org/jeang3nie/gemview#61fa06a8f8404273559c2f1ce1101da1ede47a61"
 dependencies = [
  "base64",
- "gmi",
  "gtk4",
  "once_cell",
+ "rustls",
  "textwrap",
  "tree_magic_mini",
  "url",
@@ -369,14 +369,6 @@ checksum = "f4366377bd56697de8aaee24e673c575d2694d72e7756324ded2b0428829a7b8"
 dependencies = [
  "libc",
  "system-deps",
-]
-
-[[package]]
-name = "gmi"
-version = "0.2.1"
-source = "git+https://gitlab.com/jeang3nie/gmi.git#cb1a2721e3f476dacd097d19b31f340c88d877f3"
-dependencies = [
- "rustls",
 ]
 
 [[package]]

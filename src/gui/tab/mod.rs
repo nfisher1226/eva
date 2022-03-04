@@ -1,6 +1,6 @@
 #![warn(clippy::all, clippy::pedantic)]
 use gemview::GemView;
-use gmi::url::Url;
+use url::Url;
 use gtk::prelude::*;
 
 use crate::bookmarks;
@@ -324,7 +324,7 @@ impl Tab {
     }
 
     pub fn update_bookmark_editor(&self) {
-        if let Ok(url) = gmi::url::Url::try_from(self.viewer.uri().as_str()) {
+        if let Ok(url) = Url::parse(self.viewer.uri().as_str()) {
             let bmarks = BOOKMARKS.lock().unwrap();
             let editor = &self.bookmark_editor;
             match bmarks.all.get(&self.viewer.uri()) {
@@ -338,7 +338,7 @@ impl Tab {
                 },
                 None => {
                     editor.label.set_label("<b>Create Bookmark</b>");
-                    editor.name.set_text(&url.authority.host);
+                    editor.name.set_text(&url.host_str().unwrap_or("Unknown host"));
                     editor.description.set_text("");
                     editor.url.set_text(self.viewer.uri().as_str());
                     editor.tags.set_text("");
@@ -349,16 +349,14 @@ impl Tab {
     }
 
     pub fn request_eva_page(&self, uri: &str) {
-        if let Ok(url) = Url::try_from(uri) {
-            match url.authority.host.as_str() {
-                "bookmarks" => {
-                    match url.path {
-                        None => self.open_bookmarks(),
-                        Some(p) if p.raw_path == "/" => self.open_bookmarks(),
-                        Some(p) if p.raw_path == "/tags" ||
-                            p.raw_path == "/tags/" => self.open_bookmark_tags(),
-                        Some(p) => {
-                            let maybe_tag = p.raw_path.replace("/tags/", "");
+        if let Ok(url) = Url::parse(uri) {
+            match url.host_str() {
+                Some("bookmarks") => {
+                    match url.path() {
+                        "" | "/" => self.open_bookmarks(),
+                        "/tags" | "/tags/" => self.open_bookmark_tags(),
+                        p => {
+                            let maybe_tag = p.replace("/tags/", "");
                             let bookmarks = BOOKMARKS.lock().unwrap();
                             if let Some(page) = bookmarks.tag_to_gmi(&maybe_tag) {
                                 self.viewer.render_gmi(&page);
@@ -368,9 +366,9 @@ impl Tab {
                         }
                     }
                 },
-                "history" => {
+                Some("history") => {
                 },
-                "source" => {
+                Some("source") => {
                     self.view_source();
                 },
                 _ => {},
