@@ -70,10 +70,10 @@ back to it's default for that action.
 ### Modifier keys
 | Common name | String for *keys.toml* |
 | --- | --- |
-| Control | <primary> |
-| Alt | <Alt> |
-| Shift | <Shift> |
-| Super (Windows) | <Super> |
+| Control | &lt;primary&gt; |
+| Alt | &lt;Alt&gt; |
+| Shift | &gt;Shift&gt; |
+| Super (Windows) | &lt;Super&gt; |
 
 ### Other key names
 All alphabetic keys are simply the key value, in upper or lower case. Number keys
