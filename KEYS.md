@@ -72,7 +72,7 @@ back to it's default for that action.
 | --- | --- |
 | Control | &lt;primary&gt; |
 | Alt | &lt;Alt&gt; |
-| Shift | &gt;Shift&gt; |
+| Shift | &lt;Shift&gt; |
 | Super (Windows) | &lt;Super&gt; |
 
 ### Other key names
