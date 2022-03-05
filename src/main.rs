@@ -26,7 +26,7 @@
 //! - [x] tabbed interface
 //! - [x] bookmarks
 //! - [x] keyboard shortcuts
-//!   - [ ] user configurable
+//!   - [x] user configurable
 //! - [x] user controlled styling
 //!   - [x] user specified fonts
 //!   - [x] user specified colors
@@ -46,8 +46,8 @@
 //!   - [x] Render gophermaps
 //!   - [x] Display text
 //!   - [x] Display images
-//!   - [x] Downloads
-//! - [ ] Finger protocol
+//!   - [ ] Downloads
+//! - [x] Finger protocol
 //! - [ ] Data url's
 //!   - [x] Display text
 //!   - [x] Render gemtext

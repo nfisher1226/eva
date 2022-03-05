@@ -28,7 +28,7 @@ that when Eva sees an official release it will be a polished user experience.
  - [x] tabbed interface
  - [x] bookmarks
  - [x] keyboard shortcuts
-   - [ ] user configurable
+   - [x] user configurable
  - [x] user controlled styling
    - [x] user specified fonts
    - [x] user specified colors
@@ -48,8 +48,8 @@ that when Eva sees an official release it will be a polished user experience.
    - [x] Render gophermaps
    - [x] Display text
    - [x] Display images
-   - [x] Downloads
- - [ ] Finger protocol
+   - [ ] Downloads
+ - [x] Finger protocol
  - [ ] Data url's
    - [x] Display text
    - [x] Render gemtext
@@ -57,6 +57,7 @@ that when Eva sees an official release it will be a polished user experience.
    - [ ] Save content
 
 ## Keybindings
+> Note: See [KEYS.md](KEYS.md) for information on changing keybindings
 | Key | Action |
 | --- | --- |
 | Ctrl/T | New tab |
