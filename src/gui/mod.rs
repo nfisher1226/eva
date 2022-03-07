@@ -351,9 +351,16 @@ impl Gui {
             let uri = String::from(bar.text());
             t.viewer().visit(&uri);
         });
+        let w = self.window.clone();
         let t = newtab.clone();
         newtab.viewer().connect_page_load_started(move |_, uri| {
+            w.set_title(Some(&format!(
+                "{}-{} - [loading]",
+                env!("CARGO_PKG_NAME"),
+                env!("CARGO_PKG_VERSION"),
+            )));
             t.addr_bar().set_text(&uri);
+            t.set_label("[loading]", true);
             t.reload_button().set_sensitive(false);
         });
         let t = newtab.clone();
@@ -375,15 +382,25 @@ impl Gui {
                     env!("CARGO_PKG_VERSION"),
                     url.host_str().unwrap_or("Unknown host"),
                 )));
-                t.label().label().set_label(&url.host_str().unwrap_or("Unknown host"));
+                t.set_label(&url.host_str().unwrap_or("Unknown host"), false);
             }
         });
         let t = newtab.clone();
+        let window = self.window.clone();
         newtab.viewer().connect_page_load_failed(move |_, uri| {
             t.addr_bar().set_text(&uri);
             t.reload_button().set_sensitive(true);
             t.back_button().set_sensitive(t.viewer().has_previous());
             t.forward_button().set_sensitive(t.viewer().has_next());
+            if let Ok(url) = Url::parse(uri.as_str()) {
+                window.set_title(Some(&format!(
+                    "{}-{} - {}",
+                    env!("CARGO_PKG_NAME"),
+                    env!("CARGO_PKG_VERSION"),
+                    url.host_str().unwrap_or("Unknown host"),
+                )));
+                t.set_label(&url.host_str().unwrap_or("Unknown host"), false);
+            }
         });
         let t = newtab.clone();
         newtab.viewer().connect_request_unsupported_scheme(move |_, uri| {
@@ -585,6 +602,11 @@ impl Gui {
     fn open_bookmarks(&self) {
         if let Some(tab) = self.current_tab() {
             tab.open_bookmarks();
+            self.window.set_title(Some(&format!(
+                "{}-{} - bookmarks",
+                env!("CARGO_PKG_NAME"),
+                env!("CARGO_PKG_VERSION"),
+            )));
         }
     }
 

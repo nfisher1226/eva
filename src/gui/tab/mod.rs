@@ -11,6 +11,7 @@ use crate::CONFIG;
 pub struct Label {
     handle: gtk::Box,
     label: gtk::Label,
+    spinner: gtk::Spinner,
     close_button: gtk::Button,
 }
 
@@ -21,15 +22,19 @@ impl Default for Label {
             .spacing(3)
             .build();
         let label = gtk::Label::new(Some("about:blank"));
+        let spinner = gtk::Spinner::new();
+        spinner.set_visible(false);
         let close_button = gtk::builders::ButtonBuilder::new()
             .icon_name("window-close-symbolic")
             .has_frame(false)
             .build();
         handle.append(&label);
+        handle.append(&spinner);
         handle.append(&close_button);
         Self {
             handle,
             label,
+            spinner,
             close_button,
         }
     }
@@ -348,6 +353,17 @@ impl Tab {
         }
     }
 
+    pub fn set_label(&self, label: &str, spin: bool) {
+        self.label.label.set_label(label);
+        if spin {
+            self.label.spinner.show();
+            self.label.spinner.start();
+        } else {
+            self.label.spinner.stop();
+            self.label.spinner.hide();
+        }
+    }
+
     pub fn request_eva_page(&self, uri: &str) {
         if let Ok(url) = Url::parse(uri) {
             match url.host_str() {
@@ -362,6 +378,7 @@ impl Tab {
                                 self.viewer.render_gmi(&page);
                                 self.viewer.set_uri(uri);
                                 self.addr_bar.set_text("uri");
+                                self.set_label("bookmarks", false);
                             }
                         }
                     }
@@ -383,6 +400,7 @@ impl Tab {
         self.viewer.set_uri("eva://bookmarks");
         self.addr_bar.set_text("eva://bookmarks");
         self.bookmark_button.set_icon_name("bookmark-new-symbolic");
+        self.set_label("bookmarks", false);
     }
 
     fn open_bookmark_tags(&self) {
@@ -392,6 +410,7 @@ impl Tab {
         self.viewer.set_uri("eva://bookmarks/tags");
         self.addr_bar.set_text("eva://bookmarks/tags");
         self.bookmark_button.set_icon_name("bookmark-new-symbolic");
+        self.set_label("bookmarks", false);
     }
 
     pub fn view_source(&self) {
