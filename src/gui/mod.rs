@@ -386,21 +386,27 @@ impl Gui {
             }
         });
         let t = newtab.clone();
-        let window = self.window.clone();
-        newtab.viewer().connect_page_load_failed(move |_, uri| {
-            t.addr_bar().set_text(&uri);
+        let w = self.window.clone();
+        newtab.viewer().connect_page_load_failed(move |_, err| {
             t.reload_button().set_sensitive(true);
             t.back_button().set_sensitive(t.viewer().has_previous());
             t.forward_button().set_sensitive(t.viewer().has_next());
-            if let Ok(url) = Url::parse(uri.as_str()) {
-                window.set_title(Some(&format!(
-                    "{}-{} - {}",
-                    env!("CARGO_PKG_NAME"),
-                    env!("CARGO_PKG_VERSION"),
-                    url.host_str().unwrap_or("Unknown host"),
-                )));
-                t.set_label(&url.host_str().unwrap_or("Unknown host"), false);
-            }
+            t.set_label("Load failure", false);
+            t.viewer().render_gmi(&format!(
+                "# Page load failure\n\n{}",
+                match err.as_str() {
+                    "RelativeUrlWithCannotBeABaseBase" => "Invalid url",
+                    s if s.contains("failed to lookup address information: Name or service not known") => {
+                        "Cannot resolve dns for host"
+                    },
+                    s => s,
+                },
+            ));
+            w.set_title(Some(&format!(
+                "{}-{} - page load failed",
+                env!("CARGO_PKG_NAME"),
+                env!("CARGO_PKG_VERSION"),
+            )));
         });
         let t = newtab.clone();
         newtab.viewer().connect_request_unsupported_scheme(move |_, uri| {
