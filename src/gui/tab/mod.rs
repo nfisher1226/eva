@@ -1,7 +1,7 @@
 #![warn(clippy::all, clippy::pedantic)]
 use gemview::GemView;
-use url::Url;
 use gtk::prelude::*;
+use url::Url;
 
 use crate::bookmarks;
 use crate::BOOKMARKS;
@@ -336,19 +336,24 @@ impl Tab {
                 Some(b) => {
                     editor.label.set_label("<b>Edit Bookmark</b>");
                     editor.name.set_text(&b.name());
-                    editor.description.set_text(&b.description().unwrap_or(String::new()));
+                    editor
+                        .description
+                        .set_text(&b.description().unwrap_or(String::new()));
                     editor.url.set_text(&b.url());
                     editor.tags.set_text(&b.tags().join(" "));
-                    self.bookmark_button.set_icon_name("user-bookmarks-symbolic");
-                },
+                    self.bookmark_button
+                        .set_icon_name("user-bookmarks-symbolic");
+                }
                 None => {
                     editor.label.set_label("<b>Create Bookmark</b>");
-                    editor.name.set_text(&url.host_str().unwrap_or("Unknown host"));
+                    editor
+                        .name
+                        .set_text(&url.host_str().unwrap_or("Unknown host"));
                     editor.description.set_text("");
                     editor.url.set_text(self.viewer.uri().as_str());
                     editor.tags.set_text("");
                     self.bookmark_button.set_icon_name("bookmark-new-symbolic");
-                },
+                }
             }
         }
     }
@@ -367,28 +372,25 @@ impl Tab {
     pub fn request_eva_page(&self, uri: &str) {
         if let Ok(url) = Url::parse(uri) {
             match url.host_str() {
-                Some("bookmarks") => {
-                    match url.path() {
-                        "" | "/" => self.open_bookmarks(),
-                        "/tags" | "/tags/" => self.open_bookmark_tags(),
-                        p => {
-                            let maybe_tag = p.replace("/tags/", "");
-                            let bookmarks = BOOKMARKS.lock().unwrap();
-                            if let Some(page) = bookmarks.tag_to_gmi(&maybe_tag) {
-                                self.viewer.render_gmi(&page);
-                                self.viewer.set_uri(uri);
-                                self.addr_bar.set_text("uri");
-                                self.set_label("bookmarks", false);
-                            }
+                Some("bookmarks") => match url.path() {
+                    "" | "/" => self.open_bookmarks(),
+                    "/tags" | "/tags/" => self.open_bookmark_tags(),
+                    p => {
+                        let maybe_tag = p.replace("/tags/", "");
+                        let bookmarks = BOOKMARKS.lock().unwrap();
+                        if let Some(page) = bookmarks.tag_to_gmi(&maybe_tag) {
+                            self.viewer.render_gmi(&page);
+                            self.viewer.set_uri(uri);
+                            self.addr_bar.set_text("uri");
+                            self.set_label("bookmarks", false);
                         }
                     }
                 },
-                Some("history") => {
-                },
+                Some("history") => {}
                 Some("source") => {
                     self.view_source();
-                },
-                _ => {},
+                }
+                _ => {}
             }
         }
     }

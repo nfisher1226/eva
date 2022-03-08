@@ -10,6 +10,7 @@ use url::Url;
 
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::path::PathBuf;
 use std::rc::Rc;
 
 mod tab;
@@ -17,8 +18,8 @@ use tab::Tab;
 
 mod dialogs;
 use crate::config;
-use crate::CONFIG;
 use crate::keys::Keys;
+use crate::CONFIG;
 use dialogs::Dialogs;
 
 struct Actions {
@@ -348,7 +349,21 @@ impl Gui {
         });
         let t = newtab.clone();
         newtab.addr_bar().connect_activate(move |bar| {
-            let uri = String::from(bar.text());
+            let mut uri = String::from(bar.text());
+            if !uri.contains(':') {
+                if uri.starts_with('/') {
+                    uri = format!("file://{}", uri);
+                } else {
+                    if let Ok(mut path) = std::env::current_dir() {
+                        path = path.join(&PathBuf::from(&uri));
+                        if path.exists() {
+                            uri = format!("file://{}", path.to_string_lossy());
+                        } else {
+                            uri = format!("gemini://{}", &uri);
+                        }
+                    }
+                }
+            }
             t.viewer().visit(&uri);
         });
         let w = self.window.clone();
@@ -376,13 +391,21 @@ impl Gui {
             t.forward_button().set_sensitive(t.viewer().has_next());
             t.update_bookmark_editor();
             if let Ok(url) = Url::parse(uri.as_str()) {
+                let scheme = url.scheme();
+                let host = url.host_str().unwrap_or_else(|| {
+                    if scheme == "file" {
+                        "filesystem"
+                    } else {
+                        "Unknown host"
+                    }
+                });
                 window.set_title(Some(&format!(
                     "{}-{} - {}",
                     env!("CARGO_PKG_NAME"),
                     env!("CARGO_PKG_VERSION"),
-                    url.host_str().unwrap_or("Unknown host"),
+                    host,
                 )));
-                t.set_label(&url.host_str().unwrap_or("Unknown host"), false);
+                t.set_label(host, false);
             }
         });
         let t = newtab.clone();
@@ -391,14 +414,32 @@ impl Gui {
             t.reload_button().set_sensitive(true);
             t.back_button().set_sensitive(t.viewer().has_previous());
             t.forward_button().set_sensitive(t.viewer().has_next());
+            if err.contains("unsupported-scheme") {
+                if let Ok(url) = Url::parse(t.viewer().uri().as_str()) {
+                    if let Some(host) = url.host_str() {
+                        t.set_label(host, false);
+                        w.set_title(Some(&format!(
+                            "{}-{} -{}",
+                            env!("CARGO_PKG_NAME"),
+                            env!("CARGO_PKG_VERSION"),
+                            host,
+                        )));
+                    }
+                }
+                t.addr_bar().set_text(t.viewer().uri().as_str());
+                return;
+            }
             t.set_label("Load failure", false);
             t.viewer().render_gmi(&format!(
                 "# Page load failure\n\n{}",
                 match err.as_str() {
                     "RelativeUrlWithCannotBeABaseBase" => "Invalid url",
-                    s if s.contains("failed to lookup address information: Name or service not known") => {
+                    s if s.contains(
+                        "failed to lookup address information: Name or service not known"
+                    ) =>
+                    {
                         "Cannot resolve dns for host"
-                    },
+                    }
                     s => s,
                 },
             ));
@@ -409,27 +450,31 @@ impl Gui {
             )));
         });
         let t = newtab.clone();
-        newtab.viewer().connect_request_unsupported_scheme(move |_, uri| {
-            if let Some((scheme,_)) = uri.split_once(":") {
-                match scheme {
-                    "eva" => t.request_eva_page(&uri),
-                    _ => if let Err(e) = crate::mime::open(&uri) {
-                        eprintln!("Error opening {}: {}", uri, e);
-                    },
+        newtab
+            .viewer()
+            .connect_request_unsupported_scheme(move |_, uri| {
+                if let Some((scheme, _)) = uri.split_once(":") {
+                    match scheme {
+                        "eva" => t.request_eva_page(&uri),
+                        _ => {
+                            if let Err(e) = mime_open::open(&uri) {
+                                eprintln!("Error opening {}: {}", uri, e);
+                            }
+                        }
+                    }
                 }
-            }
-        });
+            });
         let gui = Gui {
             window: self.window.clone(),
             notebook: self.notebook.clone(),
             tabs: self.tabs.clone(),
             dialogs: self.dialogs.clone(),
         };
-        newtab.viewer().connect_request_new_tab(move |_,uri| {
+        newtab.viewer().connect_request_new_tab(move |_, uri| {
             gui.new_tab(Some(&uri));
         });
         if let Some(app) = self.window.application() {
-            newtab.viewer().connect_request_new_window(move |_,uri| {
+            newtab.viewer().connect_request_new_window(move |_, uri| {
                 let gui = build_ui(&app);
                 gui.new_tab(Some(&uri));
             });

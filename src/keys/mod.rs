@@ -1,8 +1,8 @@
+use crate::config::get_config_dir;
 use serde::Deserialize;
 use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
-use crate::config::get_config_dir;
 
 /// Returns the path to keys.toml
 #[allow(clippy::must_use_candidate)]
@@ -14,7 +14,7 @@ pub fn get_key_file() -> PathBuf {
 
 #[derive(Clone, Debug, Default, Deserialize)]
 pub struct Keys {
-    keys: HashMap<String, String>
+    keys: HashMap<String, String>,
 }
 
 impl Keys {

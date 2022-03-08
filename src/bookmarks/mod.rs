@@ -191,7 +191,7 @@ impl Bookmarks {
                 None => {
                     _ = self
                         .tags
-                        .insert(tag.to_string(), vec!(bookmark.url.clone()))
+                        .insert(tag.to_string(), vec![bookmark.url.clone()])
                 }
             }
         }

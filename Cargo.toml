@@ -9,6 +9,7 @@ license = "GPL-3.0"
 [dependencies]
 gemview = { git = "https://codeberg.org/jeang3nie/gemview" }
 getopts = "~0.2"
+mime_open = { git = "https://codeberg.org/jeang3nie/mime_open" }
 lazy_static = "~1.4"
 fastrand = "~1.7"
 toml = "~0.5"

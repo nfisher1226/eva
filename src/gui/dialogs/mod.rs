@@ -4,7 +4,9 @@ use rgba_simple::{Color, ColorError, Convert};
 
 use crate::config;
 use crate::CONFIG;
-use config::{Colors, Config, DownloadScheme, Font, Fonts, General, NewPage, ShowTabs, TabPosition};
+use config::{
+    Colors, Config, DownloadScheme, Font, Fonts, General, NewPage, ShowTabs, TabPosition,
+};
 
 use std::env;
 
@@ -50,7 +52,7 @@ impl Dialogs {
             dlg.show();
         });
         let button = preferences.download_location.clone();
-        dl_location.connect_response(move |dlg,res| {
+        dl_location.connect_response(move |dlg, res| {
             if res == gtk::ResponseType::Accept {
                 if let Some(file) = dlg.file() {
                     if let Some(path) = file.path() {
@@ -269,7 +271,7 @@ impl PrefWidgets {
         match scheme {
             DownloadScheme::Ask => {
                 self.download_scheme.set_active_id(Some("ask"));
-            },
+            }
             DownloadScheme::Auto => {
                 self.download_scheme.set_active_id(Some("auto"));
             }
@@ -282,11 +284,11 @@ impl PrefWidgets {
             DownloadScheme::Ask => {
                 self.download_location_label.hide();
                 self.download_location.hide();
-            },
+            }
             DownloadScheme::Auto => {
                 self.download_location_label.show();
                 self.download_location.show();
-            },
+            }
         }
     }
 

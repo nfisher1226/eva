@@ -93,7 +93,6 @@ mod gui;
 /// Handles history creation and deletion
 pub mod history;
 pub mod keys;
-pub mod mime;
 
 #[macro_use]
 extern crate lazy_static;
@@ -133,7 +132,7 @@ fn main() {
         return;
     }
     if matches.opt_present("v") {
-        return
+        return;
     }
     gui::run();
 }
