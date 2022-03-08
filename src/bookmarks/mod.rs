@@ -235,4 +235,13 @@ impl Bookmarks {
         let bookmarks = toml::from_str(&bmarks)?;
         Ok(Some(bookmarks))
     }
+
+    pub fn url_from_name(&self, name: &str) -> Option<String> {
+        for (_,bookmark) in &self.all {
+            if bookmark.name().as_str() == name {
+                return Some(bookmark.url());
+            }
+        }
+        None
+    }
 }

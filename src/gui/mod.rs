@@ -17,6 +17,7 @@ mod tab;
 use tab::Tab;
 
 mod dialogs;
+use crate::BOOKMARKS;
 use crate::config;
 use crate::keys::Keys;
 use crate::CONFIG;
@@ -353,6 +354,8 @@ impl Gui {
             if !uri.contains(':') {
                 if uri.starts_with('/') {
                     uri = format!("file://{}", uri);
+                } else if let Some(url) = BOOKMARKS.lock().unwrap().url_from_name(&uri) {
+                    uri = url;
                 } else {
                     if let Ok(mut path) = std::env::current_dir() {
                         path = path.join(&PathBuf::from(&uri));
