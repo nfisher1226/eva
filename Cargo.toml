@@ -1,15 +1,21 @@
 [package]
 name = "eva"
+authors = ["Nathan Fisher"]
+description = "A gemini (and Gopher/Finger) browser in Gtk4"
+homepage = "https://codeberg.org/jeang3nie/eva"
+repository = "https://codeberg.org/jeang3nie/eva"
 version = "0.1.0"
 edition = "2021"
 license = "GPL-3.0"
+keywords = ["gemini", "gopher", "gtk", "nettwork"]
+categories = ["gui"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gemview = { git = "https://codeberg.org/jeang3nie/gemview" }
+gemview = "~0.2"
 getopts = "~0.2"
-mime_open = { git = "https://codeberg.org/jeang3nie/mime_open" }
+mime_open = "~0.1"
 lazy_static = "~1.4"
 fastrand = "~1.7"
 toml = "~0.5"
