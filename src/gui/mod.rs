@@ -17,9 +17,9 @@ mod tab;
 use tab::Tab;
 
 mod dialogs;
-use crate::BOOKMARKS;
 use crate::config;
 use crate::keys::Keys;
+use crate::BOOKMARKS;
 use crate::CONFIG;
 use dialogs::Dialogs;
 
@@ -316,8 +316,7 @@ impl Gui {
     }
 
     fn new_tab(&self, uri: Option<&str>) {
-        let newtab = tab::Tab::default();
-        newtab.set_fonts();
+        let newtab = tab::Tab::init();
         self.tabs
             .borrow_mut()
             .insert(newtab.tab().widget_name().to_string(), newtab.clone());
@@ -336,17 +335,14 @@ impl Gui {
             newtab.reload_button().set_sensitive(true);
             newtab.viewer().visit(uri);
         }
-        newtab.update_bookmark_editor();
         self.notebook
             .append_page(&newtab.tab(), Some(&newtab.label().handle()));
         self.notebook.set_tab_reorderable(&newtab.tab(), true);
-        newtab.back_button().set_sensitive(false);
-        newtab.forward_button().set_sensitive(false);
-        let tab = newtab.clone();
-        let notebook = self.notebook.clone();
+        let t = newtab.clone();
+        let nb = self.notebook.clone();
         newtab.label().close_button().connect_clicked(move |_| {
-            let _name = tab.tab().widget_name().to_string();
-            notebook.detach_tab(&tab.tab());
+            let _name = t.tab().widget_name().to_string();
+            nb.detach_tab(&t.tab());
         });
         let t = newtab.clone();
         newtab.addr_bar().connect_activate(move |bar| {
@@ -482,6 +478,25 @@ impl Gui {
                 gui.new_tab(Some(&uri));
             });
         }
+        let t = newtab.clone();
+        let w = self.window.clone();
+        newtab
+            .viewer()
+            .connect_request_input(move |_viewer, meta, url| {
+                if let Ok(url) = Url::parse(t.viewer().uri().as_str()) {
+                    if let Some(host) = url.host_str() {
+                        t.set_label(host, false);
+                        w.set_title(Some(&format!(
+                            "{}-{} -{}",
+                            env!("CARGO_PKG_NAME"),
+                            env!("CARGO_PKG_VERSION"),
+                            host,
+                        )));
+                    }
+                }
+                t.addr_bar().set_text(t.viewer().uri().as_str());
+                t.input().request(&meta, &url);
+            });
     }
 
     fn current_page(&self) -> Option<u32> {
@@ -680,9 +695,26 @@ pub fn run() {
         Char::from(b'p'),
         OptionFlags::NONE,
         OptionArg::None,
-        "",
+        "Do not save history",
         None,
     );
+
+    application.add_main_option(
+        "version",
+        Char::from(b'v'),
+        OptionFlags::NONE,
+        OptionArg::None,
+        "Display program version",
+        None,
+    );
+
+    application.connect_handle_local_options(move |_, dict| {
+        if dict.contains("version") {
+            println!("{}", env!("CARGO_PKG_VERSION"));
+            return 1;
+        }
+        -1
+    });
 
     match application.register(Some(&Cancellable::new())) {
         Ok(_) => {}

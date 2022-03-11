@@ -173,10 +173,54 @@ impl BookmarkEditor {
 }
 
 #[derive(Clone, Debug)]
+pub struct Input {
+    popover: gtk::Popover,
+    label: gtk::Label,
+    url: String,
+    entry: gtk::Entry,
+}
+
+impl Default for Input {
+    fn default() -> Self {
+        let label = gtk::Label::new(None);
+        let entry = gtk::Entry::new();
+        let url = String::new();
+        let vbox = gtk::Box::new(gtk::Orientation::Vertical, 3);
+        vbox.append(&label);
+        vbox.append(&entry);
+        let popover = gtk::Popover::builder()
+            .autohide(true)
+            .child(&vbox)
+            .has_arrow(false)
+            .position(gtk::PositionType::Bottom)
+            .build();
+        Self {
+            popover,
+            label,
+            url,
+            entry,
+        }
+    }
+}
+
+impl Input {
+    pub fn show(&self) {
+        self.popover.popup();
+    }
+
+    pub fn request(&mut self, meta: &str, url: &str) {
+        self.label.set_label(meta);
+        self.url = url.to_string();
+        self.show();
+    }
+}
+
+#[derive(Clone, Debug)]
 pub struct Tab {
     tab: gtk::Box,
     label: Label,
     bookmark_editor: BookmarkEditor,
+    input: Input,
     back_button: gtk::Button,
     forward_button: gtk::Button,
     reload_button: gtk::Button,
@@ -245,6 +289,13 @@ impl Default for Tab {
             .hexpand(true)
             .build();
         hbox.append(&addr_bar);
+        let input = Input::default();
+        let input_button = gtk::MenuButton::builder()
+            .has_frame(false)
+            .popover(&input.popover)
+            .visible(false)
+            .build();
+        hbox.append(&input_button);
         let bookmark_button = gtk::builders::MenuButtonBuilder::new()
             .icon_name("bookmark-new-symbolic")
             .tooltip_text("Bookmark current page")
@@ -270,6 +321,7 @@ impl Default for Tab {
         Self {
             tab,
             label: Label::default(),
+            input,
             bookmark_editor,
             back_button,
             forward_button,
@@ -282,6 +334,25 @@ impl Default for Tab {
 }
 
 impl Tab {
+    pub fn init() -> Self {
+        let tab = Self::default();
+        tab.set_fonts();
+        tab.update_bookmark_editor();
+        tab.back_button.set_sensitive(false);
+        tab.forward_button.set_sensitive(false);
+        let t = tab.clone();
+        tab.input.entry.connect_activate(move |entry| {
+            let response = entry.text();
+            if response.as_str() != "" {
+                let mut url = t.input.url.clone();
+                url.push_str("?");
+                url.push_str(response.as_str());
+                t.viewer.visit(&url);
+            }
+        });
+        tab
+    }
+
     pub fn tab(&self) -> gtk::Box {
         self.tab.clone()
     }
@@ -292,6 +363,10 @@ impl Tab {
 
     pub fn bookmark_editor(&self) -> BookmarkEditor {
         self.bookmark_editor.clone()
+    }
+
+    pub fn input(&self) -> Input {
+        self.input.clone()
     }
 
     pub fn back_button(&self) -> gtk::Button {

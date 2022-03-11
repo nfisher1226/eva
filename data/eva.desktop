@@ -2,9 +2,9 @@
 Name=eva
 GenericName=Gemini Browser
 Comment=Browse the plain-text Internet.
-Categories=Network;GTK
+Categories=Network;GTK;
 Icon=eva
 Exec=eva %u
 Terminal=false
 Type=Application
-MimeType=x-scheme-handler/gemini;
+MimeType=x-scheme-handler/gemini;x-scheme-handler/gopher;

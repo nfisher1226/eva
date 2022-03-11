@@ -81,8 +81,6 @@
 //! cd eva
 //! cargo run -- gemini://gemini.circumlunar.space
 //! ```
-use getopts::Options;
-use std::env;
 use std::sync::Mutex;
 /// Everything bookmark related
 pub mod bookmarks;
@@ -107,32 +105,6 @@ lazy_static! {
         });
 }
 
-fn usage(progname: &str, opts: &Options) {
-    let brief = format!("Usage:\n    {} [OPTIONS] [URL]...", progname);
-    print!("{}", opts.usage(&brief));
-}
-
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let progname = env!("CARGO_PKG_NAME");
-
-    let mut opts = Options::new();
-    opts.optflag("h", "help", "Display this help menu");
-    opts.optflag("p", "private", "Do not save history");
-    opts.optflag("v", "version", "Display program version");
-    let matches = match opts.parse(&args[1..]) {
-        Ok(m) => m,
-        Err(e) => {
-            eprintln!("{}", e);
-            return;
-        }
-    };
-    if matches.opt_present("h") {
-        usage(&progname, &opts);
-        return;
-    }
-    if matches.opt_present("v") {
-        return;
-    }
     gui::run();
 }

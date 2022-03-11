@@ -13,8 +13,8 @@ categories = ["gui"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-gemview = "~0.2"
-getopts = "~0.2"
+#gemview = "~0.2"
+gemview = { path = "../gemview" }
 mime_open = "~0.1"
 lazy_static = "~1.4"
 fastrand = "~1.7"

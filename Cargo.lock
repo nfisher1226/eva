@@ -112,7 +112,6 @@ dependencies = [
  "chrono",
  "fastrand",
  "gemview",
- "getopts",
  "gtk4",
  "lazy_static",
  "mime_open",
@@ -275,9 +274,7 @@ dependencies = [
 
 [[package]]
 name = "gemview"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "74a22d03a5d9a43e7adb69db98a7fbfd26fab1dd6014409e3efef252d2ea884f"
+version = "0.3.0"
 dependencies = [
  "base64",
  "gtk4",
@@ -288,15 +285,6 @@ dependencies = [
  "tree_magic_mini",
  "url",
  "urlencoding",
-]
-
-[[package]]
-name = "getopts"
-version = "0.2.21"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "14dbbfd5c71d70241ecf9e6f13737f7b5ce823821063188d7e46c41d371eebd5"
-dependencies = [
- "unicode-width",
 ]
 
 [[package]]
