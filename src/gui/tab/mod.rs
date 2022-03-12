@@ -176,7 +176,6 @@ impl BookmarkEditor {
 pub struct Input {
     popover: gtk::Popover,
     label: gtk::Label,
-    url: String,
     entry: gtk::Entry,
 }
 
@@ -184,7 +183,6 @@ impl Default for Input {
     fn default() -> Self {
         let label = gtk::Label::new(None);
         let entry = gtk::Entry::new();
-        let url = String::new();
         let vbox = gtk::Box::new(gtk::Orientation::Vertical, 3);
         vbox.append(&label);
         vbox.append(&entry);
@@ -197,7 +195,6 @@ impl Default for Input {
         Self {
             popover,
             label,
-            url,
             entry,
         }
     }
@@ -208,9 +205,8 @@ impl Input {
         self.popover.popup();
     }
 
-    pub fn request(&mut self, meta: &str, url: &str) {
+    pub fn request(&mut self, meta: &str) {
         self.label.set_label(meta);
-        self.url = url.to_string();
         self.show();
     }
 }
@@ -344,10 +340,12 @@ impl Tab {
         tab.input.entry.connect_activate(move |entry| {
             let response = entry.text();
             if response.as_str() != "" {
-                let mut url = t.input.url.clone();
+                let mut url = t.viewer.uri();
                 url.push_str("?");
-                url.push_str(response.as_str());
+                let response = urlencoding::encode(response.as_str());
+                url.push_str(&response);
                 t.viewer.visit(&url);
+                t.input.popover.popdown();
             }
         });
         tab

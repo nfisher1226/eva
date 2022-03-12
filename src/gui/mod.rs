@@ -483,7 +483,7 @@ impl Gui {
         newtab
             .viewer()
             .connect_request_input(move |_viewer, meta, url| {
-                if let Ok(url) = Url::parse(t.viewer().uri().as_str()) {
+                if let Ok(url) = Url::parse(&url) {
                     if let Some(host) = url.host_str() {
                         t.set_label(host, false);
                         w.set_title(Some(&format!(
@@ -494,8 +494,8 @@ impl Gui {
                         )));
                     }
                 }
-                t.addr_bar().set_text(t.viewer().uri().as_str());
-                t.input().request(&meta, &url);
+                t.addr_bar().set_text(&url);
+                t.input().request(&meta);
             });
     }
 
