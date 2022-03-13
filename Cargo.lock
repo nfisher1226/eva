@@ -123,7 +123,7 @@ checksum = "5827cebf4670468b8772dd191856768aedcb1b0278a04f989f7766351917b9dc"
 
 [[package]]
 name = "eva"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "chrono",
  "fastrand",
@@ -307,7 +307,8 @@ dependencies = [
 [[package]]
 name = "gemview"
 version = "0.3.0"
-source = "git+https://codeberg.org/jeang3nie/gemview#2c6ec0f1354a6615b9d54416ce01131780ee2a9a"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6ba1ec95436f261b0b54c1f3cd9e0eac19bc9fe6ad28a484f9e1d2b75e9a78c8"
 dependencies = [
  "base64",
  "gtk4",
