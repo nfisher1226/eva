@@ -103,6 +103,7 @@ lazy_static! {
             Ok(b) => b.unwrap_or_default(),
             Err(_) => bookmarks::Bookmarks::default(),
         });
+    static ref SEARCH: gui::uri::Search = gui::uri::Search::load();
 }
 
 fn main() {

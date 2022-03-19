@@ -10,16 +10,15 @@ use url::Url;
 
 use std::cell::RefCell;
 use std::collections::HashMap;
-use std::path::PathBuf;
 use std::rc::Rc;
 
 mod tab;
 use tab::Tab;
+pub mod uri;
 
 mod dialogs;
 use crate::config;
 use crate::keys::Keys;
-use crate::BOOKMARKS;
 use crate::CONFIG;
 use dialogs::Dialogs;
 
@@ -347,21 +346,8 @@ impl Gui {
         let t = newtab.clone();
         newtab.addr_bar().connect_activate(move |bar| {
             let mut uri = String::from(bar.text());
-            if !uri.contains(':') {
-                if uri.starts_with('/') {
-                    uri = format!("file://{}", uri);
-                } else if let Some(url) = BOOKMARKS.lock().unwrap().url_from_name(&uri) {
-                    uri = url;
-                } else {
-                    if let Ok(mut path) = std::env::current_dir() {
-                        path = path.join(&PathBuf::from(&uri));
-                        if path.exists() {
-                            uri = format!("file://{}", path.to_string_lossy());
-                        } else {
-                            uri = format!("gemini://{}", &uri);
-                        }
-                    }
-                }
+            if let Some(url) = uri::uri(&mut uri) {
+                uri = url;
             }
             t.viewer().visit(&uri);
         });
