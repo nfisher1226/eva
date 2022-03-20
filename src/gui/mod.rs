@@ -481,7 +481,7 @@ impl Gui {
                     }
                 }
                 t.addr_bar().set_text(&url);
-                t.input().request(&meta);
+                t.request_input(&meta, url.to_string());
             });
     }
 

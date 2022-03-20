@@ -205,7 +205,7 @@ impl Input {
         self.popover.popup();
     }
 
-    pub fn request(&mut self, meta: &str) {
+    pub fn request(&self, meta: &str) {
         self.label.set_label(meta);
         self.show();
     }
@@ -336,19 +336,24 @@ impl Tab {
         tab.update_bookmark_editor();
         tab.back_button.set_sensitive(false);
         tab.forward_button.set_sensitive(false);
-        let t = tab.clone();
-        tab.input.entry.connect_activate(move |entry| {
+        tab
+    }
+
+    pub fn request_input(&self, meta: &str, url: String) {
+        let viewer = self.viewer.clone();
+        let popover = self.input.popover.clone();
+        self.input.entry.connect_activate(move |entry| {
             let response = entry.text();
             if response.as_str() != "" {
-                let mut url = t.viewer.uri();
+                let mut url = url.to_string();
                 url.push_str("?");
                 let response = urlencoding::encode(response.as_str());
                 url.push_str(&response);
-                t.viewer.visit(&url);
-                t.input.popover.popdown();
+                viewer.visit(&url);
+                popover.popdown();
             }
         });
-        tab
+        self.input.request(meta);
     }
 
     pub fn tab(&self) -> gtk::Box {
@@ -363,9 +368,9 @@ impl Tab {
         self.bookmark_editor.clone()
     }
 
-    pub fn input(&self) -> Input {
+    /*pub fn input(&self) -> Input {
         self.input.clone()
-    }
+    }*/
 
     pub fn back_button(&self) -> gtk::Button {
         self.back_button.clone()
