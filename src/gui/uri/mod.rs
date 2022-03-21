@@ -10,6 +10,7 @@ use {
     },
     std::{
         collections::HashMap,
+        fs,
         path::PathBuf,
     },
 };
@@ -53,10 +54,26 @@ impl Search {
         }
     }
 
+    fn save(&self) {
+        let mut file = get_config_dir();
+        file.push(PathBuf::from("search.toml"));
+        let toml_string = toml::to_string(&self).expect("Could not encode TOML value");
+        fs::write(file, toml_string).expect("Could not write to file!");
+    }
+
     pub fn load() -> Self {
         let mut file = get_config_dir();
         file.push(PathBuf::from("search.toml"));
-        Search::default()
+        if let Ok(contents) = fs::read_to_string(&file) {
+            if let Ok(search) = toml::from_str(&contents) {
+                return search;
+            }
+        }
+        let search = Search::default();
+        if !file.exists() {
+            search.save();
+        }
+        search
     }
 }
 

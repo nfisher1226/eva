@@ -307,8 +307,7 @@ dependencies = [
 [[package]]
 name = "gemview"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6ba1ec95436f261b0b54c1f3cd9e0eac19bc9fe6ad28a484f9e1d2b75e9a78c8"
+source = "git+https://codeberg.org/jeang3nie/gemview#1648c0f3a1ce580ef049b00c4c2938c2b4976069"
 dependencies = [
  "base64",
  "gtk4",
