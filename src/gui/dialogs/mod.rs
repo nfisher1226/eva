@@ -1,6 +1,6 @@
 #![warn(clippy::all, clippy::pedantic)]
 use gtk::prelude::*;
-use rgba_simple::{Color, ColorError, Convert};
+use rgba_simple::{FromGdk, RGBA, ToGdk};
 
 use crate::config;
 use crate::CONFIG;
@@ -87,10 +87,7 @@ impl Dialogs {
 
     fn init_preferences(window: &gtk::ApplicationWindow, builder: &gtk::Builder) -> PrefWidgets {
         let dlg = PrefWidgets::init(builder);
-        match dlg.load_config() {
-            Ok(_) => {}
-            Err(e) => eprintln!("Error loading config: {}", e),
-        }
+        dlg.load_config();
         dlg.window.set_transient_for(Some(window));
         let dialog = dlg.clone();
         dlg.download_scheme.connect_changed(move |_| {
@@ -339,165 +336,92 @@ impl PrefWidgets {
         });
     }
 
-    pub fn fg_color(&self) -> Result<Color, ColorError> {
-        match self.fg_color.rgba().to_reduced_rgba() {
-            Ok(c) => Ok(Color::Reduced(c)),
-            Err(e) => Err(e),
+    pub fn fg_color(&self) -> RGBA<u8> {
+        RGBA::from_gdk(self.fg_color.rgba())
+    }
+
+    pub fn set_fg_color(&self, color: &RGBA<u8>) {
+        self.fg_color.set_rgba(&color.to_gdk());
+    }
+
+    pub fn bg_color(&self) -> RGBA<u8> {
+        RGBA::from_gdk(self.fg_color.rgba())
+    }
+
+    pub fn set_bg_color(&self, color: &RGBA<u8>) {
+        self.bg_color.set_rgba(&color.to_gdk());
+    }
+
+    pub fn pre_fg_color(&self) -> RGBA<u8> {
+        RGBA::from_gdk(self.pre_fg_color.rgba())
+    }
+
+    pub fn set_pre_fg_color(&self, color: &RGBA<u8>) {
+        self.pre_fg_color.set_rgba(&color.to_gdk());
+    }
+
+    pub fn pre_bg_color(&self) -> RGBA<u8> {
+        RGBA::from_gdk(self.pre_fg_color.rgba())
+    }
+
+    pub fn set_pre_bg_color(&self, color: &RGBA<u8>) {
+        self.pre_bg_color.set_rgba(&color.to_gdk());
+    }
+
+    pub fn quote_fg_color(&self) -> RGBA<u8> {
+        RGBA::from_gdk(self.quote_fg_color.rgba())
+    }
+
+    pub fn set_quote_fg_color(&self, color: &RGBA<u8>) {
+        self.quote_fg_color.set_rgba(&color.to_gdk())
+    }
+
+    pub fn quote_bg_color(&self) -> RGBA<u8> {
+        RGBA::from_gdk(self.quote_bg_color.rgba())
+    }
+
+    pub fn set_quote_bg_color(&self, color: &RGBA<u8>) {
+        self.quote_bg_color.set_rgba(&color.to_gdk());
+    }
+
+    pub fn link_color(&self) -> RGBA<u8> {
+        RGBA::from_gdk(self.link_color.rgba())
+    }
+
+    pub fn set_link_color(&self, color: &RGBA<u8>) {
+        self.link_color.set_rgba(&color.to_gdk());
+    }
+
+    pub fn hover_color(&self) -> RGBA<u8> {
+        RGBA::from_gdk(self.hover_color.rgba())
+    }
+
+    pub fn set_hover_color(&self, color: &RGBA<u8>) {
+        self.hover_color.set_rgba(&color.to_gdk());
+    }
+
+    pub fn colors(&self) -> Colors {
+        Colors {
+            fg: self.fg_color(),
+            bg: self.bg_color(),
+            pre_fg: self.pre_fg_color(),
+            pre_bg: self.pre_bg_color(),
+            quote_fg: self.quote_fg_color(),
+            quote_bg: self.quote_bg_color(),
+            link: self.link_color(),
+            hover: self.hover_color(),
         }
     }
 
-    pub fn set_fg_color(&self, color: &Color) -> Result<(), ColorError> {
-        match color.to_gdk() {
-            Ok(c) => {
-                self.fg_color.set_rgba(&c);
-                Ok(())
-            }
-            Err(e) => Err(e),
-        }
-    }
-
-    pub fn bg_color(&self) -> Result<Color, ColorError> {
-        match self.bg_color.rgba().to_reduced_rgba() {
-            Ok(c) => Ok(Color::Reduced(c)),
-            Err(e) => Err(e),
-        }
-    }
-
-    pub fn set_bg_color(&self, color: &Color) -> Result<(), ColorError> {
-        match color.to_gdk() {
-            Ok(c) => {
-                self.bg_color.set_rgba(&c);
-                Ok(())
-            }
-            Err(e) => Err(e),
-        }
-    }
-
-    pub fn pre_fg_color(&self) -> Result<Color, ColorError> {
-        match self.pre_fg_color.rgba().to_reduced_rgba() {
-            Ok(c) => Ok(Color::Reduced(c)),
-            Err(e) => Err(e),
-        }
-    }
-
-    pub fn set_pre_fg_color(&self, color: &Color) -> Result<(), ColorError> {
-        match color.to_gdk() {
-            Ok(c) => {
-                self.pre_fg_color.set_rgba(&c);
-                Ok(())
-            }
-            Err(e) => Err(e),
-        }
-    }
-
-    pub fn pre_bg_color(&self) -> Result<Color, ColorError> {
-        match self.pre_bg_color.rgba().to_reduced_rgba() {
-            Ok(c) => Ok(Color::Reduced(c)),
-            Err(e) => Err(e),
-        }
-    }
-
-    pub fn set_pre_bg_color(&self, color: &Color) -> Result<(), ColorError> {
-        match color.to_gdk() {
-            Ok(c) => {
-                self.pre_bg_color.set_rgba(&c);
-                Ok(())
-            }
-            Err(e) => Err(e),
-        }
-    }
-
-    pub fn quote_fg_color(&self) -> Result<Color, ColorError> {
-        match self.quote_fg_color.rgba().to_reduced_rgba() {
-            Ok(c) => Ok(Color::Reduced(c)),
-            Err(e) => Err(e),
-        }
-    }
-
-    pub fn set_quote_fg_color(&self, color: &Color) -> Result<(), ColorError> {
-        match color.to_gdk() {
-            Ok(c) => {
-                self.quote_fg_color.set_rgba(&c);
-                Ok(())
-            }
-            Err(e) => Err(e),
-        }
-    }
-
-    pub fn quote_bg_color(&self) -> Result<Color, ColorError> {
-        match self.quote_bg_color.rgba().to_reduced_rgba() {
-            Ok(c) => Ok(Color::Reduced(c)),
-            Err(e) => Err(e),
-        }
-    }
-
-    pub fn set_quote_bg_color(&self, color: &Color) -> Result<(), ColorError> {
-        match color.to_gdk() {
-            Ok(c) => {
-                self.quote_bg_color.set_rgba(&c);
-                Ok(())
-            }
-            Err(e) => Err(e),
-        }
-    }
-
-    pub fn link_color(&self) -> Result<Color, ColorError> {
-        match self.link_color.rgba().to_reduced_rgba() {
-            Ok(c) => Ok(Color::Reduced(c)),
-            Err(e) => Err(e),
-        }
-    }
-
-    pub fn set_link_color(&self, color: &Color) -> Result<(), ColorError> {
-        match color.to_gdk() {
-            Ok(c) => {
-                self.link_color.set_rgba(&c);
-                Ok(())
-            }
-            Err(e) => Err(e),
-        }
-    }
-
-    pub fn hover_color(&self) -> Result<Color, ColorError> {
-        match self.hover_color.rgba().to_reduced_rgba() {
-            Ok(c) => Ok(Color::Reduced(c)),
-            Err(e) => Err(e),
-        }
-    }
-
-    pub fn set_hover_color(&self, color: &Color) -> Result<(), ColorError> {
-        match color.to_gdk() {
-            Ok(c) => {
-                self.hover_color.set_rgba(&c);
-                Ok(())
-            }
-            Err(e) => Err(e),
-        }
-    }
-
-    pub fn colors(&self) -> Result<Colors, ColorError> {
-        Ok(Colors {
-            fg: self.fg_color()?,
-            bg: self.bg_color()?,
-            pre_fg: self.pre_fg_color()?,
-            pre_bg: self.pre_bg_color()?,
-            quote_fg: self.quote_fg_color()?,
-            quote_bg: self.quote_bg_color()?,
-            link: self.link_color()?,
-            hover: self.hover_color()?,
-        })
-    }
-
-    pub fn set_colors(&self, colors: &Colors) -> Result<(), ColorError> {
-        self.set_fg_color(&colors.fg)?;
-        self.set_bg_color(&colors.bg)?;
-        self.set_pre_fg_color(&colors.pre_fg)?;
-        self.set_pre_bg_color(&colors.pre_bg)?;
-        self.set_quote_fg_color(&colors.quote_fg)?;
-        self.set_quote_bg_color(&colors.quote_bg)?;
-        self.set_link_color(&colors.link)?;
-        self.set_hover_color(&colors.hover)?;
-        Ok(())
+    pub fn set_colors(&self, colors: &Colors) {
+        self.set_fg_color(&colors.fg);
+        self.set_bg_color(&colors.bg);
+        self.set_pre_fg_color(&colors.pre_fg);
+        self.set_pre_bg_color(&colors.pre_bg);
+        self.set_quote_fg_color(&colors.quote_fg);
+        self.set_quote_bg_color(&colors.quote_bg);
+        self.set_link_color(&colors.link);
+        self.set_hover_color(&colors.hover);
     }
 
     pub fn pg_font(&self) -> Option<Font> {
@@ -592,10 +516,7 @@ impl PrefWidgets {
                 Some(g) => g,
                 None => return None,
             },
-            colors: match self.colors() {
-                Ok(c) => c,
-                Err(_) => return None,
-            },
+            colors: self.colors(),
             fonts: match self.fonts() {
                 Some(f) => f,
                 None => return None,
@@ -603,12 +524,11 @@ impl PrefWidgets {
         })
     }
 
-    pub fn load_config(&self) -> Result<(), ColorError> {
+    pub fn load_config(&self) {
         let cfg = CONFIG.lock().unwrap();
         self.set_general(&cfg.general);
-        self.set_colors(&cfg.colors)?;
+        self.set_colors(&cfg.colors);
         self.set_fonts(&cfg.fonts);
-        Ok(())
     }
 
     pub fn show(&self) {

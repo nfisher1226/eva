@@ -760,10 +760,7 @@ fn build_ui(app: &Application) -> Rc<Gui> {
                         tab.set_fonts();
                     }
                 } else {
-                    match gui.dialogs.preferences.load_config() {
-                        Ok(_) => {},
-                        Err(e) => eprintln!("Error loading config: {}", e),
-                    }
+                    gui.dialogs.preferences.load_config();
                 }
             }
             dlg.hide();

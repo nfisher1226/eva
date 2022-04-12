@@ -1,5 +1,5 @@
 #![warn(clippy::all, clippy::pedantic)]
-use rgba_simple::{Color, Primary, PrimaryColor, ReducedRGBA};
+use rgba_simple::{RGBA, Primary, PrimaryColor};
 use serde::{Deserialize, Serialize};
 
 mod fonts;
@@ -35,131 +35,136 @@ pub fn get_config_file() -> PathBuf {
 
 #[derive(Clone, Deserialize, Debug, Serialize)]
 pub struct Colors {
-    pub fg: Color,
-    pub bg: Color,
-    pub pre_fg: Color,
-    pub pre_bg: Color,
-    pub quote_fg: Color,
-    pub quote_bg: Color,
-    pub link: Color,
-    pub hover: Color,
+    pub fg: RGBA<u8>,
+    pub bg: RGBA<u8>,
+    pub pre_fg: RGBA<u8>,
+    pub pre_bg: RGBA<u8>,
+    pub quote_fg: RGBA<u8>,
+    pub quote_bg: RGBA<u8>,
+    pub link: RGBA<u8>,
+    pub hover: RGBA<u8>,
 }
 
 impl Default for Colors {
     fn default() -> Self {
         Self {
-            fg: Color::Reduced(ReducedRGBA {
-                red: 24,
-                green: 24,
-                blue: 24,
+            fg: RGBA {
+                red: 153,
+                green: 193,
+                blue: 241,
                 alpha: 255,
-            }),
-            bg: Color::Reduced(ReducedRGBA {
-                red: 200,
-                green: 200,
-                blue: 200,
+            },
+            bg: RGBA {
+                red: 36,
+                green: 31,
+                blue: 49,
                 alpha: 255,
-            }),
-            pre_fg: Color::Reduced(ReducedRGBA {
-                red: 200,
-                green: 200,
-                blue: 200,
+            },
+            pre_fg: RGBA {
+                red: 98,
+                green: 160,
+                blue: 234,
                 alpha: 255,
-            }),
-            pre_bg: Color::Reduced(ReducedRGBA {
-                red: 35,
-                green: 35,
-                blue: 35,
+            },
+            pre_bg: RGBA {
+                red: 5,
+                green: 34,
+                blue: 79,
                 alpha: 255,
-            }),
-            quote_fg: Color::Reduced(ReducedRGBA {
-                red: 24,
-                green: 24,
-                blue: 24,
+            },
+            quote_fg: RGBA {
+                red: 38,
+                green: 162,
+                blue: 105,
                 alpha: 255,
-            }),
-            quote_bg: Color::Reduced(ReducedRGBA {
-                red: 210,
-                green: 175,
-                blue: 95,
+            },
+            quote_bg: RGBA {
+                red: 14,
+                green: 55,
+                blue: 105,
                 alpha: 255,
-            }),
-            link: Color::Reduced(ReducedRGBA::primary(PrimaryColor::Blue)),
-            hover: Color::Reduced(ReducedRGBA::primary(PrimaryColor::Red)),
+            },
+            link: RGBA {
+                red: 192,
+                green: 97,
+                blue: 203,
+                alpha: 255,
+            },
+            hover: RGBA::primary(PrimaryColor::Red),
         }
     }
 }
 
 impl Colors {
     #[must_use]
-    pub fn fg(&self) -> Color {
+    pub fn fg(&self) -> RGBA<u8> {
         self.fg.clone()
     }
 
-    pub fn set_fg(&mut self, color: Color) {
+    pub fn set_fg(&mut self, color: RGBA<u8>) {
         self.fg = color;
     }
 
     #[must_use]
-    pub fn bg(&self) -> Color {
+    pub fn bg(&self) -> RGBA<u8> {
         self.bg.clone()
     }
 
-    pub fn set_bg(&mut self, color: Color) {
+    pub fn set_bg(&mut self, color: RGBA<u8>) {
         self.bg = color;
     }
 
     #[must_use]
-    pub fn pre_fg(&self) -> Color {
+    pub fn pre_fg(&self) -> RGBA<u8> {
         self.pre_fg.clone()
     }
 
-    pub fn set_pre_fg(&mut self, color: Color) {
+    pub fn set_pre_fg(&mut self, color: RGBA<u8>) {
         self.pre_fg = color;
     }
 
     #[must_use]
-    pub fn pre_bg(&self) -> Color {
+    pub fn pre_bg(&self) -> RGBA<u8> {
         self.pre_bg.clone()
     }
 
-    pub fn set_pre_bg(&mut self, color: Color) {
+    pub fn set_pre_bg(&mut self, color: RGBA<u8>) {
         self.pre_bg = color;
     }
 
     #[must_use]
-    pub fn quote_fg(&self) -> Color {
+    pub fn quote_fg(&self) -> RGBA<u8> {
         self.quote_fg.clone()
     }
 
-    pub fn set_quote_fg(&mut self, color: Color) {
+    pub fn set_quote_fg(&mut self, color: RGBA<u8>) {
         self.quote_fg = color;
     }
 
     #[must_use]
-    pub fn quote_bg(&self) -> Color {
+    pub fn quote_bg(&self) -> RGBA<u8> {
         self.quote_bg.clone()
     }
 
-    pub fn set_quote_bg(&mut self, color: Color) {
+    pub fn set_quote_bg(&mut self, color: RGBA<u8>) {
         self.quote_bg = color;
     }
 
     #[must_use]
-    pub fn link(&self) -> Color {
+    pub fn link(&self) -> RGBA<u8> {
         self.link.clone()
     }
 
-    pub fn set_link(&mut self, color: Color) {
+    pub fn set_link(&mut self, color: RGBA<u8>) {
         self.link = color;
     }
 
     #[must_use]
-    pub fn hover(&self) -> Color {
+    pub fn hover(&self) -> RGBA<u8> {
         self.hover.clone()
     }
 
-    pub fn set_hover(&mut self, color: Color) {
+    pub fn set_hover(&mut self, color: RGBA<u8>) {
         self.hover = color;
     }
 }
