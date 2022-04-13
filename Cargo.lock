@@ -419,6 +419,7 @@ dependencies = [
 [[package]]
 name = "gemview"
 version = "0.3.0"
+source = "git+https://codeberg.org/jeang3nie/gemview#d0839c8f61e9ab80b06ec907c81cf1e881f1c370"
 dependencies = [
  "base64",
  "gtk4",

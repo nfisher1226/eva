@@ -17,8 +17,7 @@ png-icons = ["resvg", "usvg", "tiny-skia"]
 
 [dependencies]
 #gemview = "0.3"
-#gemview = { git = "https://codeberg.org/jeang3nie/gemview" }
-gemview = { path = "../gemview" }
+gemview = { git = "https://codeberg.org/jeang3nie/gemview" }
 mime2ext = "0.1"
 mime_open = "~0.1"
 lazy_static = "~1.4"
@@ -49,6 +48,6 @@ usvg = { version = "0.22", optional = true }
 tiny-skia = { version = "0.6", optional = true }
 
 [profile.release]
-panic = 'abort'
 lto = true
 codegen-units = 1
+strip = true
