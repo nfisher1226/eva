@@ -41,20 +41,22 @@ that when Eva sees an official release it will be a polished user experience.
    - [x] View gemtext source
    - [ ] Tofu
    - [ ] Client certificates
-   - [ ] Send user input
-   - [ ] Downloads
+   - [x] Send user input
+   - [x] Downloads
+   - [x] Save content
  - [ ] Titan protocol
- - [ ] Gopher protocol
+ - [x] Gopher protocol
    - [x] Render gophermaps
    - [x] Display text
    - [x] Display images
-   - [ ] Downloads
+   - [x] Downloads
+   - [x] Save content
  - [x] Finger protocol
- - [ ] Data url's
+ - [x] Data url's
    - [x] Display text
    - [x] Render gemtext
    - [x] Display images
-   - [ ] Save content
+   - [x] Save content
 
 ## Keybindings
 > Note: See [KEYS.md](KEYS.md) for information on changing keybindings
@@ -74,6 +76,7 @@ that when Eva sees an official release it will be a polished user experience.
 | Ctrl/Shift/O | Open bookmarks |
 | Ctrl/D | Bookmark page |
 | Ctrl/H | Open History |
+| Ctrl/S | Save Page |
 | Ctrl/Shift/P | Open preferences |
 | Ctrl/Shift/A | Open about dialog |
 

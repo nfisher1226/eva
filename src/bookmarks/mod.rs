@@ -1,9 +1,10 @@
 #![warn(clippy::all, clippy::pedantic)]
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use std::error::Error;
-use std::path::PathBuf;
+use {
+    serde::{Deserialize, Serialize},
+    std::{collections::HashMap, error::Error, path::PathBuf},
+};
 
+#[must_use]
 pub fn get_data_dir() -> PathBuf {
     let mut datadir = gtk::glib::user_data_dir();
     let progname = env!("CARGO_PKG_NAME");
@@ -11,6 +12,7 @@ pub fn get_data_dir() -> PathBuf {
     datadir
 }
 
+#[must_use]
 pub fn get_bookmarks_file() -> PathBuf {
     let mut bmarks = get_data_dir();
     bmarks.push("bookmarks.toml");
@@ -42,15 +44,18 @@ pub struct Bookmarks {
 }
 
 impl BookmarkBuilder {
+    #[must_use]
     pub fn new() -> Self {
         Self::default()
     }
 
+    #[must_use]
     pub fn name(mut self, name: &str) -> Self {
         self.name = String::from(name);
         self
     }
 
+    #[must_use]
     pub fn description(mut self, desc: Option<&str>) -> Self {
         match desc {
             Some(d) => self.description = Some(String::from(d)),
@@ -59,16 +64,19 @@ impl BookmarkBuilder {
         self
     }
 
+    #[must_use]
     pub fn url(mut self, url: &str) -> Self {
         self.url = String::from(url);
         self
     }
 
+    #[must_use]
     pub fn tags(mut self, tags: Vec<String>) -> Self {
         self.tags = tags;
         self
     }
 
+    #[must_use]
     pub fn build(self) -> Bookmark {
         Bookmark {
             name: self.name,
@@ -80,6 +88,7 @@ impl BookmarkBuilder {
 }
 
 impl Bookmark {
+    #[must_use]
     pub fn name(&self) -> String {
         self.name.clone()
     }
@@ -88,17 +97,16 @@ impl Bookmark {
         self.name = String::from(name);
     }
 
+    #[must_use]
     pub fn description(&self) -> Option<String> {
-        match &self.description {
-            Some(d) => Some(d.clone()),
-            None => None,
-        }
+        self.description.as_ref().cloned()
     }
 
     pub fn set_description(&mut self, desc: &str) {
         self.description = Some(String::from(desc));
     }
 
+    #[must_use]
     pub fn url(&self) -> String {
         self.url.clone()
     }
@@ -107,6 +115,7 @@ impl Bookmark {
         self.url = String::from(url);
     }
 
+    #[must_use]
     pub fn tags(&self) -> Vec<String> {
         self.tags.clone()
     }
@@ -123,20 +132,22 @@ impl Bookmark {
         self.tags.retain(|x| *x != tag);
     }
 
+    #[must_use]
     pub fn has_tag(&self, tag: &str) -> bool {
         self.tags.contains(&String::from(tag))
     }
 }
 
 impl Bookmarks {
+    #[must_use]
     pub fn to_gmi(&self) -> String {
         let mut page = String::from("# Bookmarks\n\n=> eva://bookmarks/tags Tags\n\n");
-        for (_, bookmark) in &self.all {
+        for bookmark in self.all.values() {
             page.push_str(&format!(
                 "### Name: {}\nDescription:\n> {}\nTags: {}\n=> {}\n\n",
                 &bookmark.name,
                 match &bookmark.description {
-                    Some(d) => &d,
+                    Some(d) => d,
                     None => "none",
                 },
                 &bookmark.tags.join(", "),
@@ -146,15 +157,17 @@ impl Bookmarks {
         page
     }
 
+    #[must_use]
     pub fn tags_to_gmi(&self) -> String {
         let mut page = String::from("# Bookmark Tags\n\n");
-        for (tag, _) in &self.tags {
+        for tag in self.tags.keys() {
             page.push_str(&format!("=> eva://bookmarks/tags/{} {}\n", &tag, &tag));
         }
         page.push_str("--\n=> eva://bookmarks back");
         page
     }
 
+    #[must_use]
     pub fn tag_to_gmi(&self, tag: &str) -> Option<String> {
         if let Some(keys) = self.tags.get(tag) {
             let mut page = format!("# Bookmarks tagged {}\n\n", tag);
@@ -164,7 +177,7 @@ impl Bookmarks {
                         "### Name: {}\nDescription:\n> {}\nTags: {}\n=> {}\n\n",
                         &bookmark.name,
                         match &bookmark.description {
-                            Some(d) => &d,
+                            Some(d) => d,
                             None => "none",
                         },
                         &bookmark.tags.join(", "),
@@ -189,9 +202,9 @@ impl Bookmarks {
                     self.tags.insert(tag.to_string(), v);
                 }
                 None => {
-                    _ = self
+                    let _in = self
                         .tags
-                        .insert(tag.to_string(), vec![bookmark.url.clone()])
+                        .insert(tag.to_string(), vec![bookmark.url.clone()]);
                 }
             }
         }
@@ -202,7 +215,7 @@ impl Bookmarks {
                 let mut u = urls.clone();
                 u.sort();
                 u.dedup();
-                if !bookmark.has_tag(&tag) {
+                if !bookmark.has_tag(tag) {
                     u.retain(|x| x != &bookmark.url);
                 }
                 self.tags.insert(tag.to_string(), u);
@@ -210,6 +223,8 @@ impl Bookmarks {
         }
     }
 
+    /// # Errors
+    /// Returns error if unable to serialize toml or write to file
     pub fn save(&self) -> Result<(), Box<dyn Error>> {
         let datadir = get_data_dir();
         let bmfile = get_bookmarks_file();
@@ -225,6 +240,8 @@ impl Bookmarks {
         Ok(())
     }
 
+    /// # Errors
+    /// Returns error if unable to read bookmarks file or deserialize toml
     pub fn from_file() -> Result<Option<Self>, Box<dyn Error>> {
         let bmarks = get_bookmarks_file();
         let bmarks = if bmarks.exists() {
@@ -236,8 +253,9 @@ impl Bookmarks {
         Ok(Some(bookmarks))
     }
 
+    #[must_use]
     pub fn url_from_name(&self, name: &str) -> Option<String> {
-        for (_, bookmark) in &self.all {
+        for bookmark in self.all.values() {
             if bookmark.name().as_str() == name {
                 return Some(bookmark.url());
             }

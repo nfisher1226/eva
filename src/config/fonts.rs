@@ -2,11 +2,11 @@
 #![allow(clippy::wrong_self_convention)]
 #![allow(clippy::trivially_copy_pass_by_ref)]
 #![allow(clippy::needless_pass_by_value)]
-use gtk::pango;
-use serde::{Deserialize, Serialize};
-
-use std::fmt;
-use std::str::FromStr;
+use {
+    gtk::pango,
+    serde::{Deserialize, Serialize},
+    std::{fmt, str::FromStr},
+};
 
 /// The style of the font
 #[derive(Clone, Copy, Deserialize, Debug, PartialEq, Serialize)]

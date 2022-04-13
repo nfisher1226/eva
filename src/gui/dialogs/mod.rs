@@ -1,14 +1,15 @@
 #![warn(clippy::all, clippy::pedantic)]
-use gtk::prelude::*;
-use rgba_simple::{FromGdk, ToGdk, RGBA};
-
-use crate::config;
-use crate::CONFIG;
-use config::{
-    Colors, Config, DownloadScheme, Font, Fonts, General, NewPage, ShowTabs, TabPosition,
+use {
+    crate::{
+        config::{
+            Colors, Config, DownloadScheme, Font, Fonts, General, NewPage, ShowTabs, TabPosition,
+        },
+        CONFIG,
+    },
+    gtk::prelude::*,
+    rgba_simple::{FromGdk, ToGdk, RGBA},
+    std::env,
 };
-
-use std::env;
 
 #[derive(Clone)]
 pub struct PrefWidgets {
@@ -307,11 +308,7 @@ impl PrefWidgets {
     }
 
     fn download_location(&self) -> Option<String> {
-        if let Some(loc) = self.download_location.label() {
-            Some(loc.to_string())
-        } else {
-            None
-        }
+        self.download_location.label().map(|loc| loc.to_string())
     }
 
     fn set_download_location(&self, location: &str) {
@@ -348,7 +345,7 @@ impl PrefWidgets {
         self.set_tab_position(&gen.tab_position);
         self.set_download_scheme(&gen.download_scheme);
         self.set_download_location(match &gen.download_location {
-            Some(loc) => &loc,
+            Some(loc) => loc,
             None => "~/Downloads",
         });
     }
@@ -357,7 +354,7 @@ impl PrefWidgets {
         RGBA::from_gdk(self.fg_color.rgba())
     }
 
-    pub fn set_fg_color(&self, color: &RGBA<u8>) {
+    pub fn set_fg_color(&self, color: RGBA<u8>) {
         self.fg_color.set_rgba(&color.to_gdk());
     }
 
@@ -365,7 +362,7 @@ impl PrefWidgets {
         RGBA::from_gdk(self.bg_color.rgba())
     }
 
-    pub fn set_bg_color(&self, color: &RGBA<u8>) {
+    pub fn set_bg_color(&self, color: RGBA<u8>) {
         self.bg_color.set_rgba(&color.to_gdk());
     }
 
@@ -373,7 +370,7 @@ impl PrefWidgets {
         RGBA::from_gdk(self.pre_fg_color.rgba())
     }
 
-    pub fn set_pre_fg_color(&self, color: &RGBA<u8>) {
+    pub fn set_pre_fg_color(&self, color: RGBA<u8>) {
         self.pre_fg_color.set_rgba(&color.to_gdk());
     }
 
@@ -381,7 +378,7 @@ impl PrefWidgets {
         RGBA::from_gdk(self.pre_fg_color.rgba())
     }
 
-    pub fn set_pre_bg_color(&self, color: &RGBA<u8>) {
+    pub fn set_pre_bg_color(&self, color: RGBA<u8>) {
         self.pre_bg_color.set_rgba(&color.to_gdk());
     }
 
@@ -389,15 +386,15 @@ impl PrefWidgets {
         RGBA::from_gdk(self.quote_fg_color.rgba())
     }
 
-    pub fn set_quote_fg_color(&self, color: &RGBA<u8>) {
-        self.quote_fg_color.set_rgba(&color.to_gdk())
+    pub fn set_quote_fg_color(&self, color: RGBA<u8>) {
+        self.quote_fg_color.set_rgba(&color.to_gdk());
     }
 
     pub fn quote_bg_color(&self) -> RGBA<u8> {
         RGBA::from_gdk(self.quote_bg_color.rgba())
     }
 
-    pub fn set_quote_bg_color(&self, color: &RGBA<u8>) {
+    pub fn set_quote_bg_color(&self, color: RGBA<u8>) {
         self.quote_bg_color.set_rgba(&color.to_gdk());
     }
 
@@ -405,7 +402,7 @@ impl PrefWidgets {
         RGBA::from_gdk(self.link_color.rgba())
     }
 
-    pub fn set_link_color(&self, color: &RGBA<u8>) {
+    pub fn set_link_color(&self, color: RGBA<u8>) {
         self.link_color.set_rgba(&color.to_gdk());
     }
 
@@ -413,7 +410,7 @@ impl PrefWidgets {
         RGBA::from_gdk(self.hover_color.rgba())
     }
 
-    pub fn set_hover_color(&self, color: &RGBA<u8>) {
+    pub fn set_hover_color(&self, color: RGBA<u8>) {
         self.hover_color.set_rgba(&color.to_gdk());
     }
 
@@ -431,14 +428,14 @@ impl PrefWidgets {
     }
 
     pub fn set_colors(&self, colors: &Colors) {
-        self.set_fg_color(&colors.fg);
-        self.set_bg_color(&colors.bg);
-        self.set_pre_fg_color(&colors.pre_fg);
-        self.set_pre_bg_color(&colors.pre_bg);
-        self.set_quote_fg_color(&colors.quote_fg);
-        self.set_quote_bg_color(&colors.quote_bg);
-        self.set_link_color(&colors.link);
-        self.set_hover_color(&colors.hover);
+        self.set_fg_color(colors.fg);
+        self.set_bg_color(colors.bg);
+        self.set_pre_fg_color(colors.pre_fg);
+        self.set_pre_bg_color(colors.pre_bg);
+        self.set_quote_fg_color(colors.quote_fg);
+        self.set_quote_bg_color(colors.quote_bg);
+        self.set_link_color(colors.link);
+        self.set_hover_color(colors.hover);
     }
 
     pub fn pg_font(&self) -> Option<Font> {

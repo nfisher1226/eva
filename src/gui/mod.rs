@@ -3,7 +3,7 @@ mod dialogs;
 mod tab;
 pub mod uri;
 use {
-    crate::{config, CONFIG, keys::Keys},
+    crate::{config, keys::Keys, CONFIG},
     dialogs::Dialogs,
     gemview::GemView,
     gtk::{
@@ -11,12 +11,13 @@ use {
         gio::{Cancellable, Notification, SimpleAction},
         glib,
         glib::{char::Char, clone, OptionArg, OptionFlags},
-        prelude::*, Application, CssProvider, ResponseType, StyleContext,
+        prelude::*,
+        Application, CssProvider, ResponseType, StyleContext,
     },
     mime2ext::mime2ext,
+    std::{borrow::Cow, cell::RefCell, collections::HashMap, fs, path::PathBuf, rc::Rc},
     tab::Tab,
     url::Url,
-    std::{borrow::Cow, cell::RefCell, collections::HashMap, fs, path::PathBuf, rc::Rc},
 };
 
 struct Actions {
@@ -84,7 +85,7 @@ impl Default for Actions {
 }
 
 impl Actions {
-    fn connect(&self, gui: &Rc<Gui>, app: &Application) {
+    fn connect_tab(&self, gui: &Rc<Gui>) {
         self.new_tab
             .connect_activate(clone!(@strong gui => move |_, _| {
                 gui.new_tab(None);
@@ -140,7 +141,9 @@ impl Actions {
         self.tab9.connect_activate(clone!(@weak gui => move |_,_| {
             gui.notebook.set_page(8);
         }));
+    }
 
+    fn connect_nav(&self, gui: &Rc<Gui>) {
         self.reload
             .connect_activate(clone!(@weak gui => move |_,_| {
                 if let Err(e) = gui.reload_current_tab() {
@@ -168,7 +171,11 @@ impl Actions {
                     eprintln!("{}", e);
                 }
             }));
+    }
 
+    fn connect(&self, gui: &Rc<Gui>, app: &Application) {
+        self.connect_tab(gui);
+        self.connect_nav(gui);
         self.new_window
             .connect_activate(clone!(@weak gui, @strong app => move |_,_| {
                 let new_gui = build_ui(&app);
@@ -326,7 +333,7 @@ impl Gui {
         if let Some(uri) = uri {
             if let Ok(u) = Url::parse(uri) {
                 let host = u.host_str().unwrap_or("Unknown host");
-                newtab.label().label().set_label(&host);
+                newtab.label().label().set_label(host);
             }
             newtab.addr_bar().set_text(uri);
             newtab.reload_button().set_sensitive(true);
@@ -446,7 +453,7 @@ impl Gui {
                     }
                 }
                 tab.addr_bar().set_text(&url);
-                tab.request_input(&meta, url.to_string());
+                tab.request_input(&meta, url);
             }),
         );
         newtab.viewer().connect_request_download(
@@ -472,57 +479,51 @@ impl Gui {
                 self.dialogs.save.set_current_name(&filename);
                 self.dialogs.save.connect_response(
                     clone!(@weak viewer, @strong self as gui => move |dlg,response| {
-                    match response {
-                        gtk::ResponseType::Accept => {
-                            if let Some(file) = dlg.file() {
-                                if let Some(path) = file.path() {
-                                    match fs::write(&path, &viewer.buffer_content()) {
-                                        Ok(_) => gui.send_notification(&format!(
-                                            "File saved: {}",
-                                            path.display(),
-                                        )),
-                                        Err(e) => gui.send_notification(&format!(
-                                            "Error: {}",
-                                            e,
-                                        )),
+                        match response {
+                            gtk::ResponseType::Accept => {
+                                if let Some(file) = dlg.file() {
+                                    if let Some(path) = file.path() {
+                                        match fs::write(&path, &viewer.buffer_content()) {
+                                            Ok(_) => gui.send_notification(&format!(
+                                                "File saved: {}",
+                                                path.display(),
+                                            )),
+                                            Err(e) => gui.send_notification(&format!(
+                                                "Error: {}",
+                                                e,
+                                            )),
+                                        }
                                     }
                                 }
-                            }
-                            dlg.hide();
-                        },
-                        _ => dlg.hide(),
-                    }
-                }));
+                                dlg.hide();
+                            },
+                            _ => dlg.hide(),
+                        }
+                    }),
+                );
                 self.dialogs.save.show();
                 viewer.reload();
-            },
+            }
             config::DownloadScheme::Auto => {
                 if let Some(location) = &cfg.general.download_location {
                     let mut location = PathBuf::from(location);
                     if !location.exists() {
                         if let Err(e) = fs::create_dir_all(&location) {
-                            self.send_notification(&format!(
-                                "Error: {}",
-                                e,
-                            ));
+                            self.send_notification(&format!("Error: {}", e,));
                             viewer.reload();
                             return;
                         }
                     }
                     location.push(&*filename);
                     match fs::write(&location, &viewer.buffer_content()) {
-                        Ok(_) => self.send_notification(&format!(
-                            "File saved: {}",
-                            location.display(),
-                        )),
-                        Err(e) => self.send_notification(&format!(
-                            "Error: {}",
-                            e,
-                        )),
+                        Ok(_) => {
+                            self.send_notification(&format!("File saved: {}", location.display()));
+                        }
+                        Err(e) => self.send_notification(&format!("Error: {}", e,)),
                     }
                     viewer.reload();
                 }
-            },
+            }
         }
     }
 
@@ -533,7 +534,6 @@ impl Gui {
             application.send_notification(None, &notification);
         }
     }
-
 
     fn current_page(&self) -> Option<u32> {
         self.notebook.current_page()
@@ -716,7 +716,58 @@ impl Gui {
     }
 
     fn save_page(&self) {
-        println!("Unimplemented");
+        if let Some(tab) = self.current_tab() {
+            let viewer = tab.viewer();
+            let mut filename = if let Some(s) = viewer.uri().split('/').last() {
+                match s {
+                    "" => "unknown",
+                    _ => s,
+                }
+            } else {
+                "unknown"
+            }.to_string();
+            if !filename.contains('.') {
+                let mime = viewer.buffer_mime();
+                let ext = if let Some(e) = mime2ext(&mime) {
+                    Some(e)
+                } else if mime == "text/gemini" {
+                    Some("gmi")
+                } else {
+                    None
+                };
+                if let Some(ext) = ext {
+                    filename.push('.');
+                    filename.push_str(ext);
+                }
+            }
+            self.dialogs.save.set_current_name(&filename);
+            self.dialogs.save.connect_response(
+                clone!(@weak viewer, @strong self as gui => move |dlg,response| {
+                    match response {
+                        gtk::ResponseType::Accept => {
+                            if let Some(file) = dlg.file() {
+                                if let Some(path) = file.path() {
+                                    match fs::write(&path, &viewer.buffer_content()) {
+                                        Ok(_) => gui.send_notification(&format!(
+                                            "File saved: {}",
+                                            path.display(),
+                                        )),
+                                        Err(e) => gui.send_notification(&format!(
+                                            "Error: {}",
+                                            e,
+                                        )),
+                                    }
+                                }
+                            }
+                            dlg.hide();
+                        },
+                        _ => dlg.hide(),
+                    }
+                }),
+            );
+            self.dialogs.save.show();
+            viewer.reload();
+        }
     }
 }
 

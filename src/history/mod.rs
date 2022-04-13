@@ -1,10 +1,11 @@
 #![warn(clippy::all, clippy::pedantic)]
-use chrono::prelude::*;
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
-use std::error::Error;
-use std::path::PathBuf;
+use {
+    chrono::prelude::*,
+    serde::{Deserialize, Serialize},
+    std::{collections::HashMap, error::Error, path::PathBuf},
+};
 
+#[must_use]
 pub fn get_data_dir() -> PathBuf {
     let mut datadir = gtk::glib::user_data_dir();
     let progname = env!("CARGO_PKG_NAME");
@@ -12,6 +13,7 @@ pub fn get_data_dir() -> PathBuf {
     datadir
 }
 
+#[must_use]
 pub fn get_history_file() -> PathBuf {
     let mut histfile = get_data_dir();
     histfile.push("history.toml");
@@ -37,6 +39,7 @@ impl History {
         self.items.clear();
     }
 
+    #[must_use]
     pub fn page(&self) -> String {
         let mut page: String = String::from("# History\n");
         for (url, date) in &self.items {
@@ -45,6 +48,10 @@ impl History {
         page
     }
 
+    /// # Errors
+    /// Returns an error if unable to get the data directory path, unable to
+    /// create the data directory, unable to serialize toml or unable to write
+    /// the toml to disk
     pub fn save(&self) -> Result<(), Box<dyn Error>> {
         let datadir = get_data_dir();
         let histfile = get_history_file();
@@ -60,6 +67,9 @@ impl History {
         Ok(())
     }
 
+    /// # Errors
+    /// Returns an error if unable to read the history from disk, or unable to
+    /// deserialize toml
     pub fn from_file() -> Result<Option<Self>, Box<dyn Error>> {
         let histfile = get_history_file();
         let histfile = if histfile.exists() {

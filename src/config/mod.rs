@@ -1,12 +1,14 @@
 #![warn(clippy::all, clippy::pedantic)]
-use rgba_simple::{Primary, PrimaryColor, RGBA};
-use serde::{Deserialize, Serialize};
+use {
+    rgba_simple::{Primary, PrimaryColor, RGBA},
+    serde::{Deserialize, Serialize},
+    std::{
+        fs,
+        path::{Path, PathBuf},
+    },
+};
 
 mod fonts;
-
-use std::fs;
-use std::path::{Path, PathBuf};
-
 pub use fonts::{Font, Fonts};
 
 /// Returns an OS appropriate configuration directory path
@@ -98,7 +100,7 @@ impl Default for Colors {
 impl Colors {
     #[must_use]
     pub fn fg(&self) -> RGBA<u8> {
-        self.fg.clone()
+        self.fg
     }
 
     pub fn set_fg(&mut self, color: RGBA<u8>) {
@@ -107,7 +109,7 @@ impl Colors {
 
     #[must_use]
     pub fn bg(&self) -> RGBA<u8> {
-        self.bg.clone()
+        self.bg
     }
 
     pub fn set_bg(&mut self, color: RGBA<u8>) {
@@ -116,7 +118,7 @@ impl Colors {
 
     #[must_use]
     pub fn pre_fg(&self) -> RGBA<u8> {
-        self.pre_fg.clone()
+        self.pre_fg
     }
 
     pub fn set_pre_fg(&mut self, color: RGBA<u8>) {
@@ -125,7 +127,7 @@ impl Colors {
 
     #[must_use]
     pub fn pre_bg(&self) -> RGBA<u8> {
-        self.pre_bg.clone()
+        self.pre_bg
     }
 
     pub fn set_pre_bg(&mut self, color: RGBA<u8>) {
@@ -134,7 +136,7 @@ impl Colors {
 
     #[must_use]
     pub fn quote_fg(&self) -> RGBA<u8> {
-        self.quote_fg.clone()
+        self.quote_fg
     }
 
     pub fn set_quote_fg(&mut self, color: RGBA<u8>) {
@@ -143,7 +145,7 @@ impl Colors {
 
     #[must_use]
     pub fn quote_bg(&self) -> RGBA<u8> {
-        self.quote_bg.clone()
+        self.quote_bg
     }
 
     pub fn set_quote_bg(&mut self, color: RGBA<u8>) {
@@ -152,7 +154,7 @@ impl Colors {
 
     #[must_use]
     pub fn link(&self) -> RGBA<u8> {
-        self.link.clone()
+        self.link
     }
 
     pub fn set_link(&mut self, color: RGBA<u8>) {
@@ -161,7 +163,7 @@ impl Colors {
 
     #[must_use]
     pub fn hover(&self) -> RGBA<u8> {
-        self.hover.clone()
+        self.hover
     }
 
     pub fn set_hover(&mut self, color: RGBA<u8>) {

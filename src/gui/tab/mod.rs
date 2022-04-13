@@ -1,14 +1,14 @@
 #![warn(clippy::all, clippy::pedantic)]
-use gemview::GemView;
-use gtk::{glib::clone, prelude::*};
-use url::Url;
-
-use super::uri;
-use crate::bookmarks;
-use crate::BOOKMARKS;
-use crate::CONFIG;
+use {
+    super::uri,
+    crate::{bookmarks, BOOKMARKS, CONFIG},
+    gemview::GemView,
+    gtk::{glib::clone, prelude::*},
+    url::Url,
+};
 
 #[derive(Clone, Debug)]
+/// Allows persistent access to the tab label, spinner indicator and close button
 pub struct Label {
     handle: gtk::Box,
     label: gtk::Label,
@@ -166,7 +166,7 @@ impl BookmarkEditor {
                     .text()
                     .to_string()
                     .split_whitespace()
-                    .map(|x| x.to_string())
+                    .map(std::string::ToString::to_string)
                     .collect(),
             )
             .build()
@@ -174,6 +174,7 @@ impl BookmarkEditor {
 }
 
 #[derive(Clone, Debug)]
+/// A small popover for user input
 pub struct Input {
     popover: gtk::Popover,
     label: gtk::Label,
@@ -344,9 +345,7 @@ impl Tab {
         self.addr_bar()
             .connect_activate(clone!(@strong self as tab => move |bar| {
                 let mut uri = String::from(bar.text());
-                if let Some(url) = uri::uri(&mut uri) {
-                    uri = url;
-                }
+                uri = uri::uri(&mut uri);
                 tab.viewer().visit(&uri);
             }));
         self.viewer()
@@ -355,7 +354,7 @@ impl Tab {
             }));
         self.viewer().connect_request_unsupported_scheme(
             clone!(@strong self as tab => move |_, uri| {
-                if let Some((scheme, _)) = uri.split_once(":") {
+                if let Some((scheme, _)) = uri.split_once(':') {
                     match scheme {
                         "eva" => tab.request_eva_page(&uri),
                         _ => {
@@ -376,7 +375,7 @@ impl Tab {
             let response = entry.text();
             if response.as_str() != "" {
                 let mut url = url.to_string();
-                url.push_str("?");
+                url.push('?');
                 let response = urlencoding::encode(response.as_str());
                 url.push_str(&response);
                 viewer.visit(&url);
@@ -446,7 +445,7 @@ impl Tab {
                     editor.name.set_text(&b.name());
                     editor
                         .description
-                        .set_text(&b.description().unwrap_or(String::new()));
+                        .set_text(&b.description().unwrap_or_default());
                     editor.url.set_text(&b.url());
                     editor.tags.set_text(&b.tags().join(" "));
                     self.bookmark_button
@@ -456,7 +455,7 @@ impl Tab {
                     editor.label.set_label("<b>Create Bookmark</b>");
                     editor
                         .name
-                        .set_text(&url.host_str().unwrap_or("Unknown host"));
+                        .set_text(url.host_str().unwrap_or("Unknown host"));
                     editor.description.set_text("");
                     editor.url.set_text(self.viewer.uri().as_str());
                     editor.tags.set_text("");
@@ -494,7 +493,7 @@ impl Tab {
                         }
                     }
                 },
-                Some("history") => {}
+                //Some("history") => {}
                 Some("source") => {
                     self.view_source();
                 }

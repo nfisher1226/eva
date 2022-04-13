@@ -29,7 +29,7 @@ impl Default for Search {
 }
 
 impl Search {
-    fn query(se: String, query: &[&str]) -> String {
+    fn query(se: &str, query: &[&str]) -> String {
         format!("{}?{}", se, query.join("%20"))
     }
 
@@ -37,15 +37,12 @@ impl Search {
         let params = query.trim().split_whitespace().collect::<Vec<&str>>();
         if let Some(se) = self.all.get(params[0]) {
             if params.len() > 1 {
-                let se = se.to_string();
                 Self::query(se, &params[1..])
             } else {
-                let se = self.default.clone();
-                Self::query(se, &params)
+                Self::query(&self.default, &params)
             }
         } else {
-            let se = self.default.clone();
-            Self::query(se, &params)
+            Self::query(&self.default, &params)
         }
     }
 
@@ -72,27 +69,25 @@ impl Search {
     }
 }
 
-pub fn uri(uri: &mut str) -> Option<String> {
-    if !uri.contains(':') {
-        if uri.starts_with('/') {
-            Some(format!("file://{}", uri))
-        } else if let Some(url) = BOOKMARKS.lock().unwrap().url_from_name(&uri) {
-            Some(url)
-        } else if let Ok(mut path) = std::env::current_dir() {
-            path = path.join(&PathBuf::from(&uri));
-            if path.exists() {
-                Some(format!("file://{}", path.to_string_lossy()))
-            } else if uri.contains(" ") || !uri.contains(".") {
-                let search = SEARCH.clone();
-                Some(search.build(uri))
-            } else {
-                Some(format!("gemini://{}", &uri))
-            }
-        } else {
+pub fn uri(uri: &mut str) -> String {
+    if uri.contains(':') {
+        (*uri).to_string()
+    } else if uri.starts_with('/') {
+        format!("file://{}", uri)
+    } else if let Some(url) = BOOKMARKS.lock().unwrap().url_from_name(uri) {
+        url
+    } else if let Ok(mut path) = std::env::current_dir() {
+        path = path.join(&PathBuf::from(&uri));
+        if path.exists() {
+            format!("file://{}", path.to_string_lossy())
+        } else if uri.contains(' ') || !uri.contains('.') {
             let search = SEARCH.clone();
-            Some(search.build(uri))
+            search.build(uri)
+        } else {
+            format!("gemini://{}", &uri)
         }
     } else {
-        Some(uri.to_string())
+        let search = SEARCH.clone();
+        search.build(uri)
     }
 }
