@@ -12,12 +12,8 @@ categories = ["gui"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[features]
-png-icons = ["resvg", "usvg", "tiny-skia"]
-
 [dependencies]
-#gemview = "0.3"
-gemview = { git = "https://codeberg.org/jeang3nie/gemview" }
+gemview = "0.4"
 mime2ext = "0.1"
 mime_open = "~0.1"
 lazy_static = "~1.4"
@@ -41,11 +37,6 @@ features = ["gdk"]
 [dependencies.serde]
 version = "~1.0"
 features = ["derive"]
-
-[build-dependencies]
-resvg = { version = "0.22", optional = true }
-usvg = { version = "0.22", optional = true }
-tiny-skia = { version = "0.6", optional = true }
 
 [profile.release]
 lto = true
