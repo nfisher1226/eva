@@ -1,8 +1,9 @@
 #![warn(clippy::all, clippy::pedantic)]
 use gemview::GemView;
-use gtk::prelude::*;
+use gtk::{glib::clone, prelude::*};
 use url::Url;
 
+use super::uri;
 use crate::bookmarks;
 use crate::BOOKMARKS;
 use crate::CONFIG;
@@ -337,6 +338,35 @@ impl Tab {
         tab.back_button.set_sensitive(false);
         tab.forward_button.set_sensitive(false);
         tab
+    }
+
+    pub fn connect_signals(&self) {
+        self.addr_bar()
+            .connect_activate(clone!(@strong self as tab => move |bar| {
+                let mut uri = String::from(bar.text());
+                if let Some(url) = uri::uri(&mut uri) {
+                    uri = url;
+                }
+                tab.viewer().visit(&uri);
+            }));
+        self.viewer()
+            .connect_page_load_redirect(clone!(@strong self as tab => move |_, uri| {
+                tab.addr_bar().set_text(&uri);
+            }));
+        self.viewer().connect_request_unsupported_scheme(
+            clone!(@strong self as tab => move |_, uri| {
+                if let Some((scheme, _)) = uri.split_once(":") {
+                    match scheme {
+                        "eva" => tab.request_eva_page(&uri),
+                        _ => {
+                            if let Err(e) = mime_open::open(&uri) {
+                                eprintln!("Error opening {}: {}", uri, e);
+                            }
+                        }
+                    }
+                }
+            }),
+        );
     }
 
     pub fn request_input(&self, meta: &str, url: String) {

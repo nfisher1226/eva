@@ -1,18 +1,7 @@
 use {
-    crate::{
-        BOOKMARKS,
-        config::get_config_dir,
-        SEARCH,
-    },
-    serde::{
-        Deserialize,
-        Serialize,
-    },
-    std::{
-        collections::HashMap,
-        fs,
-        path::PathBuf,
-    },
+    crate::{config::get_config_dir, BOOKMARKS, SEARCH},
+    serde::{Deserialize, Serialize},
+    std::{collections::HashMap, fs, path::PathBuf},
 };
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -26,9 +15,15 @@ impl Default for Search {
         Self {
             default: String::from("gemini://geminispace.info/search"),
             all: HashMap::from([
-                (String::from("gus"), String::from("gemini://geminispace.info/search")),
-                (String::from("ron"), String::from("gopher://gopher.floodgap.com/v2/vs")),
-            ])
+                (
+                    String::from("gus"),
+                    String::from("gemini://geminispace.info/search"),
+                ),
+                (
+                    String::from("ron"),
+                    String::from("gopher://gopher.floodgap.com/v2/vs"),
+                ),
+            ]),
         }
     }
 }

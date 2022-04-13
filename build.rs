@@ -1,19 +1,14 @@
 #[cfg(feature = "png-icons")]
 use {
-    std::{
-        env,
-        ffi::OsString,
-        fs,
-        path::PathBuf,
-    },
+    std::{env, ffi::OsString, fs, path::PathBuf},
     tiny_skia::Transform,
-    usvg::{ FitTo, Options, Tree },
+    usvg::{FitTo, Options, Tree},
 };
 
 use std::error::Error;
 
 #[cfg(feature = "png-icons")]
-fn png(tree: &Tree, size: u32, outdir: &OsString) -> Result<(), Box<dyn Error>>{
+fn png(tree: &Tree, size: u32, outdir: &OsString) -> Result<(), Box<dyn Error>> {
     let fit = FitTo::Size(size, size);
     let transform = Transform::from_scale(1.0, 1.0);
     let mut pixmap = match tiny_skia::Pixmap::new(size, size) {

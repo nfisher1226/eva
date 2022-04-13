@@ -1,5 +1,5 @@
 #![warn(clippy::all, clippy::pedantic)]
-use rgba_simple::{RGBA, Primary, PrimaryColor};
+use rgba_simple::{Primary, PrimaryColor, RGBA};
 use serde::{Deserialize, Serialize};
 
 mod fonts;

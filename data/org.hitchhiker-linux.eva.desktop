@@ -8,3 +8,5 @@ Exec=eva %u
 Terminal=false
 Type=Application
 MimeType=x-scheme-handler/gemini;x-scheme-handler/gopher;
+DBusActivatable=true;
+X-GNOME-UsesNotifications=true

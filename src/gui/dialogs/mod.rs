@@ -1,6 +1,6 @@
 #![warn(clippy::all, clippy::pedantic)]
 use gtk::prelude::*;
-use rgba_simple::{FromGdk, RGBA, ToGdk};
+use rgba_simple::{FromGdk, ToGdk, RGBA};
 
 use crate::config;
 use crate::CONFIG;
@@ -39,6 +39,7 @@ pub struct PrefWidgets {
 #[derive(Clone)]
 pub struct Dialogs {
     pub about: gtk::AboutDialog,
+    pub save: gtk::FileChooserDialog,
     pub preferences: PrefWidgets,
 }
 
@@ -66,6 +67,7 @@ impl Dialogs {
         });
         Self {
             about: Self::init_about(window),
+            save: Self::init_save(window),
             preferences,
         }
     }
@@ -83,6 +85,21 @@ impl Dialogs {
             .website("https://codeberg.org/jeang3nie/eva")
             .transient_for(window)
             .build()
+    }
+
+    fn init_save(window: &gtk::ApplicationWindow) -> gtk::FileChooserDialog {
+        let dlg = gtk::FileChooserDialog::builder()
+            .use_header_bar(1)
+            .destroy_with_parent(true)
+            .modal(true)
+            .transient_for(window)
+            .title("Choose location to save file")
+            .action(gtk::FileChooserAction::Save)
+            .create_folders(true)
+            .build();
+        dlg.add_button("Accept", gtk::ResponseType::Accept);
+        dlg.add_button("Cancel", gtk::ResponseType::Cancel);
+        dlg
     }
 
     fn init_preferences(window: &gtk::ApplicationWindow, builder: &gtk::Builder) -> PrefWidgets {
@@ -345,7 +362,7 @@ impl PrefWidgets {
     }
 
     pub fn bg_color(&self) -> RGBA<u8> {
-        RGBA::from_gdk(self.fg_color.rgba())
+        RGBA::from_gdk(self.bg_color.rgba())
     }
 
     pub fn set_bg_color(&self, color: &RGBA<u8>) {

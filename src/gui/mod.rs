@@ -1,26 +1,23 @@
 #![warn(clippy::all, clippy::pedantic)]
-use gtk::gdk::Display;
-use gtk::gio::{Cancellable, SimpleAction};
-use gtk::glib;
-use gtk::glib::char::Char;
-use gtk::glib::{clone, OptionArg, OptionFlags};
-use gtk::prelude::*;
-use gtk::{Application, CssProvider, ResponseType, StyleContext};
-use url::Url;
-
-use std::cell::RefCell;
-use std::collections::HashMap;
-use std::rc::Rc;
-
-mod tab;
-use tab::Tab;
-pub mod uri;
-
 mod dialogs;
-use crate::config;
-use crate::keys::Keys;
-use crate::CONFIG;
-use dialogs::Dialogs;
+mod tab;
+pub mod uri;
+use {
+    crate::{config, CONFIG, keys::Keys},
+    dialogs::Dialogs,
+    gemview::GemView,
+    gtk::{
+        gdk::Display,
+        gio::{Cancellable, Notification, SimpleAction},
+        glib,
+        glib::{char::Char, clone, OptionArg, OptionFlags},
+        prelude::*, Application, CssProvider, ResponseType, StyleContext,
+    },
+    mime2ext::mime2ext,
+    tab::Tab,
+    url::Url,
+    std::{borrow::Cow, cell::RefCell, collections::HashMap, fs, path::PathBuf, rc::Rc},
+};
 
 struct Actions {
     new_tab: SimpleAction,
@@ -228,6 +225,7 @@ impl Actions {
     }
 }
 
+#[derive(Clone)]
 struct Gui {
     window: gtk::ApplicationWindow,
     notebook: gtk::Notebook,
@@ -337,153 +335,205 @@ impl Gui {
         self.notebook
             .append_page(&newtab.tab(), Some(&newtab.label().handle()));
         self.notebook.set_tab_reorderable(&newtab.tab(), true);
-        let t = newtab.clone();
-        let nb = self.notebook.clone();
-        newtab.label().close_button().connect_clicked(move |_| {
-            let _name = t.tab().widget_name().to_string();
-            nb.detach_tab(&t.tab());
-        });
-        let t = newtab.clone();
-        newtab.addr_bar().connect_activate(move |bar| {
-            let mut uri = String::from(bar.text());
-            if let Some(url) = uri::uri(&mut uri) {
-                uri = url;
-            }
-            t.viewer().visit(&uri);
-        });
-        let w = self.window.clone();
-        let t = newtab.clone();
-        newtab.viewer().connect_page_load_started(move |_, uri| {
-            w.set_title(Some(&format!(
-                "{}-{} - [loading]",
-                env!("CARGO_PKG_NAME"),
-                env!("CARGO_PKG_VERSION"),
-            )));
-            t.addr_bar().set_text(&uri);
-            t.set_label("[loading]", true);
-            t.reload_button().set_sensitive(false);
-        });
-        let t = newtab.clone();
-        newtab.viewer().connect_page_load_redirect(move |_, uri| {
-            t.addr_bar().set_text(&uri);
-        });
-        let t = newtab.clone();
-        let window = self.window.clone();
-        newtab.viewer().connect_page_loaded(move |_, uri| {
-            t.addr_bar().set_text(&uri);
-            t.reload_button().set_sensitive(true);
-            t.back_button().set_sensitive(t.viewer().has_previous());
-            t.forward_button().set_sensitive(t.viewer().has_next());
-            t.update_bookmark_editor();
-            if let Ok(url) = Url::parse(uri.as_str()) {
-                let scheme = url.scheme();
-                let host = url.host_str().unwrap_or_else(|| {
-                    if scheme == "file" {
-                        "filesystem"
-                    } else {
-                        "Unknown host"
-                    }
-                });
+        newtab.connect_signals();
+        newtab.label().close_button().connect_clicked(
+            clone!(@strong newtab as tab, @weak self.notebook as nb => move |_| {
+                let _name = tab.tab().widget_name().to_string();
+                nb.detach_tab(&tab.tab());
+            }),
+        );
+        newtab.viewer().connect_page_load_started(
+            clone!(@weak self.window as window, @strong newtab as tab => move |_, uri| {
                 window.set_title(Some(&format!(
-                    "{}-{} - {}",
+                    "{}-{} - [loading]",
                     env!("CARGO_PKG_NAME"),
                     env!("CARGO_PKG_VERSION"),
-                    host,
                 )));
-                t.set_label(host, false);
-            }
-        });
-        let t = newtab.clone();
-        let w = self.window.clone();
-        newtab.viewer().connect_page_load_failed(move |_, err| {
-            t.reload_button().set_sensitive(true);
-            t.back_button().set_sensitive(t.viewer().has_previous());
-            t.forward_button().set_sensitive(t.viewer().has_next());
-            if err.contains("unsupported-scheme") {
-                if let Ok(url) = Url::parse(t.viewer().uri().as_str()) {
-                    if let Some(host) = url.host_str() {
-                        t.set_label(host, false);
-                        w.set_title(Some(&format!(
-                            "{}-{} -{}",
-                            env!("CARGO_PKG_NAME"),
-                            env!("CARGO_PKG_VERSION"),
-                            host,
-                        )));
-                    }
+                tab.addr_bar().set_text(&uri);
+                tab.set_label("[loading]", true);
+                tab.reload_button().set_sensitive(false);
+            }),
+        );
+        newtab.viewer().connect_page_loaded(
+            clone!(@strong newtab as tab, @weak self.window as window => move |_, uri| {
+                tab.addr_bar().set_text(&uri);
+                tab.reload_button().set_sensitive(true);
+                tab.back_button().set_sensitive(tab.viewer().has_previous());
+                tab.forward_button().set_sensitive(tab.viewer().has_next());
+                tab.update_bookmark_editor();
+                if let Ok(url) = Url::parse(uri.as_str()) {
+                    let scheme = url.scheme();
+                    let host = url.host_str().unwrap_or_else(|| {
+                        if scheme == "file" {
+                            "filesystem"
+                        } else {
+                            "Unknown host"
+                        }
+                    });
+                    window.set_title(Some(&format!(
+                        "{}-{} - {}",
+                        env!("CARGO_PKG_NAME"),
+                        env!("CARGO_PKG_VERSION"),
+                        host,
+                    )));
+                    tab.set_label(host, false);
                 }
-                t.addr_bar().set_text(t.viewer().uri().as_str());
-                return;
-            }
-            t.set_label("Load failure", false);
-            t.viewer().render_gmi(&format!(
-                "# Page load failure\n\n{}",
-                match err.as_str() {
-                    "RelativeUrlWithCannotBeABaseBase" => "Invalid url",
-                    s if s.contains(
-                        "failed to lookup address information: Name or service not known"
-                    ) =>
-                    {
-                        "Cannot resolve dns for host"
-                    }
-                    s => s,
-                },
-            ));
-            w.set_title(Some(&format!(
-                "{}-{} - page load failed",
-                env!("CARGO_PKG_NAME"),
-                env!("CARGO_PKG_VERSION"),
-            )));
-        });
-        let t = newtab.clone();
-        newtab
-            .viewer()
-            .connect_request_unsupported_scheme(move |_, uri| {
-                if let Some((scheme, _)) = uri.split_once(":") {
-                    match scheme {
-                        "eva" => t.request_eva_page(&uri),
-                        _ => {
-                            if let Err(e) = mime_open::open(&uri) {
-                                eprintln!("Error opening {}: {}", uri, e);
-                            }
+            }),
+        );
+        newtab.viewer().connect_page_load_failed(
+            clone!(@strong newtab as tab, @weak self.window as window => move |_, err| {
+                tab.reload_button().set_sensitive(true);
+                tab.back_button().set_sensitive(tab.viewer().has_previous());
+                tab.forward_button().set_sensitive(tab.viewer().has_next());
+                if err.contains("unsupported-scheme") {
+                    if let Ok(url) = Url::parse(tab.viewer().uri().as_str()) {
+                        if let Some(host) = url.host_str() {
+                            tab.set_label(host, false);
+                            window.set_title(Some(&format!(
+                                "{}-{} -{}",
+                                env!("CARGO_PKG_NAME"),
+                                env!("CARGO_PKG_VERSION"),
+                                host,
+                            )));
                         }
                     }
+                    tab.addr_bar().set_text(tab.viewer().uri().as_str());
+                    return;
                 }
-            });
-        let gui = Gui {
-            window: self.window.clone(),
-            notebook: self.notebook.clone(),
-            tabs: self.tabs.clone(),
-            dialogs: self.dialogs.clone(),
-        };
-        newtab.viewer().connect_request_new_tab(move |_, uri| {
-            gui.new_tab(Some(&uri));
-        });
+                tab.set_label("Load failure", false);
+                tab.viewer().render_gmi(&format!(
+                    "# Page load failure\n\n{}",
+                    match err.as_str() {
+                        "RelativeUrlWithCannotBeABaseBase" => "Invalid url",
+                        s if s.contains(
+                            "failed to lookup address information: Name or service not known"
+                        ) =>
+                        {
+                            "Cannot resolve dns for host"
+                        }
+                        s => s,
+                    },
+                ));
+                window.set_title(Some(&format!(
+                    "{}-{} - page load failed",
+                    env!("CARGO_PKG_NAME"),
+                    env!("CARGO_PKG_VERSION"),
+                )));
+            }),
+        );
+        newtab
+            .viewer()
+            .connect_request_new_tab(clone!(@strong self as gui => move |_, uri| {
+                gui.new_tab(Some(&uri));
+            }));
         if let Some(app) = self.window.application() {
             newtab.viewer().connect_request_new_window(move |_, uri| {
                 let gui = build_ui(&app);
                 gui.new_tab(Some(&uri));
             });
         }
-        let t = newtab.clone();
-        let w = self.window.clone();
-        newtab
-            .viewer()
-            .connect_request_input(move |_viewer, meta, url| {
+        newtab.viewer().connect_request_input(
+            clone!(@strong newtab as tab, @weak self.window as window => move |_viewer, meta, url| {
                 if let Ok(url) = Url::parse(&url) {
                     if let Some(host) = url.host_str() {
-                        t.set_label(host, false);
-                        w.set_title(Some(&format!(
-                            "{}-{} -{}",
+                        tab.set_label(host, false);
+                        window.set_title(Some(&format!(
+                            "{}-{} - {}",
                             env!("CARGO_PKG_NAME"),
                             env!("CARGO_PKG_VERSION"),
                             host,
                         )));
                     }
                 }
-                t.addr_bar().set_text(&url);
-                t.request_input(&meta, url.to_string());
-            });
+                tab.addr_bar().set_text(&url);
+                tab.request_input(&meta, url.to_string());
+            }),
+        );
+        newtab.viewer().connect_request_download(
+            clone!(@strong self as gui => move |viewer, mime, filename| {
+                gui.download(viewer, &mime, &filename);
+            }),
+        );
     }
+
+    fn download(&self, viewer: &GemView, mime: &str, filename: &str) {
+        let cfg = CONFIG.lock().unwrap();
+        let filename = if filename == "download" {
+            if let Some(extension) = mime2ext(mime) {
+                Cow::from(format!("{}.{}", filename, extension))
+            } else {
+                Cow::from(filename)
+            }
+        } else {
+            Cow::from(filename)
+        };
+        match cfg.general.download_scheme {
+            config::DownloadScheme::Ask => {
+                self.dialogs.save.set_current_name(&filename);
+                self.dialogs.save.connect_response(
+                    clone!(@weak viewer, @strong self as gui => move |dlg,response| {
+                    match response {
+                        gtk::ResponseType::Accept => {
+                            if let Some(file) = dlg.file() {
+                                if let Some(path) = file.path() {
+                                    match fs::write(&path, &viewer.buffer_content()) {
+                                        Ok(_) => gui.send_notification(&format!(
+                                            "File saved: {}",
+                                            path.display(),
+                                        )),
+                                        Err(e) => gui.send_notification(&format!(
+                                            "Error: {}",
+                                            e,
+                                        )),
+                                    }
+                                }
+                            }
+                            dlg.hide();
+                        },
+                        _ => dlg.hide(),
+                    }
+                }));
+                self.dialogs.save.show();
+                viewer.reload();
+            },
+            config::DownloadScheme::Auto => {
+                if let Some(location) = &cfg.general.download_location {
+                    let mut location = PathBuf::from(location);
+                    if !location.exists() {
+                        if let Err(e) = fs::create_dir_all(&location) {
+                            self.send_notification(&format!(
+                                "Error: {}",
+                                e,
+                            ));
+                            viewer.reload();
+                            return;
+                        }
+                    }
+                    location.push(&*filename);
+                    match fs::write(&location, &viewer.buffer_content()) {
+                        Ok(_) => self.send_notification(&format!(
+                            "File saved: {}",
+                            location.display(),
+                        )),
+                        Err(e) => self.send_notification(&format!(
+                            "Error: {}",
+                            e,
+                        )),
+                    }
+                    viewer.reload();
+                }
+            },
+        }
+    }
+
+    fn send_notification(&self, message: &str) {
+        if let Some(application) = self.window.application() {
+            let notification = Notification::new(env!("CARGO_PKG_NAME"));
+            notification.set_body(Some(message));
+            application.send_notification(None, &notification);
+        }
+    }
+
 
     fn current_page(&self) -> Option<u32> {
         self.notebook.current_page()
