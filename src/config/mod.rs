@@ -75,15 +75,15 @@ impl Default for Colors {
                 alpha: 255,
             },
             quote_fg: RGBA {
-                red: 38,
-                green: 162,
-                blue: 105,
+                red: 87,
+                green: 227,
+                blue: 137,
                 alpha: 255,
             },
             quote_bg: RGBA {
-                red: 14,
-                green: 55,
-                blue: 105,
+                red: 22,
+                green: 110,
+                blue: 0,
                 alpha: 255,
             },
             link: RGBA {

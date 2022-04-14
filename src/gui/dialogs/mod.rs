@@ -375,7 +375,7 @@ impl PrefWidgets {
     }
 
     pub fn pre_bg_color(&self) -> RGBA<u8> {
-        RGBA::from_gdk(self.pre_fg_color.rgba())
+        RGBA::from_gdk(self.pre_bg_color.rgba())
     }
 
     pub fn set_pre_bg_color(&self, color: RGBA<u8>) {
