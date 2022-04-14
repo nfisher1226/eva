@@ -6,6 +6,7 @@ Contents
 * [Introduction](#introduction)
 * [Features](#features)
 * [Keybindings](#keybindings)
+* [Installing](#installing)
 * [Building](#building)
 ## Introduction
 Eva is a [gemini protocol](https://gemini.circumlunar.space/) browser written in
@@ -80,10 +81,23 @@ that when Eva sees an official release it will be a polished user experience.
 | Ctrl/Shift/P | Open preferences |
 | Ctrl/Shift/A | Open about dialog |
 
+## Installing
+### Arch Linux
+Install the [eva-browser](https://aur.archlinux.org/packages/eva-browser) package
+from the aur. Alternatively, beginning with the 0.3.0 release, releases on Codeberg
+and Github include an Arch `PKGBUILD` file.
+### FreeBSD
+Beginning with the 0.3.0 release, there is a binary package for FreeBSD 13 and the
+x86_64 architecture included in the releases on Codeberg and Github.
+### All others
+See the [Building](#building) section below.
+
 ## Building
 ```sh
 # clone the source
 git clone https://codeberg.org/jeang3nie/eva.git
 cd eva
-cargo run -- gemini://gemini.circumlunar.space
+cargo build --release
+# To gather all release files into target/dist
+cargo xtask dist
 ```
