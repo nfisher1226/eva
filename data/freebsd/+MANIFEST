@@ -1,0 +1,11 @@
+name: eva-browser
+version: "0.3.1_1"
+origin: www/eva-browser
+comment: "Gemini browser"
+desc: "A gtk4 browser for the smol internet (gemini, gopher, finger)"
+maintainer: jeang3nie@hitchhiker-linux.org
+www: https://codeberg.org/jeang3nie/eva
+prefix: /usr/local
+deps: {
+  gtk4: { version: "4.6.2", origin: x11-toolkits/gtk40 }
+}
