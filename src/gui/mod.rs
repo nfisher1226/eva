@@ -453,7 +453,24 @@ impl Gui {
                     }
                 }
                 tab.addr_bar().set_text(&url);
-                tab.request_input(&meta, url);
+                tab.request_input(&meta, url, true);
+            }),
+        );
+        newtab.viewer().connect_request_input_sensitive(
+            clone!(@strong newtab as tab, @weak self.window as window => move |_viewer, meta, url| {
+                if let Ok(url) = Url::parse(&url) {
+                    if let Some(host) = url.host_str() {
+                        tab.set_label(host, false);
+                        window.set_title(Some(&format!(
+                            "{}-{} - {}",
+                            env!("CARGO_PKG_NAME"),
+                            env!("CARGO_PKG_VERSION"),
+                            host,
+                        )));
+                    }
+                }
+                tab.addr_bar().set_text(&url);
+                tab.request_input(&meta, url, false);
             }),
         );
         newtab.viewer().connect_request_download(

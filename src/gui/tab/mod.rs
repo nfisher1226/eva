@@ -368,9 +368,10 @@ impl Tab {
         );
     }
 
-    pub fn request_input(&self, meta: &str, url: String) {
+    pub fn request_input(&self, meta: &str, url: String, visibility: bool) {
         let viewer = self.viewer.clone();
         let popover = self.input.popover.clone();
+        self.input.entry.set_visibility(visibility);
         self.input.entry.connect_activate(move |entry| {
             let response = entry.text();
             if response.as_str() != "" {

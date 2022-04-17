@@ -2,8 +2,12 @@ textview.gemview {
   color: NORMAL_FG_COLOR;
 }
 
-textview.gemview text, scrolledwindow.gemview {
+scrolledwindow.gemview {
   background-color: NORMAL_BG_COLOR;
+}
+
+textview.gemview text {
+  background-color: rgba(0, 0, 0, 0);
 }
 
 textview.gemview box.blockquote {
