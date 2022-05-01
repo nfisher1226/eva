@@ -62,6 +62,7 @@ that when Eva sees an official release it will be a polished user experience.
 
 ## Keybindings
 > Note: See [KEYS.md](KEYS.md) for information on changing keybindings
+
 | Key | Action |
 | --- | --- |
 | Ctrl/T | New tab |
