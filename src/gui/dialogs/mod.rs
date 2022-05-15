@@ -41,7 +41,6 @@ pub struct PrefWidgets {
 pub struct Dialogs {
     pub about: gtk::AboutDialog,
     pub save: gtk::FileChooserDialog,
-    pub upload: gtk::FileChooserDialog,
     pub preferences: PrefWidgets,
 }
 
@@ -91,7 +90,6 @@ impl Dialogs {
         Self {
             about,
             save: Self::init_save(window),
-            upload: Self::init_upload(window),
             preferences,
         }
     }
@@ -119,21 +117,6 @@ impl Dialogs {
             .transient_for(window)
             .title("Choose location to save file")
             .action(gtk::FileChooserAction::Save)
-            .create_folders(true)
-            .build();
-        dlg.add_button("Accept", gtk::ResponseType::Accept);
-        dlg.add_button("Cancel", gtk::ResponseType::Cancel);
-        dlg
-    }
-
-    fn init_upload(window: &gtk::ApplicationWindow) -> gtk::FileChooserDialog {
-        let dlg = gtk::FileChooserDialog::builder()
-            .use_header_bar(1)
-            .destroy_with_parent(true)
-            .modal(true)
-            .transient_for(window)
-            .title("Choose a file to upload")
-            .action(gtk::FileChooserAction::Open)
             .create_folders(true)
             .build();
         dlg.add_button("Accept", gtk::ResponseType::Accept);

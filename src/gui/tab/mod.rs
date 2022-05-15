@@ -4,6 +4,13 @@ use {
     crate::{bookmarks, BOOKMARKS, CONFIG},
     gemview::GemView,
     gtk::{glib::clone, prelude::*},
+    std::{
+        fs::File,
+        io::{
+            BufReader,
+            Read,
+        },
+    },
     url::Url,
 };
 
@@ -219,6 +226,7 @@ pub struct Tab {
     label: Label,
     bookmark_editor: BookmarkEditor,
     input: Input,
+    upload: gtk::FileChooserDialog,
     back_button: gtk::Button,
     forward_button: gtk::Button,
     reload_button: gtk::Button,
@@ -288,6 +296,16 @@ impl Default for Tab {
             .build();
         hbox.append(&addr_bar);
         let input = Input::default();
+        let upload = gtk::FileChooserDialog::builder()
+            .use_header_bar(1)
+            .destroy_with_parent(true)
+            .modal(true)
+            .title("Choose a file to upload")
+            .action(gtk::FileChooserAction::Open)
+            .create_folders(true)
+            .build();
+        upload.add_button("Accept", gtk::ResponseType::Accept);
+        upload.add_button("Cancel", gtk::ResponseType::Cancel);
         let input_button = gtk::MenuButton::builder()
             .has_frame(false)
             .popover(&input.popover)
@@ -320,6 +338,7 @@ impl Default for Tab {
             tab,
             label: Label::default(),
             input,
+            upload,
             bookmark_editor,
             back_button,
             forward_button,
@@ -366,6 +385,28 @@ impl Tab {
                 }
             }),
         );
+        let upload = self.upload.clone();
+        self.viewer().connect_request_upload(move |_viewer, _url| {
+            upload.show();
+        });
+        self.upload.connect_response(clone!(@strong self.viewer as viewer => move |dlg,response| {
+            if response == gtk::ResponseType::Accept {
+                if let Some(file) = dlg.file() {
+                    if let Some(path) = file.path() {
+                        if let Ok(f) = File::open(path) {
+                            let mut data: Vec<u8> = vec![];
+                            let mut reader = BufReader::new(f);
+                            if reader.read_to_end(&mut data).is_ok() {
+                                if let Ok(url) = Url::parse(&viewer.uri()) {
+                                    viewer.post_spartan(url, data);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            dlg.hide();
+        }));
     }
 
     pub fn request_input(&self, meta: &str, url: String, visibility: bool) {

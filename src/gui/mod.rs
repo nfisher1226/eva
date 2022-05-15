@@ -1,4 +1,5 @@
 #![warn(clippy::all, clippy::pedantic)]
+
 mod dialogs;
 mod tab;
 pub mod uri;
