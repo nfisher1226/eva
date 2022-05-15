@@ -344,6 +344,7 @@ impl Gui {
             .append_page(&newtab.tab(), Some(&newtab.label().handle()));
         self.notebook.set_tab_reorderable(&newtab.tab(), true);
         newtab.connect_signals();
+        newtab.upload().set_transient_for(Some(&self.window));
         newtab.label().close_button().connect_clicked(
             clone!(@strong newtab as tab, @weak self.notebook as nb => move |_| {
                 let _name = tab.tab().widget_name().to_string();

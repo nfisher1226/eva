@@ -443,6 +443,10 @@ impl Tab {
         self.input.clone()
     }*/
 
+    pub fn upload(&self) -> gtk::FileChooserDialog {
+        self.upload.clone()
+    }
+
     pub fn back_button(&self) -> gtk::Button {
         self.back_button.clone()
     }
