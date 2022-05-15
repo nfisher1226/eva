@@ -742,7 +742,8 @@ impl Gui {
                 }
             } else {
                 "unknown"
-            }.to_string();
+            }
+            .to_string();
             if !filename.contains('.') {
                 let mime = viewer.buffer_mime();
                 let ext = if let Some(e) = mime2ext(&mime) {

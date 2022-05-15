@@ -34,7 +34,7 @@ impl Search {
     }
 
     fn build(&self, query: &str) -> String {
-        let params = query.trim().split_whitespace().collect::<Vec<&str>>();
+        let params = query.split_whitespace().collect::<Vec<&str>>();
         if let Some(se) = self.all.get(params[0]) {
             if params.len() > 1 {
                 Self::query(se, &params[1..])

@@ -50,48 +50,24 @@ impl Dialogs {
         let about = Self::init_about(window);
         about.add_credit_section(
             "Gtk4-rs written by",
-            &["Guillaume Gomez", "Sebastian Dröge", "Bilal Elmoussaoui", "Xiang Fan", "and others"]
+            &[
+                "Guillaume Gomez",
+                "Sebastian Dröge",
+                "Bilal Elmoussaoui",
+                "Xiang Fan",
+                "and others",
+            ],
         );
-        about.add_credit_section(
-            "Serde written by",
-            &["David Tolnay", "and others"]
-        );
-        about.add_credit_section(
-            "Chrono written by",
-            &["Kang Seonghoon", "and others"]
-        );
-        about.add_credit_section(
-            "Url written by",
-            &["The Servo project"]
-        );
-        about.add_credit_section(
-            "Lazy-static by",
-            &["Marvin Löbel", "and others"]
-        );
-        about.add_credit_section(
-            "Fastrand by",
-            &["Taiki Endo", "and others"]
-        );
-        about.add_credit_section(
-            "Urlencoding by",
-            &["Kornel", "Bertram Truong"]
-        );
-        about.add_credit_section(
-            "Mime2ext by",
-            &["Jan Verbeek", "and others"]
-        );
-        about.add_credit_section(
-            "Gemview by",
-            &["Nathan Fisher"]
-        );
-        about.add_credit_section(
-            "Mime-open by",
-            &["Nathan Fisher"]
-        );
-        about.add_credit_section(
-            "Rgba-simple by",
-            &["Nathan Fisher"]
-        );
+        about.add_credit_section("Serde written by", &["David Tolnay", "and others"]);
+        about.add_credit_section("Chrono written by", &["Kang Seonghoon", "and others"]);
+        about.add_credit_section("Url written by", &["The Servo project"]);
+        about.add_credit_section("Lazy-static by", &["Marvin Löbel", "and others"]);
+        about.add_credit_section("Fastrand by", &["Taiki Endo", "and others"]);
+        about.add_credit_section("Urlencoding by", &["Kornel", "Bertram Truong"]);
+        about.add_credit_section("Mime2ext by", &["Jan Verbeek", "and others"]);
+        about.add_credit_section("Gemview by", &["Nathan Fisher"]);
+        about.add_credit_section("Mime-open by", &["Nathan Fisher"]);
+        about.add_credit_section("Rgba-simple by", &["Nathan Fisher"]);
         let dl_location = Self::init_dl_location(&preferences.window);
         dl_location.add_button("Accept", gtk::ResponseType::Accept);
         let dlg = dl_location.clone();

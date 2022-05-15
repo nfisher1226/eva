@@ -1,7 +1,7 @@
 #![warn(clippy::all, clippy::pedantic)]
 use {
     serde::{Deserialize, Serialize},
-    std::{collections::HashMap, error::Error, path::PathBuf},
+    std::{collections::HashMap, error::Error, fmt::Write, path::PathBuf},
 };
 
 #[must_use]
@@ -143,8 +143,9 @@ impl Bookmarks {
     pub fn to_gmi(&self) -> String {
         let mut page = String::from("# Bookmarks\n\n=> eva://bookmarks/tags Tags\n\n");
         for bookmark in self.all.values() {
-            page.push_str(&format!(
-                "### Name: {}\nDescription:\n> {}\nTags: {}\n=> {}\n\n",
+            let _ = writeln!(
+                page,
+                "### Name: {}\nDescription:\n> {}\nTags: {}\n=> {}\n",
                 &bookmark.name,
                 match &bookmark.description {
                     Some(d) => d,
@@ -152,7 +153,7 @@ impl Bookmarks {
                 },
                 &bookmark.tags.join(", "),
                 &bookmark.url,
-            ));
+            );
         }
         page
     }
@@ -161,7 +162,7 @@ impl Bookmarks {
     pub fn tags_to_gmi(&self) -> String {
         let mut page = String::from("# Bookmark Tags\n\n");
         for tag in self.tags.keys() {
-            page.push_str(&format!("=> eva://bookmarks/tags/{} {}\n", &tag, &tag));
+            let _ = writeln!(page, "=> eva://bookmarks/tags/{} {}", &tag, &tag);
         }
         page.push_str("--\n=> eva://bookmarks back");
         page
@@ -173,7 +174,8 @@ impl Bookmarks {
             let mut page = format!("# Bookmarks tagged {}\n\n", tag);
             for key in keys {
                 if let Some(bookmark) = self.all.get(key) {
-                    page.push_str(&format!(
+                    let _ = write!(
+                        page,
                         "### Name: {}\nDescription:\n> {}\nTags: {}\n=> {}\n\n",
                         &bookmark.name,
                         match &bookmark.description {
@@ -182,7 +184,7 @@ impl Bookmarks {
                         },
                         &bookmark.tags.join(", "),
                         &bookmark.url,
-                    ));
+                    );
                 }
             }
             page.push_str("--\n=> eva://bookmarks/tags back");

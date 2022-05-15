@@ -2,7 +2,7 @@
 use {
     chrono::prelude::*,
     serde::{Deserialize, Serialize},
-    std::{collections::HashMap, error::Error, path::PathBuf},
+    std::{collections::HashMap, error::Error, fmt::Write, path::PathBuf},
 };
 
 #[must_use]
@@ -43,7 +43,7 @@ impl History {
     pub fn page(&self) -> String {
         let mut page: String = String::from("# History\n");
         for (url, date) in &self.items {
-            page.push_str(&format!("{}\n=> {}\n\n", date, url));
+            let _ = write!(page, "{}\n=> {}\n\n", date, url);
         }
         page
     }
