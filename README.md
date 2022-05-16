@@ -59,6 +59,9 @@ that when Eva sees an official release it will be a polished user experience.
    - [x] Render gemtext
    - [x] Display images
    - [x] Save content
+ - [x] Spartan protocol
+   - [x] Render all content supported by gemini
+   - [x] Upload Spartan content
 
 ## Keybindings
 > Note: See [KEYS.md](KEYS.md) for information on changing keybindings

@@ -8,7 +8,8 @@ Contents
 * Gemini - Use colored icons to differentiate link types
 * Gemini - Handle sensitive input requests
 * Gopher - handle http[s] links
-* Spartan - initial support (sans prompt support)
+* Spartan - initial support (sans upload support)
+* Spartan - support Spartan uploads
 
 ## 0.3.1 release
 * Fix issue with the wrong color being read during preferences update
