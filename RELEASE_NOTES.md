@@ -10,6 +10,7 @@ Contents
 * Gopher - handle http[s] links
 * Spartan - initial support (sans upload support)
 * Spartan - support Spartan uploads
+* Rewrite of gemtext parser in GemView
 
 ## 0.3.1 release
 * Fix issue with the wrong color being read during preferences update
