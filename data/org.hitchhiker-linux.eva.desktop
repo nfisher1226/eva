@@ -7,6 +7,6 @@ Icon=eva
 Exec=eva %u
 Terminal=false
 Type=Application
-MimeType=x-scheme-handler/gemini;x-scheme-handler/gopher;
+MimeType=x-scheme-handler/gemini;x-scheme-handler/gopher;x-scheme-handler/spartan;x-scheme-handler/finger;
 DBusActivatable=true;
 X-GNOME-UsesNotifications=true
