@@ -267,6 +267,8 @@ pub struct Config {
 
 impl Config {
     /// Saves Config struct as a .toml file
+    /// # Errors
+    /// Returns an io error if unable to save the config file
     pub fn save_to_file(&self, file: &Path) -> Result<(), io::Error> {
         let toml_string = match toml::to_string(&self) {
             Ok(t) => t,

@@ -9,7 +9,7 @@ use {
     std::rc::Rc,
 };
 
-const ACTIONS: [&'static str; 27] = [
+const ACTIONS: [&str; 27] = [
     "new_tab",
     "close_tab",
     "next_tab",
@@ -41,7 +41,7 @@ const ACTIONS: [&'static str; 27] = [
 
 pub fn add(gui: &Rc<Gui>, app: &gtk::Application) {
     let keys = Keys::from_file().unwrap_or_default();
-    ACTIONS.iter().for_each(|name| {
+    for name in &ACTIONS {
         let action = SimpleAction::new(name, None);
         app.set_accels_for_action(&format!("win.{}", name), &[keys.get(name)]);
         gui.window.add_action(&action);
@@ -196,5 +196,5 @@ pub fn add(gui: &Rc<Gui>, app: &gtk::Application) {
             }
             _ => {}
         }
-    });
+    };
 }

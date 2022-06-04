@@ -11,6 +11,7 @@ Contents
 * Spartan - initial support (sans upload support)
 * Spartan - support Spartan uploads
 * Rewrite of gemtext parser in GemView
+* Major refactor of actions handing, removing 293 total lines of code
 
 ## 0.3.1 release
 * Fix issue with the wrong color being read during preferences update

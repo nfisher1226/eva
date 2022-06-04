@@ -18,6 +18,7 @@ pub struct Keys {
 }
 
 impl Keys {
+    #[must_use]
     pub fn get(&self, action: &str) -> &str {
         if let Some(key) = self.keys.get(action) {
             if gtk::accelerator_parse(key).is_some() {

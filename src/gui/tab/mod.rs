@@ -1,4 +1,4 @@
-#![warn(clippy::all, clippy::pedantic)]
+#![allow(clippy::too_many_lines)]
 pub mod bookmark_editor;
 pub mod input;
 pub mod label;
