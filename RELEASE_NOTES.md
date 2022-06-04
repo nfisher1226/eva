@@ -1,8 +1,8 @@
 Contents
 ========
-* [0.4.0](0.4.0 release)
-* [0.3.1](0.3.1 release)
-* [0.3.0](0.3.0-release)
+* [0.4.0](#0.4.0 release)
+* [0.3.1](#0.3.1 release)
+* [0.3.0](#0.3.0-release)
 
 ## 0.4.0 release
 * Gemini - Use colored icons to differentiate link types
