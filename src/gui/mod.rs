@@ -1,15 +1,16 @@
 #![warn(clippy::all, clippy::pedantic)]
-
+mod actions;
 mod dialogs;
 pub mod tab;
 pub mod uri;
 use {
+    actions::Actions,
     crate::{config, keys::Keys, CONFIG},
     dialogs::Dialogs,
     gemview::GemView,
     gtk::{
         gdk::Display,
-        gio::{Cancellable, Notification, SimpleAction},
+        gio::{Cancellable, Notification},
         glib,
         glib::{char::Char, clone, OptionArg, OptionFlags},
         prelude::*,
@@ -21,220 +22,8 @@ use {
     url::Url,
 };
 
-struct Actions {
-    new_tab: SimpleAction,
-    close_tab: SimpleAction,
-    next_tab: SimpleAction,
-    prev_tab: SimpleAction,
-    tab1: SimpleAction,
-    tab2: SimpleAction,
-    tab3: SimpleAction,
-    tab4: SimpleAction,
-    tab5: SimpleAction,
-    tab6: SimpleAction,
-    tab7: SimpleAction,
-    tab8: SimpleAction,
-    tab9: SimpleAction,
-    reload: SimpleAction,
-    go_home: SimpleAction,
-    go_previous: SimpleAction,
-    go_next: SimpleAction,
-    new_window: SimpleAction,
-    open_bookmarks: SimpleAction,
-    bookmark_page: SimpleAction,
-    open_history: SimpleAction,
-    clear_history: SimpleAction,
-    view_source: SimpleAction,
-    save_page: SimpleAction,
-    open_prefs: SimpleAction,
-    open_about: SimpleAction,
-    quit: SimpleAction,
-}
-
-impl Default for Actions {
-    fn default() -> Self {
-        Self {
-            new_tab: SimpleAction::new("new_tab", None),
-            close_tab: SimpleAction::new("close_tab", None),
-            next_tab: SimpleAction::new("next_tab", None),
-            prev_tab: SimpleAction::new("prev_tab", None),
-            tab1: SimpleAction::new("tab1", None),
-            tab2: SimpleAction::new("tab2", None),
-            tab3: SimpleAction::new("tab3", None),
-            tab4: SimpleAction::new("tab4", None),
-            tab5: SimpleAction::new("tab5", None),
-            tab6: SimpleAction::new("tab6", None),
-            tab7: SimpleAction::new("tab7", None),
-            tab8: SimpleAction::new("tab8", None),
-            tab9: SimpleAction::new("tab9", None),
-            reload: SimpleAction::new("reload", None),
-            go_home: SimpleAction::new("go_home", None),
-            go_previous: SimpleAction::new("go_previous", None),
-            go_next: SimpleAction::new("go_next", None),
-            new_window: SimpleAction::new("new_window", None),
-            open_bookmarks: SimpleAction::new("open_bookmarks", None),
-            bookmark_page: SimpleAction::new("bookmark_page", None),
-            open_history: SimpleAction::new("open_history", None),
-            clear_history: SimpleAction::new("clear_history", None),
-            view_source: SimpleAction::new("view_source", None),
-            save_page: SimpleAction::new("save_page", None),
-            open_prefs: SimpleAction::new("open_prefs", None),
-            open_about: SimpleAction::new("open_about", None),
-            quit: SimpleAction::new("quit", None),
-        }
-    }
-}
-
-impl Actions {
-    fn connect_tab(&self, gui: &Rc<Gui>) {
-        self.new_tab
-            .connect_activate(clone!(@strong gui => move |_, _| {
-                gui.new_tab(None);
-            }));
-
-        self.close_tab
-            .connect_activate(clone!(@weak gui => move |_,_| {
-                gui.close_current_tab();
-            }));
-
-        self.next_tab
-            .connect_activate(clone!(@weak gui => move |_,_| {
-                gui.next_tab();
-            }));
-
-        self.prev_tab
-            .connect_activate(clone!(@weak gui => move |_,_| {
-                gui.prev_tab();
-            }));
-
-        self.tab1.connect_activate(clone!(@weak gui => move |_,_| {
-            gui.notebook.set_page(0);
-        }));
-
-        self.tab2.connect_activate(clone!(@weak gui => move |_,_| {
-            gui.notebook.set_page(1);
-        }));
-
-        self.tab3.connect_activate(clone!(@weak gui => move |_,_| {
-            gui.notebook.set_page(2);
-        }));
-
-        self.tab4.connect_activate(clone!(@weak gui => move |_,_| {
-            gui.notebook.set_page(3);
-        }));
-
-        self.tab5.connect_activate(clone!(@weak gui => move |_,_| {
-            gui.notebook.set_page(4);
-        }));
-
-        self.tab6.connect_activate(clone!(@weak gui => move |_,_| {
-            gui.notebook.set_page(5);
-        }));
-
-        self.tab7.connect_activate(clone!(@weak gui => move |_,_| {
-            gui.notebook.set_page(6);
-        }));
-
-        self.tab8.connect_activate(clone!(@weak gui => move |_,_| {
-            gui.notebook.set_page(7);
-        }));
-
-        self.tab9.connect_activate(clone!(@weak gui => move |_,_| {
-            gui.notebook.set_page(8);
-        }));
-    }
-
-    fn connect_nav(&self, gui: &Rc<Gui>) {
-        self.reload
-            .connect_activate(clone!(@weak gui => move |_,_| {
-                if let Err(e) = gui.reload_current_tab() {
-                    eprintln!("{}", e);
-                }
-            }));
-
-        self.go_home
-            .connect_activate(clone!(@weak gui => move |_,_| {
-                if let Err(e) = gui.go_home() {
-                    eprintln!("{}", e);
-                }
-            }));
-
-        self.go_previous
-            .connect_activate(clone!(@weak gui => move |_,_| {
-                if let Err(e) = gui.go_previous() {
-                    eprintln!("{}", e);
-                }
-            }));
-
-        self.go_next
-            .connect_activate(clone!(@weak gui => move |_,_| {
-                if let Err(e) = gui.go_next() {
-                    eprintln!("{}", e);
-                }
-            }));
-    }
-
-    fn connect(&self, gui: &Rc<Gui>, app: &Application) {
-        self.connect_tab(gui);
-        self.connect_nav(gui);
-        self.new_window
-            .connect_activate(clone!(@weak gui, @strong app => move |_,_| {
-                let new_gui = build_ui(&app);
-                new_gui.new_tab(None);
-            }));
-
-        self.open_bookmarks
-            .connect_activate(clone!(@weak gui => move |_,_| {
-                gui.open_bookmarks();
-            }));
-
-        self.bookmark_page
-            .connect_activate(clone!(@weak gui => move |_,_| {
-                if let Some(tab) = gui.current_tab() {
-                    tab.bookmark_editor().popover().popup();
-                }
-            }));
-
-        self.open_history
-            .connect_activate(clone!(@weak gui => move |_,_| {
-                println!("Not implemented yet");
-            }));
-
-        self.view_source
-            .connect_activate(clone!(@weak gui => move |_,_| {
-                if let Some(tab) = gui.current_tab() {
-                    tab.view_source();
-                }
-            }));
-
-        self.save_page
-            .connect_activate(clone!(@weak gui => move |_,_| {
-                gui.save_page();
-            }));
-
-        self.clear_history
-            .connect_activate(clone!(@weak gui => move |_,_| {
-                println!("Not implemented yet");
-            }));
-
-        self.open_prefs
-            .connect_activate(clone!(@weak gui => move |_,_| {
-                gui.dialogs.preferences.show();
-            }));
-
-        self.open_about
-            .connect_activate(clone!(@weak gui => move |_,_| {
-                gui.dialogs.about.show();
-            }));
-
-        self.quit.connect_activate(clone!(@weak gui => move |_,_| {
-            gui.window.close();
-        }));
-    }
-}
-
 #[derive(Clone)]
-struct Gui {
+pub struct Gui {
     window: gtk::ApplicationWindow,
     notebook: gtk::Notebook,
     tabs: RefCell<HashMap<String, Tab>>,
@@ -843,7 +632,13 @@ pub fn run() {
 
 fn build_ui(app: &Application) -> Rc<Gui> {
     let gui = Rc::new(Gui::default());
-    gui.add_actions(app).connect(&gui, app);
+    let actions = gui.add_actions(app);
+    actions.new_window
+        .connect_activate(clone!(@weak gui, @strong app => move |_,_| {
+            let new_gui = build_ui(&app);
+            new_gui.new_tab(None);
+        }));
+    actions.connect(&gui);
     let config = CONFIG.lock().unwrap().clone();
     gui.set_css(&config.colors);
     gui.window.set_application(Some(app));
