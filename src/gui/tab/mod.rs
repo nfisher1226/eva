@@ -1,4 +1,6 @@
 #![warn(clippy::all, clippy::pedantic)]
+pub mod bookmark_editor;
+pub use bookmark_editor::BookmarkEditor;
 
 use {
     super::uri,
@@ -57,104 +59,6 @@ impl Label {
     }
 }
 
-#[derive(Clone, Debug)]
-pub struct BookmarkEditor {
-    popover: gtk::Popover,
-    label: gtk::Label,
-    name: gtk::Entry,
-    description: gtk::Entry,
-    url: gtk::Entry,
-    tags: gtk::Entry,
-}
-
-impl Default for BookmarkEditor {
-    fn default() -> Self {
-        let grid = gtk::builders::GridBuilder::new()
-            .row_spacing(5)
-            .column_spacing(5)
-            .build();
-        let popover = gtk::builders::PopoverBuilder::new().child(&grid).build();
-        let label = gtk::builders::LabelBuilder::new()
-            .use_markup(true)
-            .halign(gtk::Align::Center)
-            .label("<b>Create Bookmark</b>")
-            .build();
-        grid.attach(&label, 0, 0, 2, 1);
-        let name_label = gtk::Label::new(Some("Name"));
-        grid.attach(&name_label, 0, 1, 1, 1);
-        let name = gtk::Entry::new();
-        grid.attach(&name, 1, 1, 1, 1);
-        let desc_label = gtk::Label::new(Some("Description"));
-        grid.attach(&desc_label, 0, 2, 1, 1);
-        let description = gtk::Entry::new();
-        grid.attach(&description, 1, 2, 1, 1);
-        let url_label = gtk::Label::new(Some("Url"));
-        grid.attach(&url_label, 0, 3, 1, 1);
-        let url = gtk::Entry::new();
-        grid.attach(&url, 1, 3, 1, 1);
-        let tag_label = gtk::Label::new(Some("Tags"));
-        tag_label.set_valign(gtk::Align::Center);
-        grid.attach(&tag_label, 0, 4, 1, 1);
-        let tags = gtk::Entry::new();
-        grid.attach(&tags, 1, 4, 1, 1);
-        let cancel = gtk::builders::ButtonBuilder::new()
-            .hexpand(false)
-            .halign(gtk::Align::Start)
-            .label("Cancel")
-            .build();
-        grid.attach(&cancel, 0, 5, 1, 1);
-        let accept = gtk::builders::ButtonBuilder::new()
-            .hexpand(false)
-            .halign(gtk::Align::End)
-            .label("Accept")
-            .css_classes(vec![String::from("suggested-action")])
-            .build();
-        grid.attach(&accept, 1, 5, 1, 1);
-        let pop = popover.clone();
-        cancel.connect_clicked(move |_| pop.popdown());
-        let editor = Self {
-            popover,
-            label,
-            name,
-            description,
-            url,
-            tags,
-        };
-        let ed = editor.clone();
-        accept.connect_clicked(move |_| {
-            let bm = (&ed).into();
-            let mut bmarks = BOOKMARKS.lock().unwrap();
-            bmarks.update(&bm);
-            if let Err(e) = bmarks.save() {
-                eprintln!("Error: {}", e);
-            }
-            ed.popover.popdown();
-        });
-        editor
-    }
-}
-
-impl BookmarkEditor {
-    pub fn popover(&self) -> gtk::Popover {
-        self.popover.clone()
-    }
-
-    pub fn name(&self) -> gtk::Entry {
-        self.name.clone()
-    }
-
-    pub fn description(&self) -> gtk::Entry {
-        self.description.clone()
-    }
-
-    pub fn url(&self) -> gtk::Entry {
-        self.url.clone()
-    }
-
-    pub fn tags(&self) -> gtk::Entry {
-        self.tags.clone()
-    }
-}
 
 #[derive(Clone, Debug)]
 /// A small popover for user input
@@ -308,7 +212,7 @@ impl Default for Tab {
         scroller.set_child(Some(&viewer));
         tab.append(&scroller);
         let bookmark_editor = BookmarkEditor::default();
-        bookmark_button.set_popover(Some(&bookmark_editor.popover));
+        bookmark_button.set_popover(Some(&bookmark_editor.popover()));
 
         Self {
             tab,
@@ -458,32 +362,10 @@ impl Tab {
     }
 
     pub fn update_bookmark_editor(&self) {
-        if let Ok(url) = Url::parse(self.viewer.uri().as_str()) {
-            let bmarks = BOOKMARKS.lock().unwrap();
-            let editor = &self.bookmark_editor;
-            match bmarks.all.get(&self.viewer.uri()) {
-                Some(b) => {
-                    editor.label.set_label("<b>Edit Bookmark</b>");
-                    editor.name.set_text(&b.name());
-                    editor
-                        .description
-                        .set_text(&b.description().unwrap_or_default());
-                    editor.url.set_text(&b.url());
-                    editor.tags.set_text(&b.tags().join(" "));
-                    self.bookmark_button
-                        .set_icon_name("user-bookmarks-symbolic");
-                }
-                None => {
-                    editor.label.set_label("<b>Create Bookmark</b>");
-                    editor
-                        .name
-                        .set_text(url.host_str().unwrap_or("Unknown host"));
-                    editor.description.set_text("");
-                    editor.url.set_text(self.viewer.uri().as_str());
-                    editor.tags.set_text("");
-                    self.bookmark_button.set_icon_name("bookmark-new-symbolic");
-                }
-            }
+        if  self.bookmark_editor.update(self.viewer.uri().as_str()) {
+            self.bookmark_button.set_icon_name("user-bookmarks-symbolic");
+        } else {
+            self.bookmark_button.set_icon_name("bookmark-new-symbolic");
         }
     }
 
