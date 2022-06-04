@@ -2,13 +2,11 @@
 use {
     rgba_simple::{Primary, PrimaryColor, RGBA},
     serde::{Deserialize, Serialize},
-    std::{
-        fs,
-        path::{Path, PathBuf},
-    },
+    std::{io, fs, path::{Path, PathBuf}},
 };
 
 mod fonts;
+
 pub use fonts::{Font, Fonts};
 
 /// Returns an OS appropriate configuration directory path
@@ -171,7 +169,7 @@ impl Colors {
     }
 }
 
-#[derive(Clone, Deserialize, Debug, PartialEq, Serialize)]
+#[derive(Clone, Deserialize, Debug, Eq, PartialEq, Serialize)]
 pub enum NewPage {
     Home,
     Blank,
@@ -183,7 +181,7 @@ impl Default for NewPage {
     }
 }
 
-#[derive(Clone, Deserialize, Debug, PartialEq, Serialize)]
+#[derive(Clone, Deserialize, Debug, Eq, PartialEq, Serialize)]
 pub enum ShowTabs {
     Always,
     Multiple,
@@ -196,7 +194,7 @@ impl Default for ShowTabs {
     }
 }
 
-#[derive(Clone, Deserialize, Debug, PartialEq, Serialize)]
+#[derive(Clone, Deserialize, Debug, Eq, PartialEq, Serialize)]
 pub enum TabPosition {
     Top,
     Bottom,
@@ -222,7 +220,7 @@ impl TabPosition {
     }
 }
 
-#[derive(Clone, Deserialize, Debug, PartialEq, Serialize)]
+#[derive(Clone, Deserialize, Debug, Eq, PartialEq, Serialize)]
 pub enum DownloadScheme {
     Ask,
     Auto,
@@ -266,9 +264,13 @@ pub struct Config {
 
 impl Config {
     /// Saves Config struct as a .toml file
-    pub fn save_to_file(&self, file: &Path) {
-        let toml_string = toml::to_string(&self).expect("Could not encode TOML value");
-        fs::write(file, toml_string).expect("Could not write to file!");
+    pub fn save_to_file(&self, file: &Path) -> Result<(), io::Error> {
+        let toml_string = match toml::to_string(&self) {
+            Ok(t) => t,
+            Err(e) => return Err(io::Error::new(io::ErrorKind::Other, e)),
+        };
+        fs::write(file, toml_string)?;
+        Ok(())
     }
 
     /// Deserializes config.toml into a `GfretConfig` struct

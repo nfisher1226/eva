@@ -2,14 +2,15 @@
 #![allow(clippy::wrong_self_convention)]
 #![allow(clippy::trivially_copy_pass_by_ref)]
 #![allow(clippy::needless_pass_by_value)]
+
 use {
     gtk::pango,
     serde::{Deserialize, Serialize},
-    std::{fmt, str::FromStr},
+    std::{fmt, error::Error, str::FromStr},
 };
 
 /// The style of the font
-#[derive(Clone, Copy, Deserialize, Debug, PartialEq, Serialize)]
+#[derive(Clone, Copy, Deserialize, Debug, Eq, PartialEq, Serialize)]
 pub enum Style {
     Normal,
     Oblique,
@@ -61,7 +62,7 @@ impl Style {
 }
 
 /// The weight of the font
-#[derive(Clone, Copy, Deserialize, Debug, PartialEq, Serialize)]
+#[derive(Clone, Copy, Deserialize, Debug, Eq, PartialEq, Serialize)]
 pub enum Weight {
     Thin,
     Ultralight,
@@ -151,7 +152,7 @@ impl Weight {
 }
 
 /// The stretch of the font
-#[derive(Clone, Copy, Deserialize, Debug, PartialEq, Serialize)]
+#[derive(Clone, Copy, Deserialize, Debug, Eq, PartialEq, Serialize)]
 pub enum Stretch {
     UltraCondensed,
     ExtraCondensed,
@@ -236,7 +237,7 @@ pub struct Font {
 }
 
 /// Error returned if unable to parse a font from a given `str`
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Eq, PartialEq)]
 pub struct ParseFontError;
 
 impl fmt::Display for ParseFontError {
@@ -244,6 +245,8 @@ impl fmt::Display for ParseFontError {
         write!(f, "{:?}", self)
     }
 }
+
+impl Error for ParseFontError {}
 
 impl Default for Font {
     /// Returns "Sans Normal"

@@ -1,5 +1,7 @@
 #![warn(clippy::all, clippy::pedantic)]
 use {
+    crate::gui::tab::BookmarkEditor,
+    gtk::prelude::*,
     serde::{Deserialize, Serialize},
     std::{collections::HashMap, error::Error, fmt::Write, path::PathBuf},
 };
@@ -84,6 +86,27 @@ impl BookmarkBuilder {
             url: self.url,
             tags: self.tags,
         }
+    }
+}
+
+impl From<&BookmarkEditor> for Bookmark {
+    fn from(editor: &BookmarkEditor) -> Self {
+        BookmarkBuilder::new()
+            .name(editor.name().text().as_str())
+            .description(match editor.description().text().as_str() {
+                "" => None,
+                s => Some(s),
+            })
+            .url(editor.url().text().as_str())
+            .tags(
+                editor.tags()
+                    .text()
+                    .to_string()
+                    .split_whitespace()
+                    .map(std::string::ToString::to_string)
+                    .collect(),
+            )
+            .build()
     }
 }
 

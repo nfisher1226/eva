@@ -1,7 +1,7 @@
 #![warn(clippy::all, clippy::pedantic)]
 
 mod dialogs;
-mod tab;
+pub mod tab;
 pub mod uri;
 use {
     crate::{config, keys::Keys, CONFIG},
@@ -874,7 +874,9 @@ fn build_ui(app: &Application) -> Rc<Gui> {
             if res == ResponseType::Accept {
                 if let Some(cfg) = gui.dialogs.preferences.config() {
                     *CONFIG.lock().unwrap() = cfg.clone();
-                    cfg.save_to_file(&config::get_config_file());
+                    if let Err(e) = cfg.save_to_file(&config::get_config_file()) {
+                        eprintln!("{}", e);
+                    }
                     gui.set_general(&cfg.general);
                     gui.set_css(&cfg.colors);
                     for (_,tab) in gui.tabs.borrow().clone() {

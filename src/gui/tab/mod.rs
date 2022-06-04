@@ -1,16 +1,11 @@
 #![warn(clippy::all, clippy::pedantic)]
+
 use {
     super::uri,
-    crate::{bookmarks, BOOKMARKS, CONFIG},
+    crate::{BOOKMARKS, CONFIG},
     gemview::GemView,
     gtk::{glib::clone, prelude::*},
-    std::{
-        fs::File,
-        io::{
-            BufReader,
-            Read,
-        },
-    },
+    std::{fs::File, io::{BufReader, Read}},
     url::Url,
 };
 
@@ -127,7 +122,7 @@ impl Default for BookmarkEditor {
         };
         let ed = editor.clone();
         accept.connect_clicked(move |_| {
-            let bm = ed.to_bookmark();
+            let bm = (&ed).into();
             let mut bmarks = BOOKMARKS.lock().unwrap();
             bmarks.update(&bm);
             if let Err(e) = bmarks.save() {
@@ -144,7 +139,7 @@ impl BookmarkEditor {
         self.popover.clone()
     }
 
-    /*pub fn name(&self) -> gtk::Entry {
+    pub fn name(&self) -> gtk::Entry {
         self.name.clone()
     }
 
@@ -158,25 +153,6 @@ impl BookmarkEditor {
 
     pub fn tags(&self) -> gtk::Entry {
         self.tags.clone()
-    }*/
-
-    pub fn to_bookmark(&self) -> bookmarks::Bookmark {
-        bookmarks::BookmarkBuilder::new()
-            .name(self.name.text().as_str())
-            .description(match self.description.text().as_str() {
-                "" => None,
-                s => Some(s),
-            })
-            .url(self.url.text().as_str())
-            .tags(
-                self.tags
-                    .text()
-                    .to_string()
-                    .split_whitespace()
-                    .map(std::string::ToString::to_string)
-                    .collect(),
-            )
-            .build()
     }
 }
 
