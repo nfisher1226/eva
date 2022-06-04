@@ -196,5 +196,5 @@ pub fn add(gui: &Rc<Gui>, app: &gtk::Application) {
             }
             _ => {}
         }
-    };
+    }
 }
