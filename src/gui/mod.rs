@@ -4,8 +4,7 @@ mod dialogs;
 pub mod tab;
 pub mod uri;
 use {
-    actions::Actions,
-    crate::{config, keys::Keys, CONFIG},
+    crate::{config, CONFIG},
     dialogs::Dialogs,
     gemview::GemView,
     gtk::{
@@ -48,67 +47,6 @@ impl Default for Gui {
 }
 
 impl Gui {
-    fn add_actions(&self, app: &gtk::Application) -> Actions {
-        let actions = Actions::default();
-        let keys = Keys::from_file().unwrap_or_default();
-
-        app.set_accels_for_action("win.new_tab", &[keys.new_tab()]);
-        app.set_accels_for_action("win.close_tab", &[keys.close_tab()]);
-        app.set_accels_for_action("win.next_tab", &[keys.next_tab()]);
-        app.set_accels_for_action("win.prev_tab", &[keys.prev_tab()]);
-        app.set_accels_for_action("win.tab1", &[keys.tab1()]);
-        app.set_accels_for_action("win.tab2", &[keys.tab2()]);
-        app.set_accels_for_action("win.tab3", &[keys.tab3()]);
-        app.set_accels_for_action("win.tab4", &[keys.tab4()]);
-        app.set_accels_for_action("win.tab5", &[keys.tab5()]);
-        app.set_accels_for_action("win.tab6", &[keys.tab6()]);
-        app.set_accels_for_action("win.tab7", &[keys.tab7()]);
-        app.set_accels_for_action("win.tab8", &[keys.tab8()]);
-        app.set_accels_for_action("win.tab9", &[keys.tab9()]);
-        app.set_accels_for_action("win.reload", &[keys.reload()]);
-        app.set_accels_for_action("win.go_home", &[keys.go_home()]);
-        app.set_accels_for_action("win.go_previous", &[keys.go_previous()]);
-        app.set_accels_for_action("win.go_next", &[keys.go_next()]);
-        app.set_accels_for_action("win.new_window", &[keys.new_window()]);
-        app.set_accels_for_action("win.open_bookmarks", &[keys.open_bookmarks()]);
-        app.set_accels_for_action("win.bookmark_page", &[keys.bookmark_page()]);
-        app.set_accels_for_action("win.open_history", &[keys.open_history()]);
-        app.set_accels_for_action("win.view_source", &[keys.view_source()]);
-        app.set_accels_for_action("win.save_page", &[keys.save_page()]);
-        app.set_accels_for_action("win.open_prefs", &[keys.open_prefs()]);
-        app.set_accels_for_action("win.open_about", &[keys.open_about()]);
-        app.set_accels_for_action("win.quit", &[keys.quit()]);
-
-        self.window.add_action(&actions.new_tab);
-        self.window.add_action(&actions.close_tab);
-        self.window.add_action(&actions.next_tab);
-        self.window.add_action(&actions.prev_tab);
-        self.window.add_action(&actions.tab1);
-        self.window.add_action(&actions.tab2);
-        self.window.add_action(&actions.tab3);
-        self.window.add_action(&actions.tab4);
-        self.window.add_action(&actions.tab5);
-        self.window.add_action(&actions.tab6);
-        self.window.add_action(&actions.tab7);
-        self.window.add_action(&actions.tab8);
-        self.window.add_action(&actions.tab9);
-        self.window.add_action(&actions.reload);
-        self.window.add_action(&actions.go_home);
-        self.window.add_action(&actions.go_previous);
-        self.window.add_action(&actions.go_next);
-        self.window.add_action(&actions.new_window);
-        self.window.add_action(&actions.open_bookmarks);
-        self.window.add_action(&actions.bookmark_page);
-        self.window.add_action(&actions.open_history);
-        self.window.add_action(&actions.clear_history);
-        self.window.add_action(&actions.view_source);
-        self.window.add_action(&actions.save_page);
-        self.window.add_action(&actions.open_prefs);
-        self.window.add_action(&actions.open_about);
-        self.window.add_action(&actions.quit);
-        actions
-    }
-
     fn new_tab(&self, uri: Option<&str>) {
         let newtab = tab::Tab::init();
         self.tabs
@@ -630,15 +568,9 @@ pub fn run() {
     application.run();
 }
 
-fn build_ui(app: &Application) -> Rc<Gui> {
+pub fn build_ui(app: &Application) -> Rc<Gui> {
     let gui = Rc::new(Gui::default());
-    let actions = gui.add_actions(app);
-    actions.new_window
-        .connect_activate(clone!(@weak gui, @strong app => move |_,_| {
-            let new_gui = build_ui(&app);
-            new_gui.new_tab(None);
-        }));
-    actions.connect(&gui);
+    actions::add(&gui, app);
     let config = CONFIG.lock().unwrap().clone();
     gui.set_css(&config.colors);
     gui.window.set_application(Some(app));

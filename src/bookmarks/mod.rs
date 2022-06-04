@@ -99,7 +99,8 @@ impl From<&BookmarkEditor> for Bookmark {
             })
             .url(editor.url().text().as_str())
             .tags(
-                editor.tags()
+                editor
+                    .tags()
                     .text()
                     .to_string()
                     .split_whitespace()

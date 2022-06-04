@@ -6,7 +6,7 @@
 use {
     gtk::pango,
     serde::{Deserialize, Serialize},
-    std::{fmt, error::Error, str::FromStr},
+    std::{error::Error, fmt, str::FromStr},
 };
 
 /// The style of the font

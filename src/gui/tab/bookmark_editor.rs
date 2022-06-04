@@ -108,7 +108,8 @@ impl BookmarkEditor {
             Some(b) => {
                 self.label.set_label("<b>Edit Bookmark</b>");
                 self.name.set_text(&b.name());
-                self.description.set_text(&b.description().unwrap_or_default());
+                self.description
+                    .set_text(&b.description().unwrap_or_default());
                 self.url.set_text(&b.url());
                 self.tags.set_text(&b.tags().join(" "));
                 true
@@ -126,4 +127,3 @@ impl BookmarkEditor {
         }
     }
 }
-

@@ -9,7 +9,10 @@ use {
     crate::{BOOKMARKS, CONFIG},
     gemview::GemView,
     gtk::{glib::clone, prelude::*},
-    std::{fs::File, io::{BufReader, Read}},
+    std::{
+        fs::File,
+        io::{BufReader, Read},
+    },
     url::Url,
 };
 
@@ -182,24 +185,26 @@ impl Tab {
         self.viewer().connect_request_upload(move |_viewer, _url| {
             upload.show();
         });
-        self.upload.connect_response(clone!(@strong self.viewer as viewer => move |dlg,response| {
-            if response == gtk::ResponseType::Accept {
-                if let Some(file) = dlg.file() {
-                    if let Some(path) = file.path() {
-                        if let Ok(f) = File::open(path) {
-                            let mut data: Vec<u8> = vec![];
-                            let mut reader = BufReader::new(f);
-                            if reader.read_to_end(&mut data).is_ok() {
-                                if let Ok(url) = Url::parse(&viewer.uri()) {
-                                    viewer.post_spartan(url, data);
+        self.upload.connect_response(
+            clone!(@strong self.viewer as viewer => move |dlg,response| {
+                if response == gtk::ResponseType::Accept {
+                    if let Some(file) = dlg.file() {
+                        if let Some(path) = file.path() {
+                            if let Ok(f) = File::open(path) {
+                                let mut data: Vec<u8> = vec![];
+                                let mut reader = BufReader::new(f);
+                                if reader.read_to_end(&mut data).is_ok() {
+                                    if let Ok(url) = Url::parse(&viewer.uri()) {
+                                        viewer.post_spartan(url, data);
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
-            dlg.hide();
-        }));
+                dlg.hide();
+            }),
+        );
     }
 
     pub fn request_input(&self, meta: &str, url: String, visibility: bool) {
@@ -275,8 +280,9 @@ impl Tab {
     }
 
     pub fn update_bookmark_editor(&self) {
-        if  self.bookmark_editor.update(self.viewer.uri().as_str()) {
-            self.bookmark_button.set_icon_name("user-bookmarks-symbolic");
+        if self.bookmark_editor.update(self.viewer.uri().as_str()) {
+            self.bookmark_button
+                .set_icon_name("user-bookmarks-symbolic");
         } else {
             self.bookmark_button.set_icon_name("bookmark-new-symbolic");
         }

@@ -2,7 +2,10 @@
 use {
     rgba_simple::{Primary, PrimaryColor, RGBA},
     serde::{Deserialize, Serialize},
-    std::{io, fs, path::{Path, PathBuf}},
+    std::{
+        fs, io,
+        path::{Path, PathBuf},
+    },
 };
 
 mod fonts;
