@@ -1,7 +1,8 @@
 #![warn(clippy::all, clippy::pedantic)]
 pub mod bookmark_editor;
+pub mod input;
 pub mod label;
-pub use {bookmark_editor::BookmarkEditor, label::Label};
+pub use {bookmark_editor::BookmarkEditor, input::Input, label::Label};
 
 use {
     super::uri,
@@ -11,48 +12,6 @@ use {
     std::{fs::File, io::{BufReader, Read}},
     url::Url,
 };
-
-
-
-#[derive(Clone, Debug)]
-/// A small popover for user input
-pub struct Input {
-    popover: gtk::Popover,
-    label: gtk::Label,
-    entry: gtk::Entry,
-}
-
-impl Default for Input {
-    fn default() -> Self {
-        let label = gtk::Label::new(None);
-        let entry = gtk::Entry::new();
-        let vbox = gtk::Box::new(gtk::Orientation::Vertical, 3);
-        vbox.append(&label);
-        vbox.append(&entry);
-        let popover = gtk::Popover::builder()
-            .autohide(true)
-            .child(&vbox)
-            .has_arrow(false)
-            .position(gtk::PositionType::Bottom)
-            .build();
-        Self {
-            popover,
-            label,
-            entry,
-        }
-    }
-}
-
-impl Input {
-    pub fn show(&self) {
-        self.popover.popup();
-    }
-
-    pub fn request(&self, meta: &str) {
-        self.label.set_label(meta);
-        self.show();
-    }
-}
 
 #[derive(Clone, Debug)]
 pub struct Tab {
@@ -142,7 +101,7 @@ impl Default for Tab {
         upload.add_button("Cancel", gtk::ResponseType::Cancel);
         let input_button = gtk::MenuButton::builder()
             .has_frame(false)
-            .popover(&input.popover)
+            .popover(&input.popover())
             .visible(false)
             .build();
         hbox.append(&input_button);
@@ -245,9 +204,9 @@ impl Tab {
 
     pub fn request_input(&self, meta: &str, url: String, visibility: bool) {
         let viewer = self.viewer.clone();
-        let popover = self.input.popover.clone();
-        self.input.entry.set_visibility(visibility);
-        self.input.entry.connect_activate(move |entry| {
+        let popover = self.input.popover();
+        self.input.set_visibility(visibility);
+        self.input.entry().connect_activate(move |entry| {
             let response = entry.text();
             if response.as_str() != "" {
                 let mut url = url.to_string();
