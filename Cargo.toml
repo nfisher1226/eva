@@ -13,10 +13,9 @@ categories = ["gui"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-#gemview = "0.4"
-gemview = { git = "https://codeberg.org/jeang3nie/gemview" }
+gemview = "0.5"
 mime2ext = "0.1"
-mime_open = "~0.1"
+mime_open = "0.2"
 lazy_static = "~1.4"
 fastrand = "~1.7"
 toml = "~0.5"

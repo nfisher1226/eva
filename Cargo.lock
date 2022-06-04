@@ -37,15 +37,15 @@ checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
 name = "bumpalo"
-version = "3.9.1"
+version = "3.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a4a45a46ab1f2412e53d3a0ade76ffad2025804294569aae387231a0cd6e0899"
+checksum = "37ccbd214614c6783386c1af30caf03192f17891059cecc394b4fb119e363de3"
 
 [[package]]
 name = "bytecount"
-version = "0.6.2"
+version = "0.6.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72feb31ffc86498dacdbd0fcebb56138e7177a8cc5cea4516031d15ae85a742e"
+checksum = "2c676a478f63e9fa2dd5368a42f28bba0d6c560b775f38583c8bbaa7fcd67c9c"
 
 [[package]]
 name = "cairo-rs"
@@ -307,8 +307,9 @@ dependencies = [
 
 [[package]]
 name = "gemview"
-version = "0.4.0"
-source = "git+https://codeberg.org/jeang3nie/gemview#727a09806e6b09c994497ca650b92d52b1778038"
+version = "0.5.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e17857a1f6cf3fd3f9d8e19d7812956ace3307eb7366d6ff5d49a888ad4df23"
 dependencies = [
  "base64",
  "gtk4",
@@ -621,9 +622,9 @@ checksum = "a1a85a5069ebd40e64b1985773cc81addbe9d90d7ecf60e7b5475a57ad584c70"
 
 [[package]]
 name = "mime_open"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aa45a708f9c618eca4d5f60449a161ab1dc5542e41d459c419597ea58d853b68"
+checksum = "026be65003da266efdef430411a645b15bb652f9c890b74433fa887c1f5bef6b"
 
 [[package]]
 name = "minimal-lexical"
@@ -727,9 +728,9 @@ checksum = "ff011a302c396a5197692431fc1948019154afc178baf7d8e37367442a4601cf"
 
 [[package]]
 name = "openssl-sys"
-version = "0.9.73"
+version = "0.9.74"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d5fd19fb3e0a8191c1e34935718976a3e70c112ab9a24af6d7cadccd9d90bc0"
+checksum = "835363342df5fba8354c5b453325b110ffd54044e588c539cf2f20a8014e4cb1"
 dependencies = [
  "autocfg",
  "cc",
@@ -925,9 +926,9 @@ dependencies = [
 
 [[package]]
 name = "rgba_simple"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "93f6e5bd1653168fcfc1e7280a9d4a01145971e132adcda3e69bbaa9b6974d1a"
+checksum = "a7af1ac45b3df82125e12bdd27553ae4eef52a66fc5db9aa32c3c0d06189a2f8"
 dependencies = [
  "gdk4",
  "serde",
@@ -1054,9 +1055,9 @@ checksum = "6e63cff320ae2c57904679ba7cb63280a3dc4613885beafb148ee7bf9aa9042d"
 
 [[package]]
 name = "syn"
-version = "1.0.95"
+version = "1.0.96"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fbaf6116ab8924f39d52792136fb74fd60a80194cf1b1c6ffa6453eef1c3f942"
+checksum = "0748dd251e24453cb8717f0354206b91557e4ec8703673a4b30208f2abaf1ebf"
 dependencies = [
  "proc-macro2",
  "quote",
