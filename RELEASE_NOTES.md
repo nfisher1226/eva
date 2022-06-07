@@ -1,8 +1,16 @@
 Contents
 ========
+* [0.4.1](#0.4.1-release)
 * [0.4.0](#0.4.0-release)
 * [0.3.1](#0.3.1-release)
 * [0.3.0](#0.3.0-release)
+
+## 0.4.1 release
+* Fixes a regression caused by the new parser. This was actually due to a
+workaround for the old parser, which was inserting an empty line at the end of
+every preformatted block. The workaround truncated the final character from the
+block, removing the newline, but this was no longer required with the new
+parser and was instead cutting off the final non-whitespace character.
 
 ## 0.4.0 release
 * Gemini - Use colored icons to differentiate link types
