@@ -20,6 +20,10 @@ impl Default for Search {
                     String::from("gemini://geminispace.info/search"),
                 ),
                 (
+                    String::from("ken"),
+                    String::from("gemini://kennedy.gemi.dev/search")
+                ),
+                (
                     String::from("ron"),
                     String::from("gopher://gopher.floodgap.com/v2/vs"),
                 ),
