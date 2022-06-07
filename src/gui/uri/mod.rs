@@ -16,6 +16,10 @@ impl Default for Search {
             default: String::from("gemini://geminispace.info/search"),
             all: HashMap::from([
                 (
+                    String::from("gmp"),
+                    String::from("gemini://gemi.dev/cgi-bin/wp.cgi/search"),
+                ),
+                (
                     String::from("gus"),
                     String::from("gemini://geminispace.info/search"),
                 ),
