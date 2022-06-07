@@ -1,9 +1,14 @@
 Contents
 ========
+* [unreleased](#unreleased)
 * [0.4.1](#0.4.1-release)
 * [0.4.0](#0.4.0-release)
 * [0.3.1](#0.3.1-release)
 * [0.3.0](#0.3.0-release)
+
+## Unreleased
+* Add Kennedy search engine to default search engines
+* Add Gemipedia to default search engines
 
 ## 0.4.1 release
 * Fixes a regression caused by the new parser. This was actually due to a
