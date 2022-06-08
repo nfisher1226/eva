@@ -1,5 +1,5 @@
 name: eva-browser
-version: "0.3.1_1"
+version: "0.4.1_1"
 origin: www/eva-browser
 comment: "Gemini browser"
 desc: "A gtk4 browser for the smol internet (gemini, gopher, finger)"
