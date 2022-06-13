@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="Input" parent="GtkPopover">
+    <property name="autohide">1</property>
+    <property name="has-arrow">0</property>
+    <property name="position">bottom</property>
+    <child>
+      <object class="GtkBox">
+        <property name="orientation">vertical</property>
+        <property name="spacing">3</property>
+        <child>
+          <object class="GtkLabel" id="label"></object>
+        </child>
+        <child>
+          <object class="GtkEntry" id="entry"></object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
+    

@@ -104,7 +104,7 @@ impl Default for Tab {
         upload.add_button("Cancel", gtk::ResponseType::Cancel);
         let input_button = gtk::MenuButton::builder()
             .has_frame(false)
-            .popover(&input.popover())
+            .popover(&input)
             .visible(false)
             .build();
         hbox.append(&input_button);
@@ -209,7 +209,7 @@ impl Tab {
 
     pub fn request_input(&self, meta: &str, url: String, visibility: bool) {
         let viewer = self.viewer.clone();
-        let popover = self.input.popover();
+        let popover = self.input.clone();
         self.input.set_visibility(visibility);
         self.input.entry().connect_activate(move |entry| {
             let response = entry.text();
