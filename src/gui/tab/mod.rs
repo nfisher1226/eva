@@ -128,7 +128,7 @@ impl Default for Tab {
         scroller.set_child(Some(&viewer));
         tab.append(&scroller);
         let bookmark_editor = BookmarkEditor::default();
-        bookmark_button.set_popover(Some(&bookmark_editor.popover()));
+        bookmark_button.set_popover(Some(&bookmark_editor));
 
         Self {
             tab,

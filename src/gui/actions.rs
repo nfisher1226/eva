@@ -153,7 +153,7 @@ pub fn add(gui: &Rc<Gui>, app: &gtk::Application) {
             "bookmark_page" => {
                 action.connect_activate(clone!(@weak gui => move |_,_| {
                     if let Some(tab) = gui.current_tab() {
-                        tab.bookmark_editor().popover().popup();
+                        tab.bookmark_editor().popup();
                     }
                 }));
             }
