@@ -1,6 +1,6 @@
 #![warn(clippy::all, clippy::pedantic)]
 #![doc = include_str!("../README.md")]
-use std::sync::Mutex;
+use {lazy_static::lazy_static, std::sync::Mutex};
 /// Everything bookmark related
 pub mod bookmarks;
 /// Handles getting the configuration data to and from disk
@@ -11,9 +11,6 @@ mod gui;
 pub mod history;
 /// Handles loading keybindings
 pub mod keys;
-
-#[macro_use]
-extern crate lazy_static;
 
 lazy_static! {
     static ref CONFIG: Mutex<config::Config> =

@@ -61,14 +61,14 @@ impl Gui {
         if let Some(uri) = uri {
             if let Ok(u) = Url::parse(uri) {
                 let host = u.host_str().unwrap_or("Unknown host");
-                newtab.label().label().set_label(host);
+                newtab.label().set(host, false);
             }
             newtab.addr_bar().set_text(uri);
             newtab.reload_button().set_sensitive(true);
             newtab.viewer().visit(uri);
         }
         self.notebook
-            .append_page(&newtab.tab(), Some(&newtab.label().handle()));
+            .append_page(&newtab.tab(), Some(&newtab.label()));
         self.notebook.set_tab_reorderable(&newtab.tab(), true);
         newtab.connect_signals();
         newtab.upload().set_transient_for(Some(&self.window));
