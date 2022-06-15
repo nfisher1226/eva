@@ -9,6 +9,7 @@ Contents
 ## Unreleased
 * Add Kennedy search engine to default search engines
 * Add Gemipedia to default search engines
+* Move tab sub-structures to ui definition files and subclass as Gobjects
 
 ## 0.4.1 release
 * Fixes a regression caused by the new parser. This was actually due to a
