@@ -16,7 +16,7 @@
     <child>
       <object class="GtkButton" id="button">
         <property name="icon-name">window-close-symbolic</property>
-	<property name="has-frame">0</property>
+	      <property name="has-frame">0</property>
       </object>
     </child>
   </template>

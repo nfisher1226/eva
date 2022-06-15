@@ -25,7 +25,7 @@ impl Default for Search {
                 ),
                 (
                     String::from("ken"),
-                    String::from("gemini://kennedy.gemi.dev/search")
+                    String::from("gemini://kennedy.gemi.dev/search"),
                 ),
                 (
                     String::from("ron"),

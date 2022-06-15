@@ -62,11 +62,13 @@ impl BookmarkEditor {
 
     pub fn update(&self, url: &str) -> bool {
         let bmarks = BOOKMARKS.lock().unwrap();
-        match bmarks.all.get(url) {
+        let matches = bmarks.all.get(url);
+        match matches {
             Some(b) => {
                 self.imp().label.set_label("<b>Edit Bookmark</b>");
                 self.imp().name.set_text(&b.name());
-                self.imp().description
+                self.imp()
+                    .description
                     .set_text(&b.description().unwrap_or_default());
                 self.imp().url.set_text(&b.url());
                 self.imp().tags.set_text(&b.tags().join(" "));
@@ -75,7 +77,9 @@ impl BookmarkEditor {
             None => {
                 self.imp().label.set_label("<b>Create Bookmark</b>");
                 if let Ok(u) = Url::parse(url) {
-                    self.imp().name.set_text(u.host_str().unwrap_or("Unknown host"));
+                    self.imp()
+                        .name
+                        .set_text(u.host_str().unwrap_or("Unknown host"));
                 }
                 self.imp().description.set_text("");
                 self.imp().url.set_text(url);

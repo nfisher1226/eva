@@ -1,8 +1,8 @@
 use gtk::{
-    CompositeTemplate,
     glib::{self, subclass::InitializingObject},
     prelude::*,
     subclass::prelude::*,
+    CompositeTemplate,
 };
 
 #[derive(CompositeTemplate, Default)]
@@ -37,5 +37,3 @@ impl ObjectImpl for Input {
 
 impl WidgetImpl for Input {}
 impl PopoverImpl for Input {}
-
-

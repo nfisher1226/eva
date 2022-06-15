@@ -40,4 +40,3 @@ impl Input {
         self.show();
     }
 }
-

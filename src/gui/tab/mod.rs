@@ -1,8 +1,8 @@
-#![allow(clippy::too_many_lines)]
 pub mod bookmark_editor;
+pub mod controls;
 pub mod input;
 pub mod label;
-pub use {bookmark_editor::BookmarkEditor, input::Input, label::Label};
+pub use {bookmark_editor::BookmarkEditor, controls::Controls, input::Input, label::Label};
 
 use {
     super::uri,
@@ -21,13 +21,9 @@ pub struct Tab {
     tab: gtk::Box,
     label: Label,
     bookmark_editor: BookmarkEditor,
-    input: Input,
     upload: gtk::FileChooserDialog,
-    back_button: gtk::Button,
-    forward_button: gtk::Button,
-    reload_button: gtk::Button,
-    addr_bar: gtk::SearchEntry,
-    bookmark_button: gtk::MenuButton,
+    input: Input,
+    controls: Controls,
     viewer: GemView,
 }
 
@@ -40,58 +36,14 @@ impl Default for Tab {
             .orientation(gtk::Orientation::Vertical)
             .name(&name)
             .build();
-        let hbox = gtk::builders::BoxBuilder::new()
-            .orientation(gtk::Orientation::Horizontal)
-            .spacing(3)
-            .margin_start(3)
-            .margin_end(3)
-            .margin_top(3)
-            .margin_bottom(3)
-            .build();
-        tab.append(&hbox);
-        let button_box = gtk::builders::BoxBuilder::new()
-            .orientation(gtk::Orientation::Horizontal)
-            .homogeneous(true)
-            .css_classes(vec![String::from("linked")])
-            .margin_end(15)
-            .build();
-        hbox.append(&button_box);
-        let image = gtk::builders::ImageBuilder::new()
-            .icon_name("go-previous-symbolic")
-            .build();
-        let back_button = gtk::builders::ButtonBuilder::new()
-            .child(&image)
-            .tooltip_text("Go back")
-            .action_name("win.go_previous")
-            .sensitive(false)
-            .build();
-        button_box.append(&back_button);
-        let image = gtk::builders::ImageBuilder::new()
-            .icon_name("go-next-symbolic")
-            .build();
-        let forward_button = gtk::builders::ButtonBuilder::new()
-            .child(&image)
-            .tooltip_text("Go forward")
-            .action_name("win.go_next")
-            .sensitive(false)
-            .build();
-        button_box.append(&forward_button);
-        let image = gtk::builders::ImageBuilder::new()
-            .icon_name("view-refresh-symbolic")
-            .build();
-        let reload_button = gtk::builders::ButtonBuilder::new()
-            .child(&image)
-            .tooltip_text("Reload page")
-            .action_name("win.reload")
-            .sensitive(false)
-            .build();
-        button_box.append(&reload_button);
-        let addr_bar = gtk::builders::SearchEntryBuilder::new()
-            .placeholder_text("Search or enter an address")
-            .hexpand(true)
-            .build();
-        hbox.append(&addr_bar);
         let input = Input::default();
+        let bookmark_editor = BookmarkEditor::default();
+        let controls = Controls::default();
+        controls.input_button().set_popover(Some(&input));
+        controls
+            .bookmark_button()
+            .set_popover(Some(&bookmark_editor));
+        tab.append(&controls);
         let upload = gtk::FileChooserDialog::builder()
             .use_header_bar(1)
             .destroy_with_parent(true)
@@ -102,17 +54,6 @@ impl Default for Tab {
             .build();
         upload.add_button("Accept", gtk::ResponseType::Accept);
         upload.add_button("Cancel", gtk::ResponseType::Cancel);
-        let input_button = gtk::MenuButton::builder()
-            .has_frame(false)
-            .popover(&input)
-            .visible(false)
-            .build();
-        hbox.append(&input_button);
-        let bookmark_button = gtk::builders::MenuButtonBuilder::new()
-            .icon_name("bookmark-new-symbolic")
-            .tooltip_text("Bookmark current page")
-            .build();
-        hbox.append(&bookmark_button);
         let scroller = gtk::builders::ScrolledWindowBuilder::new()
             .hexpand(true)
             .vexpand(true)
@@ -127,8 +68,6 @@ impl Default for Tab {
         viewer.set_css_classes(&["gemview"]);
         scroller.set_child(Some(&viewer));
         tab.append(&scroller);
-        let bookmark_editor = BookmarkEditor::default();
-        bookmark_button.set_popover(Some(&bookmark_editor));
 
         Self {
             tab,
@@ -136,11 +75,7 @@ impl Default for Tab {
             input,
             upload,
             bookmark_editor,
-            back_button,
-            forward_button,
-            reload_button,
-            addr_bar,
-            bookmark_button,
+            controls,
             viewer,
         }
     }
@@ -151,13 +86,14 @@ impl Tab {
         let tab = Self::default();
         tab.set_fonts();
         tab.update_bookmark_editor();
-        tab.back_button.set_sensitive(false);
-        tab.forward_button.set_sensitive(false);
+        tab.controls().back_button().set_sensitive(false);
+        tab.controls().forward_button().set_sensitive(false);
         tab
     }
 
     pub fn connect_signals(&self) {
-        self.addr_bar()
+        self.controls()
+            .addr_bar()
             .connect_activate(clone!(@strong self as tab => move |bar| {
                 let mut uri = String::from(bar.text());
                 uri = uri::uri(&mut uri);
@@ -165,7 +101,7 @@ impl Tab {
             }));
         self.viewer()
             .connect_page_load_redirect(clone!(@strong self as tab => move |_, uri| {
-                tab.addr_bar().set_text(&uri);
+                tab.controls().addr_bar().set_text(&uri);
             }));
         self.viewer().connect_request_unsupported_scheme(
             clone!(@strong self as tab => move |_, uri| {
@@ -237,6 +173,10 @@ impl Tab {
         self.bookmark_editor.clone()
     }
 
+    pub fn controls(&self) -> Controls {
+        self.controls.clone()
+    }
+
     /*pub fn input(&self) -> Input {
         self.input.clone()
     }*/
@@ -244,26 +184,6 @@ impl Tab {
     pub fn upload(&self) -> gtk::FileChooserDialog {
         self.upload.clone()
     }
-
-    pub fn back_button(&self) -> gtk::Button {
-        self.back_button.clone()
-    }
-
-    pub fn forward_button(&self) -> gtk::Button {
-        self.forward_button.clone()
-    }
-
-    pub fn reload_button(&self) -> gtk::Button {
-        self.reload_button.clone()
-    }
-
-    pub fn addr_bar(&self) -> gtk::SearchEntry {
-        self.addr_bar.clone()
-    }
-
-    /*pub fn bookmark_button(&self) -> gtk::MenuButton {
-        self.bookmark_button.clone()
-    }*/
 
     pub fn viewer(&self) -> GemView {
         self.viewer.clone()
@@ -281,10 +201,13 @@ impl Tab {
 
     pub fn update_bookmark_editor(&self) {
         if self.bookmark_editor.update(self.viewer.uri().as_str()) {
-            self.bookmark_button
+            self.controls
+                .bookmark_button()
                 .set_icon_name("user-bookmarks-symbolic");
         } else {
-            self.bookmark_button.set_icon_name("bookmark-new-symbolic");
+            self.controls
+                .bookmark_button()
+                .set_icon_name("bookmark-new-symbolic");
         }
     }
 
@@ -304,7 +227,7 @@ impl Tab {
                         if let Some(page) = bookmarks.tag_to_gmi(&maybe_tag) {
                             self.viewer.render_gmi(&page);
                             self.viewer.set_uri(uri);
-                            self.addr_bar.set_text("uri");
+                            self.controls.addr_bar().set_text("uri");
                             self.set_label("bookmarks", false);
                         }
                     }
@@ -323,8 +246,10 @@ impl Tab {
         let page = bookmarks.to_gmi();
         self.viewer.render_gmi(&page);
         self.viewer.set_uri("eva://bookmarks");
-        self.addr_bar.set_text("eva://bookmarks");
-        self.bookmark_button.set_icon_name("bookmark-new-symbolic");
+        self.controls.addr_bar().set_text("eva://bookmarks");
+        self.controls()
+            .bookmark_button()
+            .set_icon_name("bookmark-new-symbolic");
         self.set_label("bookmarks", false);
     }
 
@@ -333,8 +258,10 @@ impl Tab {
         let page = bookmarks.tags_to_gmi();
         self.viewer.render_gmi(&page);
         self.viewer.set_uri("eva://bookmarks/tags");
-        self.addr_bar.set_text("eva://bookmarks/tags");
-        self.bookmark_button.set_icon_name("bookmark-new-symbolic");
+        self.controls.addr_bar().set_text("eva://bookmarks/tags");
+        self.controls()
+            .bookmark_button()
+            .set_icon_name("bookmark-new-symbolic");
         self.set_label("bookmarks", false);
     }
 
@@ -344,7 +271,7 @@ impl Tab {
         if mime.starts_with("text") {
             let content = String::from_utf8_lossy(&content);
             self.viewer.render_text(&content);
-            self.addr_bar.set_text("eva://source");
+            self.controls.addr_bar().set_text("eva://source");
         }
     }
 }

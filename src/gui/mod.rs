@@ -63,8 +63,8 @@ impl Gui {
                 let host = u.host_str().unwrap_or("Unknown host");
                 newtab.label().set(host, false);
             }
-            newtab.addr_bar().set_text(uri);
-            newtab.reload_button().set_sensitive(true);
+            newtab.controls().addr_bar().set_text(uri);
+            newtab.controls().reload_button().set_sensitive(true);
             newtab.viewer().visit(uri);
         }
         self.notebook
@@ -85,17 +85,17 @@ impl Gui {
                     env!("CARGO_PKG_NAME"),
                     env!("CARGO_PKG_VERSION"),
                 )));
-                tab.addr_bar().set_text(&uri);
+                tab.controls().addr_bar().set_text(&uri);
                 tab.set_label("[loading]", true);
-                tab.reload_button().set_sensitive(false);
+                tab.controls().reload_button().set_sensitive(false);
             }),
         );
         newtab.viewer().connect_page_loaded(
             clone!(@strong newtab as tab, @weak self.window as window => move |_, uri| {
-                tab.addr_bar().set_text(&uri);
-                tab.reload_button().set_sensitive(true);
-                tab.back_button().set_sensitive(tab.viewer().has_previous());
-                tab.forward_button().set_sensitive(tab.viewer().has_next());
+                tab.controls().addr_bar().set_text(&uri);
+                tab.controls().reload_button().set_sensitive(true);
+                tab.controls().back_button().set_sensitive(tab.viewer().has_previous());
+                tab.controls().forward_button().set_sensitive(tab.viewer().has_next());
                 tab.update_bookmark_editor();
                 if let Ok(url) = Url::parse(uri.as_str()) {
                     let scheme = url.scheme();
@@ -118,9 +118,9 @@ impl Gui {
         );
         newtab.viewer().connect_page_load_failed(
             clone!(@strong newtab as tab, @weak self.window as window => move |_, err| {
-                tab.reload_button().set_sensitive(true);
-                tab.back_button().set_sensitive(tab.viewer().has_previous());
-                tab.forward_button().set_sensitive(tab.viewer().has_next());
+                tab.controls().reload_button().set_sensitive(true);
+                tab.controls().back_button().set_sensitive(tab.viewer().has_previous());
+                tab.controls().forward_button().set_sensitive(tab.viewer().has_next());
                 if err.contains("unsupported-scheme") {
                     if let Ok(url) = Url::parse(tab.viewer().uri().as_str()) {
                         if let Some(host) = url.host_str() {
@@ -133,7 +133,7 @@ impl Gui {
                             )));
                         }
                     }
-                    tab.addr_bar().set_text(tab.viewer().uri().as_str());
+                    tab.controls().addr_bar().set_text(tab.viewer().uri().as_str());
                     return;
                 }
                 tab.set_label("Load failure", false);
@@ -181,7 +181,7 @@ impl Gui {
                         )));
                     }
                 }
-                tab.addr_bar().set_text(&url);
+                tab.controls().addr_bar().set_text(&url);
                 tab.request_input(&meta, url, true);
             }),
         );
@@ -198,7 +198,7 @@ impl Gui {
                         )));
                     }
                 }
-                tab.addr_bar().set_text(&url);
+                tab.controls().addr_bar().set_text(&url);
                 tab.request_input(&meta, url, false);
             }),
         );
@@ -220,7 +220,8 @@ impl Gui {
         } else {
             Cow::from(filename)
         };
-        match cfg.general.download_scheme {
+        let scheme = &cfg.general.download_scheme;
+        match scheme {
             config::DownloadScheme::Ask => {
                 self.dialogs.save.set_current_name(&filename);
                 self.dialogs.save.connect_response(

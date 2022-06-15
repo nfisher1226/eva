@@ -1,8 +1,8 @@
 use gtk::{
-    CompositeTemplate,
     glib::{self, subclass::InitializingObject},
     prelude::*,
     subclass::prelude::*,
+    CompositeTemplate,
 };
 
 #[derive(CompositeTemplate, Default)]
@@ -39,4 +39,3 @@ impl ObjectImpl for Label {
 
 impl WidgetImpl for Label {}
 impl BoxImpl for Label {}
-

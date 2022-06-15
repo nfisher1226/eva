@@ -1,8 +1,8 @@
 use gtk::{
-    CompositeTemplate,
     glib::{self, subclass::InitializingObject},
     prelude::*,
     subclass::prelude::*,
+    CompositeTemplate,
 };
 
 #[derive(CompositeTemplate, Default)]
@@ -47,5 +47,3 @@ impl ObjectImpl for BookmarkEditor {
 
 impl WidgetImpl for BookmarkEditor {}
 impl PopoverImpl for BookmarkEditor {}
-
-

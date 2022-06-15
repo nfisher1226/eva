@@ -20,7 +20,8 @@ impl Default for Label {
 
 impl Label {
     pub fn new() -> Self {
-        Object::new(&[("orientation", &gtk::Orientation::Horizontal)]).expect("Cannot create tab label")
+        Object::new(&[("orientation", &gtk::Orientation::Horizontal)])
+            .expect("Cannot create tab label")
     }
 
     pub fn close_button(&self) -> gtk::Button {
