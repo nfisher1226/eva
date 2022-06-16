@@ -92,17 +92,16 @@ impl BookmarkBuilder {
 impl From<&BookmarkEditor> for Bookmark {
     fn from(editor: &BookmarkEditor) -> Self {
         BookmarkBuilder::new()
-            .name(editor.name().text().as_str())
-            .description(match editor.description().text().as_str() {
+            .name(editor.name().as_str())
+            .description(match editor.description().as_str() {
                 "" => None,
                 s => Some(s),
             })
-            .url(editor.url().text().as_str())
+            .url(editor.url().as_str())
             .tags(
                 editor
                     .tags()
-                    .text()
-                    .to_string()
+                    .as_str()
                     .split_whitespace()
                     .map(std::string::ToString::to_string)
                     .collect(),

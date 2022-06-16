@@ -3,7 +3,7 @@ mod imp;
 use {
     crate::BOOKMARKS,
     gtk::{
-        glib::{self, Object},
+        glib::{self, GString, Object},
         prelude::*,
         subclass::prelude::*,
     },
@@ -40,24 +40,20 @@ impl BookmarkEditor {
         editor
     }
 
-    pub fn label(&self) -> gtk::Label {
-        self.imp().label.clone()
+    pub fn name(&self) -> GString {
+        self.imp().name.text()
     }
 
-    pub fn name(&self) -> gtk::Entry {
-        self.imp().name.clone()
+    pub fn description(&self) -> GString {
+        self.imp().description.text()
     }
 
-    pub fn description(&self) -> gtk::Entry {
-        self.imp().description.clone()
+    pub fn url(&self) -> GString {
+        self.imp().url.text()
     }
 
-    pub fn url(&self) -> gtk::Entry {
-        self.imp().url.clone()
-    }
-
-    pub fn tags(&self) -> gtk::Entry {
-        self.imp().tags.clone()
+    pub fn tags(&self) -> GString {
+        self.imp().tags.text()
     }
 
     pub fn update(&self, url: &str) -> bool {
