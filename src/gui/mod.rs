@@ -61,41 +61,41 @@ impl Gui {
         if let Some(uri) = uri {
             if let Ok(u) = Url::parse(uri) {
                 let host = u.host_str().unwrap_or("Unknown host");
-                newtab.label().set(host, false);
+                newtab.label.set(host, false);
             }
-            newtab.controls().addr_bar().set_text(uri);
-            newtab.controls().reload_button().set_sensitive(true);
-            newtab.viewer().visit(uri);
+            newtab.controls.set_uri(uri);
+            newtab.controls.set_reload_button_sensitive(true);
+            newtab.viewer.visit(uri);
         }
         self.notebook
-            .append_page(&newtab.tab(), Some(&newtab.label()));
+            .append_page(&newtab.tab(), Some(&newtab.label));
         self.notebook.set_tab_reorderable(&newtab.tab(), true);
         newtab.connect_signals();
-        newtab.upload().set_transient_for(Some(&self.window));
-        newtab.label().close_button().connect_clicked(
+        newtab.upload.set_transient_for(Some(&self.window));
+        newtab.label.close_button().connect_clicked(
             clone!(@strong newtab as tab, @weak self.notebook as nb => move |_| {
                 let _name = tab.tab().widget_name().to_string();
                 nb.detach_tab(&tab.tab());
             }),
         );
-        newtab.viewer().connect_page_load_started(
+        newtab.viewer.connect_page_load_started(
             clone!(@weak self.window as window, @strong newtab as tab => move |_, uri| {
                 window.set_title(Some(&format!(
                     "{}-{} - [loading]",
                     env!("CARGO_PKG_NAME"),
                     env!("CARGO_PKG_VERSION"),
                 )));
-                tab.controls().addr_bar().set_text(&uri);
+                tab.controls.set_uri(&uri);
                 tab.set_label("[loading]", true);
-                tab.controls().reload_button().set_sensitive(false);
+                tab.controls.set_reload_button_sensitive(false);
             }),
         );
-        newtab.viewer().connect_page_loaded(
+        newtab.viewer.connect_page_loaded(
             clone!(@strong newtab as tab, @weak self.window as window => move |_, uri| {
-                tab.controls().addr_bar().set_text(&uri);
-                tab.controls().reload_button().set_sensitive(true);
-                tab.controls().back_button().set_sensitive(tab.viewer().has_previous());
-                tab.controls().forward_button().set_sensitive(tab.viewer().has_next());
+                tab.controls.set_uri(&uri);
+                tab.controls.set_reload_button_sensitive(true);
+                tab.controls.set_back_button_sensitive(tab.viewer.has_previous());
+                tab.controls.set_forward_button_sensitive(tab.viewer.has_next());
                 tab.update_bookmark_editor();
                 if let Ok(url) = Url::parse(uri.as_str()) {
                     let scheme = url.scheme();
@@ -116,13 +116,13 @@ impl Gui {
                 }
             }),
         );
-        newtab.viewer().connect_page_load_failed(
+        newtab.viewer.connect_page_load_failed(
             clone!(@strong newtab as tab, @weak self.window as window => move |_, err| {
-                tab.controls().reload_button().set_sensitive(true);
-                tab.controls().back_button().set_sensitive(tab.viewer().has_previous());
-                tab.controls().forward_button().set_sensitive(tab.viewer().has_next());
+                tab.controls.set_reload_button_sensitive(true);
+                tab.controls.set_back_button_sensitive(tab.viewer.has_previous());
+                tab.controls.set_forward_button_sensitive(tab.viewer.has_next());
                 if err.contains("unsupported-scheme") {
-                    if let Ok(url) = Url::parse(tab.viewer().uri().as_str()) {
+                    if let Ok(url) = Url::parse(tab.viewer.uri().as_str()) {
                         if let Some(host) = url.host_str() {
                             tab.set_label(host, false);
                             window.set_title(Some(&format!(
@@ -133,11 +133,11 @@ impl Gui {
                             )));
                         }
                     }
-                    tab.controls().addr_bar().set_text(tab.viewer().uri().as_str());
+                    tab.controls.set_uri(tab.viewer.uri().as_str());
                     return;
                 }
                 tab.set_label("Load failure", false);
-                tab.viewer().render_gmi(&format!(
+                tab.viewer.render_gmi(&format!(
                     "# Page load failure\n\n{}",
                     match err.as_str() {
                         "RelativeUrlWithCannotBeABaseBase" => "Invalid url",
@@ -158,17 +158,17 @@ impl Gui {
             }),
         );
         newtab
-            .viewer()
+            .viewer
             .connect_request_new_tab(clone!(@strong self as gui => move |_, uri| {
                 gui.new_tab(Some(&uri));
             }));
         if let Some(app) = self.window.application() {
-            newtab.viewer().connect_request_new_window(move |_, uri| {
+            newtab.viewer.connect_request_new_window(move |_, uri| {
                 let gui = build_ui(&app);
                 gui.new_tab(Some(&uri));
             });
         }
-        newtab.viewer().connect_request_input(
+        newtab.viewer.connect_request_input(
             clone!(@strong newtab as tab, @weak self.window as window => move |_viewer, meta, url| {
                 if let Ok(url) = Url::parse(&url) {
                     if let Some(host) = url.host_str() {
@@ -181,11 +181,11 @@ impl Gui {
                         )));
                     }
                 }
-                tab.controls().addr_bar().set_text(&url);
+                tab.controls.set_uri(&url);
                 tab.request_input(&meta, url, true);
             }),
         );
-        newtab.viewer().connect_request_input_sensitive(
+        newtab.viewer.connect_request_input_sensitive(
             clone!(@strong newtab as tab, @weak self.window as window => move |_viewer, meta, url| {
                 if let Ok(url) = Url::parse(&url) {
                     if let Some(host) = url.host_str() {
@@ -198,11 +198,11 @@ impl Gui {
                         )));
                     }
                 }
-                tab.controls().addr_bar().set_text(&url);
+                tab.controls.set_uri(&url);
                 tab.request_input(&meta, url, false);
             }),
         );
-        newtab.viewer().connect_request_download(
+        newtab.viewer.connect_request_download(
             clone!(@strong self as gui => move |viewer, mime, filename| {
                 gui.download(viewer, &mime, &filename);
             }),
@@ -362,7 +362,7 @@ impl Gui {
 
     fn reload_current_tab(&self) -> Result<(), Box<dyn std::error::Error>> {
         if let Some(tab) = self.current_tab() {
-            tab.viewer().reload();
+            tab.viewer.reload();
             Ok(())
         } else {
             Err(String::from("Error getting tab").into())
@@ -372,7 +372,7 @@ impl Gui {
     fn go_home(&self) -> Result<(), Box<dyn std::error::Error>> {
         let home = CONFIG.lock().unwrap().clone().general.homepage;
         if let Some(tab) = self.current_tab() {
-            tab.viewer().visit(&home);
+            tab.viewer.visit(&home);
             Ok(())
         } else {
             Err(String::from("Error getting tab").into())
@@ -381,7 +381,7 @@ impl Gui {
 
     fn go_previous(&self) -> Result<(), Box<dyn std::error::Error>> {
         if let Some(tab) = self.current_tab() {
-            tab.viewer().go_previous();
+            tab.viewer.go_previous();
             Ok(())
         } else {
             Err(String::from("Error getting tab").into())
@@ -390,7 +390,7 @@ impl Gui {
 
     fn go_next(&self) -> Result<(), Box<dyn std::error::Error>> {
         if let Some(tab) = self.current_tab() {
-            tab.viewer().go_next();
+            tab.viewer.go_next();
             Ok(())
         } else {
             Err(String::from("Error getting tab").into())
@@ -399,7 +399,7 @@ impl Gui {
 
     fn switch_tab(&self, page: u32) {
         if let Some(tab) = self.nth_tab(page) {
-            let uri = tab.viewer().uri();
+            let uri = tab.viewer.uri();
             if let Ok(url) = Url::parse(uri.as_str()) {
                 self.window.set_title(Some(&format!(
                     "{}-{} - {}",
@@ -464,7 +464,7 @@ impl Gui {
 
     fn save_page(&self) {
         if let Some(tab) = self.current_tab() {
-            let viewer = tab.viewer();
+            let viewer = tab.viewer;
             let mut filename = if let Some(s) = viewer.uri().split('/').last() {
                 match s {
                     "" => "unknown",

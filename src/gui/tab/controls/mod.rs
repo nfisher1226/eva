@@ -1,8 +1,11 @@
 mod imp;
 
-use gtk::{
-    glib::{self, Object},
-    subclass::prelude::*,
+use {
+    gtk::{
+        glib::{self, Object},
+        subclass::prelude::*, traits::{EditableExt, WidgetExt},
+    },
+    super::{BookmarkEditor, Input},
 };
 
 glib::wrapper! {
@@ -22,27 +25,35 @@ impl Controls {
         Object::new(&[]).expect("Failed to create Controls")
     }
 
-    pub fn back_button(&self) -> gtk::Button {
-        self.imp().back_button.clone()
+    pub fn set_back_button_sensitive(&self, sensitive: bool) {
+        self.imp().back_button.set_sensitive(sensitive);
     }
 
-    pub fn forward_button(&self) -> gtk::Button {
-        self.imp().forward_button.clone()
+    pub fn set_forward_button_sensitive(&self, sensitive: bool) {
+        self.imp().forward_button.set_sensitive(sensitive);
     }
 
-    pub fn reload_button(&self) -> gtk::Button {
-        self.imp().reload_button.clone()
+    pub fn set_reload_button_sensitive(&self, sensitive: bool) {
+        self.imp().reload_button.set_sensitive(sensitive);
     }
 
     pub fn addr_bar(&self) -> gtk::SearchEntry {
         self.imp().addr_bar.clone()
     }
 
-    pub fn input_button(&self) -> gtk::MenuButton {
-        self.imp().input_button.clone()
+    pub fn set_uri(&self, uri: &str) {
+        self.imp().addr_bar.set_text(uri);
     }
 
-    pub fn bookmark_button(&self) -> gtk::MenuButton {
-        self.imp().bookmark_button.clone()
+    pub fn set_input_popover(&self, popover: Option<&Input>) {
+        self.imp().input_button.set_popover(popover);
+    }
+
+    pub fn set_bookmark_icon_name(&self, name: &str) {
+        self.imp().bookmark_button.set_icon_name(name);
+    }
+
+    pub fn set_bookmark_popover(&self, popover: Option<&BookmarkEditor>) {
+        self.imp().bookmark_button.set_popover(popover);
     }
 }
