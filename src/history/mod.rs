@@ -22,13 +22,12 @@ pub fn get_history_file() -> PathBuf {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct History {
-    items: HashMap<String, String>,
+    items: HashMap<String, chrono::DateTime<Local>>,
 }
 
 impl History {
     pub fn append(&mut self, url: &str) {
-        let now = Local::now();
-        let _old = self.items.insert(String::from(url), format!("{}", now));
+        let _old = self.items.insert(String::from(url), Local::now());
     }
 
     pub fn remove(&mut self, url: &str) {
@@ -43,7 +42,7 @@ impl History {
     pub fn page(&self) -> String {
         let mut page: String = String::from("# History\n");
         for (url, date) in &self.items {
-            let _ = write!(page, "{}\n=> {}\n\n", date, url);
+            let _ = write!(page, "{date}\n=> {url}\n\n");
         }
         page
     }

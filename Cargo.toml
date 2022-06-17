@@ -25,7 +25,7 @@ urlencoding = "2.1"
 
 [dependencies.chrono]
 version = "~0.4"
-features = ["std"]
+features = ["std", "serde"]
 
 [dependencies.gtk]
 version = "~0.4"

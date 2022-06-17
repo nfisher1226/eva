@@ -597,7 +597,7 @@ pub fn build_ui(app: &Application) -> Rc<Gui> {
         }));
     gui.dialogs
         .preferences
-        .window()
+        .window
         .connect_response(clone!(@weak gui => move |dlg,res| {
             if res == ResponseType::Accept {
                 if let Some(cfg) = gui.dialogs.preferences.config() {

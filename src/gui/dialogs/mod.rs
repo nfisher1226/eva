@@ -13,7 +13,7 @@ use {
 
 #[derive(Clone)]
 pub struct PrefWidgets {
-    window: gtk::Dialog,
+    pub window: gtk::Dialog,
     homepage: gtk::Entry,
     new_page: gtk::ComboBoxText,
     show_tabs: gtk::ComboBoxText,
@@ -214,10 +214,6 @@ impl PrefWidgets {
             h2_font: builder.object("h2_font").expect("Error getting 'h2_font'"),
             h3_font: builder.object("h3_font").expect("Error getting 'h3_font'"),
         }
-    }
-
-    pub fn window(&self) -> gtk::Dialog {
-        self.window.clone()
     }
 
     pub fn homepage(&self) -> String {

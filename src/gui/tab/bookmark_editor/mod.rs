@@ -1,3 +1,5 @@
+//! This module provides the widget which allows for creating and editing
+//! bookmarks in Eva. It is a subclass of a `gtk::Popover`.
 mod imp;
 
 use {
@@ -40,22 +42,27 @@ impl BookmarkEditor {
         editor
     }
 
+    /// Retreives the value from the `name` field from the editor
     pub fn name(&self) -> GString {
         self.imp().name.text()
     }
 
+    /// Retreives the value from the `description` field from the editor
     pub fn description(&self) -> GString {
         self.imp().description.text()
     }
 
+    /// Retreives the value from the `url` field from the editor
     pub fn url(&self) -> GString {
         self.imp().url.text()
     }
 
+    /// Retreives the value from the `tags` field from the editor
     pub fn tags(&self) -> GString {
         self.imp().tags.text()
     }
 
+    /// Updates the editor based on whether the current url is bookmarked or not.
     pub fn update(&self, url: &str) -> bool {
         let bmarks = BOOKMARKS.lock().unwrap();
         let matches = bmarks.all.get(url);
