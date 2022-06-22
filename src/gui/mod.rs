@@ -35,7 +35,7 @@ impl Default for Gui {
         let window: gtk::ApplicationWindow = builder.object("mainWindow").unwrap();
         let notebook: gtk::Notebook = builder.object("mainNotebook").unwrap();
         let tabs: RefCell<HashMap<String, Tab>> = RefCell::new(HashMap::new());
-        let dialogs: Dialogs = Dialogs::init(&window, &builder);
+        let dialogs: Dialogs = Dialogs::init(&window);
 
         Self {
             window,
@@ -597,7 +597,6 @@ pub fn build_ui(app: &Application) -> Rc<Gui> {
         }));
     gui.dialogs
         .preferences
-        .window
         .connect_response(clone!(@weak gui => move |dlg,res| {
             if res == ResponseType::Accept {
                 if let Some(cfg) = gui.dialogs.preferences.config() {

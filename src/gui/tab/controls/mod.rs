@@ -1,11 +1,12 @@
 mod imp;
 
 use {
+    super::{BookmarkEditor, Input},
     gtk::{
         glib::{self, Object},
-        subclass::prelude::*, traits::{EditableExt, WidgetExt},
+        subclass::prelude::*,
+        traits::{EditableExt, WidgetExt},
     },
-    super::{BookmarkEditor, Input},
 };
 
 glib::wrapper! {

@@ -175,9 +175,11 @@ impl Tab {
 
     pub fn update_bookmark_editor(&self) {
         if self.bookmark_editor.update(self.viewer.uri().as_str()) {
-            self.controls.set_bookmark_icon_name("user-bookmarks-symbolic");
+            self.controls
+                .set_bookmark_icon_name("user-bookmarks-symbolic");
         } else {
-            self.controls.set_bookmark_icon_name("bookmark-new-symbolic");
+            self.controls
+                .set_bookmark_icon_name("bookmark-new-symbolic");
         }
     }
 
@@ -217,7 +219,8 @@ impl Tab {
         self.viewer.render_gmi(&page);
         self.viewer.set_uri("eva://bookmarks");
         self.controls.set_uri("eva://bookmarks");
-        self.controls.set_bookmark_icon_name("bookmark-new-symbolic");
+        self.controls
+            .set_bookmark_icon_name("bookmark-new-symbolic");
         self.set_label("bookmarks", false);
     }
 
@@ -227,7 +230,8 @@ impl Tab {
         self.viewer.render_gmi(&page);
         self.viewer.set_uri("eva://bookmarks/tags");
         self.controls.set_uri("eva://bookmarks/tags");
-        self.controls.set_bookmark_icon_name("bookmark-new-symbolic");
+        self.controls
+            .set_bookmark_icon_name("bookmark-new-symbolic");
         self.set_label("bookmarks", false);
     }
 
