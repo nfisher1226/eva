@@ -32,10 +32,6 @@ impl Prefs {
     pub fn new() -> Self {
         let dlg: Self =
             Object::new(&[("use-header-bar", &1)]).expect("Failed to create Preferences Dialog");
-        println!(
-            "Prefs window set to use headerbar: {}",
-            dlg.use_header_bar()
-        );
         let dialog = dlg.clone();
         dlg.imp().download_scheme.connect_changed(move |_| {
             if let Some(scheme) = dialog.download_scheme() {
