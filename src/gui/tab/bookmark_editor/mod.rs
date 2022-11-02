@@ -42,22 +42,22 @@ impl BookmarkEditor {
         editor
     }
 
-    /// Retreives the value from the `name` field from the editor
+    /// Retrieves the value from the `name` field from the editor
     pub fn name(&self) -> GString {
         self.imp().name.text()
     }
 
-    /// Retreives the value from the `description` field from the editor
+    /// Retrieves the value from the `description` field from the editor
     pub fn description(&self) -> GString {
         self.imp().description.text()
     }
 
-    /// Retreives the value from the `url` field from the editor
+    /// Retrieves the value from the `url` field from the editor
     pub fn url(&self) -> GString {
         self.imp().url.text()
     }
 
-    /// Retreives the value from the `tags` field from the editor
+    /// Retrieves the value from the `tags` field from the editor
     pub fn tags(&self) -> GString {
         self.imp().tags.text()
     }
