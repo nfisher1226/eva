@@ -68,8 +68,8 @@ impl ObjectSubclass for Prefs {
 }
 
 impl ObjectImpl for Prefs {
-    fn constructed(&self, obj: &Self::Type) {
-        self.parent_constructed(obj);
+    fn constructed(&self) {
+        self.parent_constructed();
     }
 }
 

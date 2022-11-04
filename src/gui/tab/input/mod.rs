@@ -20,7 +20,7 @@ impl Default for Input {
 
 impl Input {
     pub fn new() -> Self {
-        Object::new(&[]).expect("Cannot create input widget")
+        Object::new(&[])
     }
 
     pub fn entry(&self) -> gtk::Entry {

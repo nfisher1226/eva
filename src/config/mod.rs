@@ -1,6 +1,6 @@
 #![warn(clippy::all, clippy::pedantic)]
 use {
-    rgba_simple::{Primary, PrimaryColor, RGBA},
+    rgba_simple::{PrimaryColor, RGBA},
     serde::{Deserialize, Serialize},
     std::{
         fs, io,
@@ -93,7 +93,7 @@ impl Default for Colors {
                 blue: 203,
                 alpha: 255,
             },
-            hover: RGBA::primary(PrimaryColor::Red),
+            hover: PrimaryColor::Red.into(),
         }
     }
 }

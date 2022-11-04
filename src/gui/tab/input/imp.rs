@@ -30,8 +30,8 @@ impl ObjectSubclass for Input {
 }
 
 impl ObjectImpl for Input {
-    fn constructed(&self, obj: &Self::Type) {
-        self.parent_constructed(obj);
+    fn constructed(&self) {
+        self.parent_constructed();
     }
 }
 
