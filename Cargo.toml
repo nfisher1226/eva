@@ -31,6 +31,10 @@ features = ["std", "serde"]
 version = "0.5"
 package = "gtk4"
 
+[dependencies.adw]
+version = "0.2"
+package = "libadwaita"
+
 [dependencies.rgba_simple]
 version = "0.8"
 features = ["gdk", "serde"]

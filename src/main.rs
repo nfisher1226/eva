@@ -12,6 +12,9 @@ pub mod history;
 /// Handles loading keybindings
 pub mod keys;
 
+//pub mod tab;
+//pub mod window;
+
 lazy_static! {
     static ref CONFIG: Mutex<config::Config> =
         Mutex::new(config::Config::from_file().unwrap_or_default());

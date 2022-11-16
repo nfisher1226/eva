@@ -56,13 +56,10 @@ impl Default for Tab {
             .hexpand(true)
             .vexpand(true)
             .propagate_natural_width(true)
+            .hscrollbar_policy(gtk::PolicyType::Never)
             .css_classes(vec!["gemview".to_string()])
             .build();
         let viewer = GemView::new();
-        viewer.set_margin_start(25);
-        viewer.set_margin_end(25);
-        viewer.set_margin_top(25);
-        viewer.set_margin_bottom(25);
         viewer.set_css_classes(&["gemview"]);
         scroller.set_child(Some(&viewer));
         tab.append(&scroller);
