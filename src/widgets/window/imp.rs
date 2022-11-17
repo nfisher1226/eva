@@ -2,9 +2,11 @@ use adw::{
     gtk::{
         self,
         glib::{self, subclass::InitializingObject},
+        prelude::*,
         subclass::prelude::*,
         CompositeTemplate,
     },
+    prelude::*,
     subclass::prelude::*,
 };
 
