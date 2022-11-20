@@ -53,7 +53,7 @@
           </object>
         </child>
         <child>
-          <object class="GtkSearchEntry" id="addr_bar">
+          <object class="GtkEntry" id="addr_bar">
             <property name="placeholder_text">Search or enter an address</property>
             <property name="hexpand">1</property>
           </object>
@@ -78,6 +78,13 @@
         <property name="vexpand">True</property>
         <property name="propogate-natural-width">True</property>
         <property name="css-class">gemview</property>
+        <child>
+          <object class="GemView" id="viewer">
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <property name="propogate-natural-width">True</property>
+          </object>
+        </child>
       </object>
     </child>
   </template>

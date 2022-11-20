@@ -1,18 +1,35 @@
-use adw::{
-    gtk::{
-        self,
-        glib::{self, subclass::InitializingObject},
+use {
+    adw::{
+        gtk::{
+            self,
+            glib::{self, subclass::InitializingObject},
+            prelude::*,
+            subclass::prelude::*,
+            CompositeTemplate,
+        },
         prelude::*,
         subclass::prelude::*,
-        CompositeTemplate,
     },
-    prelude::*,
-    subclass::prelude::*,
+    gemview::GemView,
 };
 
 #[derive(CompositeTemplate, Default)]
 #[template(file = "tab.ui")]
 pub struct Tab {
+    #[template_child]
+    pub back_button: TemplateChild<gtk::Button>,
+    #[template_child]
+    pub forward_button: TemplateChild<gtk::Button>,
+    #[template_child]
+    pub reload_button: TemplateChild<gtk::Button>,
+    #[template_child]
+    pub addr_bar: TemplateChild<gtk::Entry>,
+    #[template_child]
+    pub bookmark_button: TemplateChild<gtk::Button>,
+    #[template_child]
+    pub scroller: TemplateChild<gtk::ScrolledWindow>,
+    #[template_child]
+    pub viewer: TemplateChild<GemView>,
 }
 
 #[glib::object_subclass]
