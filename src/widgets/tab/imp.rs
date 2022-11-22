@@ -1,14 +1,10 @@
 use {
-    adw::{
-        gtk::{
-            self,
-            glib::{self, subclass::InitializingObject},
-            prelude::*,
-            subclass::prelude::*,
-            CompositeTemplate,
-        },
+    adw::gtk::{
+        self,
+        glib::{self, subclass::InitializingObject},
         prelude::*,
         subclass::prelude::*,
+        CompositeTemplate,
     },
     gemview::GemView,
 };

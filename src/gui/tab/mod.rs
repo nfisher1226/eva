@@ -1,7 +1,7 @@
 pub mod controls;
 pub mod input;
 pub mod label;
-pub use {crate::BookmarkEditor, controls::Controls, input::Input, label::Label};
+pub use {crate::prelude::BookmarkEditor, controls::Controls, input::Input, label::Label};
 
 use {
     super::uri,

@@ -1,5 +1,5 @@
 use {
-    crate::{get_config_dir, BOOKMARKS, SEARCH},
+    crate::{prelude::get_config_dir, BOOKMARKS, SEARCH},
     serde::{Deserialize, Serialize},
     std::{collections::HashMap, fs, path::PathBuf},
 };

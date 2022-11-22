@@ -3,11 +3,7 @@ mod imp;
 use {
     crate::uri::uri,
     adw::{
-        gtk::{
-            gio,
-            glib::{self, Object},
-        },
-        prelude::*,
+        gtk::glib::{self, Object},
         subclass::prelude::*,
     },
 };

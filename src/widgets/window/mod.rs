@@ -1,7 +1,7 @@
 mod imp;
 
 use {
-    crate::Tab,
+    crate::prelude::{Application, Tab},
     adw::gtk::{
         gio,
         glib::{self, Object},
@@ -18,7 +18,7 @@ glib::wrapper! {
 }
 
 impl Window {
-    pub fn new(app: &crate::Application) -> Self {
+    pub fn new(app: &Application) -> Self {
         Object::new(&[("application", app)])
     }
 

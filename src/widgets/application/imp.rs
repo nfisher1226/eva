@@ -1,8 +1,5 @@
 use adw::{
-    gtk::{
-        glib::{self, subclass::InitializingObject},
-        subclass::prelude::*,
-    },
+    gtk::{glib, subclass::prelude::*},
     subclass::prelude::*,
 };
 

@@ -6,7 +6,6 @@ use adw::{
         subclass::prelude::*,
         CompositeTemplate,
     },
-    prelude::*,
     subclass::prelude::*,
 };
 
