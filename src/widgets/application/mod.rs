@@ -1,10 +1,8 @@
 mod imp;
 
-use adw::{
-    gtk::{
-        gio,
-        glib::{self, Object},
-    },
+use adw::gtk::{
+    gio,
+    glib::{self, Object},
 };
 
 glib::wrapper! {
@@ -18,5 +16,3 @@ impl Application {
         Object::new(&[])
     }
 }
-
-

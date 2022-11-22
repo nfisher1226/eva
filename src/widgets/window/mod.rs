@@ -1,7 +1,8 @@
 mod imp;
 
-use adw::{
-    gtk::{
+use {
+    crate::Tab,
+    adw::gtk::{
         gio,
         glib::{self, Object},
     },
@@ -20,5 +21,8 @@ impl Window {
     pub fn new(app: &crate::Application) -> Self {
         Object::new(&[("application", app)])
     }
-}
 
+    pub fn add_tab(&self, address: Option<&mut str>) {
+        let tab = Tab::new();
+    }
+}

@@ -7,8 +7,7 @@ use adw::{
 };
 
 #[derive(Default)]
-pub struct Application {
-}
+pub struct Application {}
 
 #[glib::object_subclass]
 impl ObjectSubclass for Application {
@@ -30,5 +29,3 @@ impl ObjectImpl for Application {
 impl AdwApplicationImpl for Application {}
 impl GtkApplicationImpl for Application {}
 impl ApplicationImpl for Application {}
-
-

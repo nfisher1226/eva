@@ -55,5 +55,3 @@ impl ObjectImpl for Tab {
 
 impl BoxImpl for Tab {}
 impl WidgetImpl for Tab {}
-
-

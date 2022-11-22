@@ -51,4 +51,3 @@ impl ApplicationWindowImpl for Window {}
 impl AdwWindowImpl for Window {}
 impl WindowImpl for Window {}
 impl WidgetImpl for Window {}
-

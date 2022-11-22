@@ -1,8 +1,7 @@
-pub mod bookmark_editor;
 pub mod controls;
 pub mod input;
 pub mod label;
-pub use {bookmark_editor::BookmarkEditor, controls::Controls, input::Input, label::Label};
+pub use {crate::BookmarkEditor, controls::Controls, input::Input, label::Label};
 
 use {
     super::uri,

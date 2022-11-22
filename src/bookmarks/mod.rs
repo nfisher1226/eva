@@ -1,6 +1,6 @@
 #![warn(clippy::all, clippy::pedantic)]
 use {
-    crate::gui::tab::BookmarkEditor,
+    crate::BookmarkEditor,
     serde::{Deserialize, Serialize},
     std::{collections::HashMap, error::Error, fmt::Write, path::PathBuf},
 };

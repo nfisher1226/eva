@@ -1,9 +1,14 @@
 mod imp;
 
-use adw::{
-    gtk::{
-        gio,
-        glib::{self, Object},
+use {
+    crate::uri::uri,
+    adw::{
+        gtk::{
+            gio,
+            glib::{self, Object},
+        },
+        prelude::*,
+        subclass::prelude::*,
     },
 };
 
@@ -17,6 +22,9 @@ impl Tab {
     pub fn new() -> Self {
         Object::new(&[])
     }
+
+    pub fn visit(&self, addr: &mut str) {
+        let addr = uri(addr);
+        self.imp().viewer.visit(&addr);
+    }
 }
-
-
