@@ -211,6 +211,7 @@ dependencies = [
  "libadwaita",
  "mime2ext",
  "mime_open",
+ "once_cell",
  "rgba_simple",
  "serde",
  "toml",
