@@ -42,6 +42,12 @@ impl ObjectSubclass for Window {
 impl ObjectImpl for Window {
     fn constructed(&self) {
         self.parent_constructed();
+        let instance = self.instance();
+        if let Some(app) = instance.application() {
+            if let Some(app) = app.downcast_ref::<crate::prelude::Application>() {
+                app.add_actions(&instance);
+            }
+        }
     }
 }
 

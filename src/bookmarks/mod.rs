@@ -193,7 +193,7 @@ impl Bookmarks {
     #[must_use]
     pub fn tag_to_gmi(&self, tag: &str) -> Option<String> {
         if let Some(keys) = self.tags.get(tag) {
-            let mut page = format!("# Bookmarks tagged {}\n\n", tag);
+            let mut page = format!("# Bookmarks tagged {tag}\n\n");
             for key in keys {
                 if let Some(bookmark) = self.all.get(key) {
                     let _ = write!(
@@ -253,11 +253,10 @@ impl Bookmarks {
         let datadir = get_data_dir();
         let bmfile = get_bookmarks_file();
         if !datadir.exists() {
-            let dd = match datadir.to_str() {
-                Some(d) => d,
-                None => return Err(String::from("Empty data directory path").into()),
+            let Some(d) = datadir.to_str() else {
+                return Err(String::from("Empty data directory path").into());
             };
-            std::fs::create_dir(&dd)?;
+            std::fs::create_dir(d)?;
         }
         let toml_string = toml::to_string(self)?;
         std::fs::write(bmfile, toml_string)?;

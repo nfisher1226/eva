@@ -1,13 +1,16 @@
 use {
     adw::gtk::{
         self,
-        glib::{self, clone, subclass::{InitializingObject, Signal}},
+        glib::{
+            self, clone,
+            subclass::{InitializingObject, Signal},
+        },
         prelude::*,
         subclass::prelude::*,
         CompositeTemplate,
     },
-    once_cell::sync::Lazy,
     gemview::GemView,
+    once_cell::sync::Lazy,
 };
 
 #[derive(CompositeTemplate, Default)]

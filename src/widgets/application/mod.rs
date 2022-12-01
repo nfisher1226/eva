@@ -1,3 +1,4 @@
+mod actions;
 mod imp;
 
 use adw::gtk::{
@@ -11,8 +12,18 @@ glib::wrapper! {
         @implements gio::ActionGroup, gio::ActionMap;
 }
 
+impl Default for Application {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Application {
     pub fn new() -> Self {
         Object::new(&[])
+    }
+
+    pub fn add_actions(&self, win: &crate::prelude::Window) {
+        actions::add(win, self);
     }
 }

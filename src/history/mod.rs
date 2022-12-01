@@ -55,11 +55,10 @@ impl History {
         let datadir = get_data_dir();
         let histfile = get_history_file();
         if !datadir.exists() {
-            let dd = match datadir.to_str() {
-                Some(d) => d,
-                None => return Err(String::from("Empty data directory path").into()),
+            let Some(dd) = datadir.to_str() else {
+                return Err(String::from("Empty data directory path").into());
             };
-            std::fs::create_dir(&dd)?;
+            std::fs::create_dir(dd)?;
         }
         let toml_string = toml::to_string(self)?;
         std::fs::write(histfile, toml_string)?;

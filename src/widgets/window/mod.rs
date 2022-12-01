@@ -45,6 +45,7 @@ impl Window {
     fn update_title(&self, page: adw::TabPage) {
         let tab: Tab = page.child().downcast().unwrap();
         let uri = tab.imp().viewer.uri();
+        tab.imp().addr_bar.set_text(&uri);
         if let Ok(url) = Url::parse(&uri) {
             let host = url.host_str().unwrap_or_else(|| {
                 if url.scheme() == "file" {

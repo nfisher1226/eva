@@ -230,7 +230,7 @@ impl Gui {
                             gtk::ResponseType::Accept => {
                                 if let Some(file) = dlg.file() {
                                     if let Some(path) = file.path() {
-                                        match fs::write(&path, &viewer.buffer_content()) {
+                                        match fs::write(&path, viewer.buffer_content()) {
                                             Ok(_) => gui.send_notification(&format!(
                                                 "File saved: {}",
                                                 path.display(),
@@ -262,7 +262,7 @@ impl Gui {
                         }
                     }
                     location.push(&*filename);
-                    match fs::write(&location, &viewer.buffer_content()) {
+                    match fs::write(&location, viewer.buffer_content()) {
                         Ok(_) => {
                             self.send_notification(&format!("File saved: {}", location.display()));
                         }
@@ -495,7 +495,7 @@ impl Gui {
                         gtk::ResponseType::Accept => {
                             if let Some(file) = dlg.file() {
                                 if let Some(path) = file.path() {
-                                    match fs::write(&path, &viewer.buffer_content()) {
+                                    match fs::write(&path, viewer.buffer_content()) {
                                         Ok(_) => gui.send_notification(&format!(
                                             "File saved: {}",
                                             path.display(),

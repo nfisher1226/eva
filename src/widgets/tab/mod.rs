@@ -15,6 +15,12 @@ glib::wrapper! {
         @implements gtk::Buildable;
 }
 
+impl Default for Tab {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Tab {
     pub fn new() -> Self {
         Object::new(&[])
@@ -25,7 +31,7 @@ impl Tab {
         self.imp().viewer.visit(&addr);
     }
 
-    pub fn set_nav_buttons_sensitive(&self, sensitive: bool) {
+    fn set_nav_buttons_sensitive(&self, sensitive: bool) {
         self.imp().reload_button.set_sensitive(sensitive);
         if sensitive {
             let back = self.imp().viewer.has_previous();

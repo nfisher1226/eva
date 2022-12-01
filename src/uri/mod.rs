@@ -85,7 +85,7 @@ pub fn uri(uri: &mut str) -> String {
     } else if let Some(url) = BOOKMARKS.lock().unwrap().url_from_name(uri) {
         url
     } else if let Ok(mut path) = std::env::current_dir() {
-        path = path.join(&PathBuf::from(&uri));
+        path = path.join(PathBuf::from(&uri));
         if path.exists() {
             format!("file://{}", path.to_string_lossy())
         } else if uri.contains(' ') || !uri.contains('.') {

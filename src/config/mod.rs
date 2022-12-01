@@ -23,7 +23,7 @@ pub fn get_config_dir() -> PathBuf {
     let progname = env!("CARGO_PKG_NAME");
     configdir.push(progname);
     if !configdir.exists() {
-        fs::create_dir(&configdir.to_str().unwrap()).unwrap_or_else(|e| eprintln!("{}", e));
+        fs::create_dir(configdir.to_str().unwrap()).unwrap_or_else(|e| eprintln!("{e}"));
     }
     configdir
 }
@@ -286,7 +286,7 @@ impl Config {
             match fs::read_to_string(config_file) {
                 Ok(c) => c,
                 Err(e) => {
-                    eprintln!("{}", e);
+                    eprintln!("{e}");
                     return None;
                 }
             }
@@ -296,7 +296,7 @@ impl Config {
         let config: Self = match toml::from_str(&config_file) {
             Ok(c) => c,
             Err(e) => {
-                eprintln!("{}", e);
+                eprintln!("{e}");
                 return None;
             }
         };
