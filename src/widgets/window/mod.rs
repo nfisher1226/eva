@@ -28,21 +28,39 @@ impl Window {
         Object::new(&[("application", app)])
     }
 
-    pub fn add_tab(&self, address: Option<&mut str>) {
+    pub fn open_tab(&self, address: Option<&mut str>) {
         let tab = Tab::new();
-        let page = self.imp().tabview.add_page(&tab, Some(&tab.imp().page));
+        let page = self.imp().tab_view.append(&tab);
+        tab.imp().connect_signals(&page);
         if let Some(addr) = address {
             tab.visit(addr);
         }
         tab.connect_page_loaded(clone!(@weak self as window, @weak page => move |_,_| {
-            window.update_title(page);
+            window.update_title(&page);
         }));
         tab.connect_page_load_failed(clone!(@weak self as window, @weak page => move |_,_| {
-            window.update_title(page);
+            window.update_title(&page);
         }));
     }
 
-    fn update_title(&self, page: adw::TabPage) {
+    pub fn current_tab(&self) -> Option<Tab> {
+        self.imp()
+            .tab_view
+            .selected_page()
+            .map(|x| x.child().downcast().ok())
+            .flatten()
+    }
+
+    pub fn close_current_page(&self) {
+        if let Some(page) = self.imp().tab_view.selected_page() {
+            self.imp().tab_view.close_page(&page);
+            if let Some(page) = self.imp().tab_view.selected_page() {
+                self.update_title(&page);
+            }
+        }
+    }
+
+    fn update_title(&self, page: &adw::TabPage) {
         let tab: Tab = page.child().downcast().unwrap();
         let uri = tab.imp().viewer.uri();
         tab.imp().addr_bar.set_text(&uri);

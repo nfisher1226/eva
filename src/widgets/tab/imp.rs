@@ -9,6 +9,7 @@ use {
         subclass::prelude::*,
         CompositeTemplate,
     },
+    crate::CONFIG,
     gemview::GemView,
     once_cell::sync::Lazy,
 };
@@ -16,8 +17,6 @@ use {
 #[derive(CompositeTemplate, Default)]
 #[template(file = "tab.ui")]
 pub struct Tab {
-    #[template_child]
-    pub page: TemplateChild<adw::TabPage>,
     #[template_child]
     pub back_button: TemplateChild<gtk::Button>,
     #[template_child]
@@ -27,7 +26,7 @@ pub struct Tab {
     #[template_child]
     pub addr_bar: TemplateChild<gtk::Entry>,
     #[template_child]
-    pub bookmark_button: TemplateChild<gtk::Button>,
+    pub bookmark_button: TemplateChild<gtk::MenuButton>,
     #[template_child]
     pub scroller: TemplateChild<gtk::ScrolledWindow>,
     #[template_child]
@@ -52,7 +51,7 @@ impl ObjectSubclass for Tab {
 impl ObjectImpl for Tab {
     fn constructed(&self) {
         self.parent_constructed();
-        self.connect_signals();
+        let config = CONFIG.lock().unwrap().clone();
     }
 
     fn signals() -> &'static [Signal] {
@@ -80,9 +79,8 @@ impl BoxImpl for Tab {}
 impl WidgetImpl for Tab {}
 
 impl Tab {
-    fn connect_signals(&self) {
+    pub fn connect_signals(&self, page: &adw::TabPage) {
         let viewer = self.viewer.get();
-        let page = self.page.get();
         let instance = self.instance();
         viewer.connect_page_load_started(clone!(@weak page, @weak instance => move |_,_| {
             page.set_loading(true);

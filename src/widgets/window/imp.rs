@@ -21,7 +21,7 @@ pub struct Window {
     #[template_child]
     pub overlay: TemplateChild<adw::ToastOverlay>,
     #[template_child]
-    pub tabview: TemplateChild<adw::TabView>,
+    pub tab_view: TemplateChild<adw::TabView>,
 }
 
 #[glib::object_subclass]

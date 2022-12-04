@@ -1,6 +1,10 @@
-use adw::{
-    gtk::{glib, subclass::prelude::*},
-    subclass::prelude::*,
+use {
+    adw::{
+        gtk::glib,
+        prelude::*,
+        subclass::prelude::*,
+    },
+    crate::prelude::Window,
 };
 
 #[derive(Default)]
@@ -23,6 +27,18 @@ impl ObjectImpl for Application {
     }
 }
 
+impl ApplicationImpl for Application {
+    fn activate(&self) {
+        let instance = self.instance();
+        if instance.windows().is_empty() {
+            let window = Window::new(&instance);
+            instance.add_actions(&window);
+            let mut addr = "gemini://gemini.circumlunar.space".to_string();
+            window.open_tab(Some(&mut addr));
+            window.present();
+        }
+    }
+}
+
 impl AdwApplicationImpl for Application {}
 impl GtkApplicationImpl for Application {}
-impl ApplicationImpl for Application {}

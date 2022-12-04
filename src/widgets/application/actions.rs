@@ -38,12 +38,12 @@ pub fn add(win: &Window, app: &Application) {
         match *name {
             "new_tab" => {
                 action.connect_activate(clone!(@strong win => move |_,_| {
-                    //win.add_tab(None);
+                    win.open_tab(None);
                 }));
             }
             "close_tab" => {
                 action.connect_activate(clone!(@weak win => move |_,_| {
-                    //win.close_current_tab();
+                    win.close_current_page();
                 }));
             }
             "next_tab" => {

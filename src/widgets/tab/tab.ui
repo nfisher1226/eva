@@ -77,13 +77,12 @@
       <object class="GtkScrolledWindow" id="scroller">
         <property name="hexpand">True</property>
         <property name="vexpand">True</property>
-        <property name="propogate-natural-width">True</property>
-        <property name="css-class">gemview</property>
+        <property name="propagate-natural-width">True</property>
+        <property name="css-classes">gemview</property>
         <child>
           <object class="GemView" id="viewer">
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
-            <property name="propogate-natural-width">True</property>
           </object>
         </child>
       </object>
