@@ -12,7 +12,7 @@ use {
         prelude::*,
         subclass::prelude::*,
     },
-    rgba_simple::{FromGdk, ToGdk, RGBA},
+    rgba_simple::RGBA,
 };
 
 glib::wrapper! {
@@ -31,7 +31,7 @@ impl Default for Prefs {
 impl Prefs {
     pub fn new() -> Self {
         let dlg: Self =
-            Object::new(&[("use-header-bar", &1)]).expect("Failed to create Preferences Dialog");
+            Object::new(&[("use-header-bar", &1.to_value())]);
         let dialog = dlg.clone();
         dlg.imp().download_scheme.connect_changed(move |_| {
             if let Some(scheme) = dialog.download_scheme() {
@@ -215,67 +215,67 @@ impl Prefs {
     }
 
     pub fn fg_color(&self) -> RGBA<u8> {
-        RGBA::from_gdk(self.imp().fg_color.rgba())
+        RGBA::from(self.imp().fg_color.rgba())
     }
 
     pub fn set_fg_color(&self, color: RGBA<u8>) {
-        self.imp().fg_color.set_rgba(&color.to_gdk());
+        self.imp().fg_color.set_rgba(&color.into());
     }
 
     pub fn bg_color(&self) -> RGBA<u8> {
-        RGBA::from_gdk(self.imp().bg_color.rgba())
+        RGBA::from(self.imp().bg_color.rgba())
     }
 
     pub fn set_bg_color(&self, color: RGBA<u8>) {
-        self.imp().bg_color.set_rgba(&color.to_gdk());
+        self.imp().bg_color.set_rgba(&color.into());
     }
 
     pub fn pre_fg_color(&self) -> RGBA<u8> {
-        RGBA::from_gdk(self.imp().pre_fg_color.rgba())
+        RGBA::from(self.imp().pre_fg_color.rgba())
     }
 
     pub fn set_pre_fg_color(&self, color: RGBA<u8>) {
-        self.imp().pre_fg_color.set_rgba(&color.to_gdk());
+        self.imp().pre_fg_color.set_rgba(&color.into());
     }
 
     pub fn pre_bg_color(&self) -> RGBA<u8> {
-        RGBA::from_gdk(self.imp().pre_bg_color.rgba())
+        RGBA::from(self.imp().pre_bg_color.rgba())
     }
 
     pub fn set_pre_bg_color(&self, color: RGBA<u8>) {
-        self.imp().pre_bg_color.set_rgba(&color.to_gdk());
+        self.imp().pre_bg_color.set_rgba(&color.into());
     }
 
     pub fn quote_fg_color(&self) -> RGBA<u8> {
-        RGBA::from_gdk(self.imp().quote_fg_color.rgba())
+        RGBA::from(self.imp().quote_fg_color.rgba())
     }
 
     pub fn set_quote_fg_color(&self, color: RGBA<u8>) {
-        self.imp().quote_fg_color.set_rgba(&color.to_gdk());
+        self.imp().quote_fg_color.set_rgba(&color.into());
     }
 
     pub fn quote_bg_color(&self) -> RGBA<u8> {
-        RGBA::from_gdk(self.imp().quote_bg_color.rgba())
+        RGBA::from(self.imp().quote_bg_color.rgba())
     }
 
     pub fn set_quote_bg_color(&self, color: RGBA<u8>) {
-        self.imp().quote_bg_color.set_rgba(&color.to_gdk());
+        self.imp().quote_bg_color.set_rgba(&color.into());
     }
 
     pub fn link_color(&self) -> RGBA<u8> {
-        RGBA::from_gdk(self.imp().link_color.rgba())
+        RGBA::from(self.imp().link_color.rgba())
     }
 
     pub fn set_link_color(&self, color: RGBA<u8>) {
-        self.imp().link_color.set_rgba(&color.to_gdk());
+        self.imp().link_color.set_rgba(&color.into());
     }
 
     pub fn hover_color(&self) -> RGBA<u8> {
-        RGBA::from_gdk(self.imp().hover_color.rgba())
+        RGBA::from(self.imp().hover_color.rgba())
     }
 
     pub fn set_hover_color(&self, color: RGBA<u8>) {
-        self.imp().hover_color.set_rgba(&color.to_gdk());
+        self.imp().hover_color.set_rgba(&color.into());
     }
 
     pub fn colors(&self) -> Colors {

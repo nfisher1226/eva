@@ -17,26 +17,26 @@ categories = ["gui"]
 gemview = { git = "https://codeberg.org/jeang3nie/gemview" }
 mime2ext = "0.1"
 mime_open = "0.2"
-lazy_static = "~1.4"
-fastrand = "~1.7"
-toml = "~0.5"
-url = "~2.2"
+lazy_static = "1.4"
+fastrand = "1.7"
+toml = "0.5"
+url = "2.2"
 urlencoding = "2.1"
 
 [dependencies.chrono]
-version = "~0.4"
+version = "0.4"
 features = ["std", "serde"]
 
 [dependencies.gtk]
-version = "~0.4"
+version = "0.5"
 package = "gtk4"
 
 [dependencies.rgba_simple]
-version = "0.6"
-features = ["gdk"]
+version = "0.8"
+features = ["gdk", "serde"]
 
 [dependencies.serde]
-version = "~1.0"
+version = "1.0"
 features = ["derive"]
 
 [profile.release]

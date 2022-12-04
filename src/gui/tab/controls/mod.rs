@@ -23,7 +23,7 @@ impl Default for Controls {
 
 impl Controls {
     pub fn new() -> Self {
-        Object::new(&[]).expect("Failed to create Controls")
+        Object::new(&[])
     }
 
     pub fn set_back_button_sensitive(&self, sensitive: bool) {

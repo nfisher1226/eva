@@ -26,7 +26,7 @@ impl Default for BookmarkEditor {
 
 impl BookmarkEditor {
     pub fn new() -> Self {
-        let editor: Self = Object::new(&[]).expect("Failed to create BookmarkEditor");
+        let editor: Self = Object::new(&[]);
         let ed = editor.clone();
         editor.imp().cancel.connect_clicked(move |_| ed.popdown());
         let ed = editor.clone();

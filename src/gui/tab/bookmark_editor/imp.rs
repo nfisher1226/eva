@@ -40,8 +40,8 @@ impl ObjectSubclass for BookmarkEditor {
 }
 
 impl ObjectImpl for BookmarkEditor {
-    fn constructed(&self, obj: &Self::Type) {
-        self.parent_constructed(obj);
+    fn constructed(&self) {
+        self.parent_constructed();
     }
 }
 
