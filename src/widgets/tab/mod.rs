@@ -1,7 +1,7 @@
 mod imp;
 
 use {
-    crate::uri::uri,
+    crate::{uri::uri, CONFIG},
     adw::{
         gtk::glib::{self, Object},
         prelude::*,
@@ -41,6 +41,18 @@ impl Tab {
         } else {
             self.imp().forward_button.set_sensitive(sensitive);
             self.imp().back_button.set_sensitive(sensitive);
+        }
+    }
+
+    pub fn set_fonts(&self) {
+        if let Ok(cfg) = CONFIG.try_lock() {
+            let fonts = cfg.fonts.clone();
+            self.imp().viewer.set_font_paragraph(fonts.pg.to_pango());
+            self.imp().viewer.set_font_quote(fonts.quote.to_pango());
+            self.imp().viewer.set_font_pre(fonts.pre.to_pango());
+            self.imp().viewer.set_font_h1(fonts.h1.to_pango());
+            self.imp().viewer.set_font_h2(fonts.h2.to_pango());
+            self.imp().viewer.set_font_h3(fonts.h3.to_pango());
         }
     }
 

@@ -1,4 +1,5 @@
 use {
+    crate::CONFIG,
     adw::gtk::{
         self,
         glib::{
@@ -9,7 +10,6 @@ use {
         subclass::prelude::*,
         CompositeTemplate,
     },
-    crate::CONFIG,
     gemview::GemView,
     once_cell::sync::Lazy,
 };
@@ -51,7 +51,7 @@ impl ObjectSubclass for Tab {
 impl ObjectImpl for Tab {
     fn constructed(&self) {
         self.parent_constructed();
-        let config = CONFIG.lock().unwrap().clone();
+        self.instance().set_fonts();
     }
 
     fn signals() -> &'static [Signal] {

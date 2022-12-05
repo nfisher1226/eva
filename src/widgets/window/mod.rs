@@ -1,17 +1,21 @@
-use url::Url;
-
 mod imp;
 
 use {
-    crate::prelude::{Application, Tab},
+    crate::{
+        prelude::{Application, Tab},
+        CONFIG,
+    },
     adw::{
         gtk::{
+            gdk::Display,
             gio,
             glib::{self, clone, Object},
+            CssProvider, StyleContext,
         },
         prelude::*,
         subclass::prelude::*,
     },
+    url::Url,
 };
 
 glib::wrapper! {
@@ -26,6 +30,32 @@ glib::wrapper! {
 impl Window {
     pub fn new(app: &Application) -> Self {
         Object::new(&[("application", app)])
+    }
+
+    fn set_css(&self) {
+        if let Ok(cfg) = CONFIG.try_lock() {
+            let colors = &cfg.colors;
+            let provider = CssProvider::new();
+            let context = self.style_context();
+            let css = include_str!("gemview.css")
+                .replace("NORMAL_FG_COLOR", &colors.fg.to_string())
+                .replace("NORMAL_BG_COLOR", &colors.bg.to_string())
+                .replace("QUOTE_FG_COLOR", &colors.quote_fg.to_string())
+                .replace("QUOTE_BG_COLOR", &colors.quote_bg.to_string())
+                .replace("PRE_FG_COLOR", &colors.pre_fg.to_string())
+                .replace("PRE_BG_COLOR", &colors.pre_bg.to_string())
+                .replace("LINK_COLOR", &colors.link.to_string())
+                .replace("HOVER_COLOR", &colors.hover.to_string())
+                .replace("DEFAULT_FG_COLOR", &context.color().to_string())
+                .replace("ReducedRGBA", "rgba")
+                .replace("RGBA", "rgba");
+            provider.load_from_data(css.as_bytes());
+            StyleContext::add_provider_for_display(
+                &Display::default().expect("Cannot connect to display"),
+                &provider,
+                gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
+            );
+        }
     }
 
     pub fn open_tab(&self, address: Option<&mut str>) {

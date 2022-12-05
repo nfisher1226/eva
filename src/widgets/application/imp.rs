@@ -1,10 +1,6 @@
 use {
-    adw::{
-        gtk::glib,
-        prelude::*,
-        subclass::prelude::*,
-    },
     crate::prelude::Window,
+    adw::{gtk::glib, prelude::*, subclass::prelude::*},
 };
 
 #[derive(Default)]

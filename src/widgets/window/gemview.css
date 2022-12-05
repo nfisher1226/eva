@@ -1,0 +1,64 @@
+textview.gemview {
+  color: NORMAL_FG_COLOR;
+}
+
+scrolledwindow.gemview {
+  background-color: NORMAL_BG_COLOR;
+}
+
+textview.gemview text {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+textview.gemview box.blockquote {
+  border-radius: 8px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: QUOTE_FG_COLOR;
+  box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.6);
+}
+
+textview.gemview .blockquote {
+  color: QUOTE_FG_COLOR;
+  background-color: QUOTE_BG_COLOR;
+  padding: 8px;
+}
+
+textview.gemview box.preformatted {
+  border-radius: 8px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: PRE_FG_COLOR;
+  box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.6);
+}
+
+textview.gemview .preformatted {
+  color: PRE_FG_COLOR;
+  background-color: PRE_BG_COLOR;
+  padding: 8px;
+}
+
+textview.gemview .image {
+  box-shadow: 2px 2px 4px 2px rgba(0, 0, 0, 0.6);
+  margin: 20px;
+}
+
+textview.gemview link {
+  color: LINK_COLOR;
+}
+
+textview.gemview :hover {
+  color: HOVER_COLOR;
+}
+
+textview.gemview popover :hover {
+  color: DEFAULT_FG_COLOR;
+}
+
+textview.gemview box.blockquote :hover {
+  color: QUOTE_FG_COLOR;
+}
+
+textview.gemview box.preformatted :hover {
+  color: PRE_FG_COLOR;
+}

@@ -13,7 +13,7 @@ use adw::{
 #[template(file = "window.ui")]
 pub struct Window {
     #[template_child]
-    pub header_bar: TemplateChild<adw::HeaderBar>,
+    pub header_bar: TemplateChild<gtk::Box>,
     #[template_child]
     pub tab_bar: TemplateChild<adw::TabBar>,
     #[template_child]
@@ -48,6 +48,7 @@ impl ObjectImpl for Window {
                 app.add_actions(&instance);
             }
         }
+        instance.set_css();
     }
 }
 
