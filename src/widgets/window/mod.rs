@@ -37,7 +37,7 @@ impl Window {
             let colors = &cfg.colors;
             let provider = CssProvider::new();
             let context = self.style_context();
-            let css = include_str!("gemview.css")
+            let css = include_str!("style.css")
                 .replace("NORMAL_FG_COLOR", &colors.fg.to_string())
                 .replace("NORMAL_BG_COLOR", &colors.bg.to_string())
                 .replace("QUOTE_FG_COLOR", &colors.quote_fg.to_string())

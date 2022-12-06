@@ -4,6 +4,11 @@
   <menu id="actionMenu">
     <section>
       <item>
+        <attribute name="custom">theme</attribute>
+      </item>
+    </section>
+    <section>
+      <item>
         <attribute name="label">New Tab</attribute>
         <attribute name="action">win.new_tab</attribute>
       </item>
@@ -106,7 +111,7 @@
                   </object>
                 </child>
                 <child>
-                  <object id="menuButton" class="GtkMenuButton">
+                  <object id="menu_button" class="GtkMenuButton">
                     <property name="tooltip-text">Open application menu</property>
                     <property name="menu-model">actionMenu</property>
                     <child>

@@ -1,12 +1,14 @@
-use adw::{
-    gtk::{
-        self,
-        glib::{self, subclass::InitializingObject},
+use {
+    crate::prelude::ThemeSwitcher,
+    adw::{
+        gtk::{
+            self,
+            glib::{self, subclass::InitializingObject},
+            CompositeTemplate,
+        },
         prelude::*,
         subclass::prelude::*,
-        CompositeTemplate,
     },
-    subclass::prelude::*,
 };
 
 #[derive(CompositeTemplate, Default)]
@@ -18,6 +20,8 @@ pub struct Window {
     pub tab_bar: TemplateChild<adw::TabBar>,
     #[template_child]
     pub new_tab: TemplateChild<gtk::Button>,
+    #[template_child]
+    pub menu_button: TemplateChild<gtk::MenuButton>,
     #[template_child]
     pub overlay: TemplateChild<adw::ToastOverlay>,
     #[template_child]
@@ -47,6 +51,15 @@ impl ObjectImpl for Window {
             if let Some(app) = app.downcast_ref::<crate::prelude::Application>() {
                 app.add_actions(&instance);
             }
+        }
+        if let Some(pop) = self
+            .menu_button
+            .popover()
+            .map(|x| x.downcast::<gtk::PopoverMenu>().ok())
+            .flatten()
+        {
+            let switcher = ThemeSwitcher::new();
+            pop.add_child(&switcher, "theme");
         }
         instance.set_css();
     }

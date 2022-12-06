@@ -1,25 +1,45 @@
 use {
     crate::prelude::Window,
-    adw::{gtk::glib, prelude::*, subclass::prelude::*},
+    adw::{
+        gtk::{
+            gio::{PropertyAction, Settings, SettingsBindFlags},
+            glib,
+        },
+        prelude::*,
+        subclass::prelude::*,
+    },
 };
 
-#[derive(Default)]
-pub struct Application {}
+pub struct Application {
+    pub settings: Settings,
+}
+
+impl Default for Application {
+    fn default() -> Self {
+        Self {
+            settings: Settings::new("org.codeberg.jeang3nie.eva"),
+        }
+    }
+}
 
 #[glib::object_subclass]
 impl ObjectSubclass for Application {
     const NAME: &'static str = "Application";
     type Type = super::Application;
     type ParentType = adw::Application;
-
-    //fn class_init(klass: &mut Self::Class) {}
-
-    //fn instance_init(obj: &InitializingObject<Self>) {}
 }
 
 impl ObjectImpl for Application {
     fn constructed(&self) {
         self.parent_constructed();
+        let instance = self.instance();
+        let set_property_action =
+            PropertyAction::new("set-theme", &instance.style_manager(), "color-scheme");
+        instance.add_action(&set_property_action);
+        self.settings
+            .bind("theme", &instance.style_manager(), "color-scheme")
+            .flags(SettingsBindFlags::DEFAULT)
+            .build();
     }
 }
 
