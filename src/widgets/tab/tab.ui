@@ -84,6 +84,7 @@
             <property name="hexpand">True</property>
             <property name="vexpand">True</property>
             <property name="css-classes">gemview</property>
+            <property name="wrap-mode">word</property>
             <property name="margin-start">45</property>
             <property name="margin-end">45</property>
             <property name="margin-top">25</property>

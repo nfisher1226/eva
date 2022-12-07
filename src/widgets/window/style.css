@@ -100,8 +100,13 @@ window.eva-window .themeswitcher checkbutton.theme-button radio {
   padding: 2px;
 }
 
-window.gfret-window .themeswitcher checkbutton.theme-button radio:checked {
+window.eva-window .themeswitcher checkbutton.theme-button radio:checked {
   -gtk-icon-source: -gtk-icontheme("object-select-symbolic");
   background-color: @theme_selected_bg_color;
   color: @theme_selected_fg_color;
+}
+
+window.eva-window .eva-headerbar {
+  border: none;
+  background-color: @headerbar_bg_color;
 }

@@ -5,6 +5,7 @@ use {
         gio::SimpleAction,
         glib::{self, clone},
         prelude::*,
+        subclass::prelude::*,
     },
 };
 
@@ -37,8 +38,14 @@ pub fn add(win: &Window, app: &Application) {
         win.add_action(&action);
         match *name {
             "new_tab" => {
-                action.connect_activate(clone!(@strong win => move |_,_| {
-                    win.open_tab(None);
+                action.connect_activate(clone!(@strong win, @weak app => move |_,_| {
+                    match app.imp().settings.string("new-page").as_str() {
+                        "home" => {
+                            let mut page = app.imp().settings.string("homepage").to_string();
+                            win.open_tab(Some(&mut page));
+                        },
+                        _ => win.open_tab(None),
+                    };
                 }));
             }
             "close_tab" => {
@@ -58,9 +65,7 @@ pub fn add(win: &Window, app: &Application) {
             }
             "reload" => {
                 action.connect_activate(clone!(@weak win => move |_,_| {
-                    //if let Err(e) = gui.reload_current_tab() {
-                    //    eprintln!("{}", e);
-                    //}
+                    win.on_reload();
                 }));
             }
             "go_home" => {
@@ -72,16 +77,12 @@ pub fn add(win: &Window, app: &Application) {
             }
             "go_previous" => {
                 action.connect_activate(clone!(@weak win => move |_,_| {
-                    //if let Err(e) = gui.go_previous() {
-                    //    eprintln!("{}", e);
-                    //}
+                    win.on_go_previous();
                 }));
             }
             "go_next" => {
                 action.connect_activate(clone!(@weak win => move |_,_| {
-                    //if let Err(e) = gui.go_next() {
-                    //    eprintln!("{}", e);
-                    //}
+                    win.on_go_next();
                 }));
             }
             "new_window" => {

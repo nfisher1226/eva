@@ -73,6 +73,9 @@
             <property name="centering-policy">strict</property>
             <property name="hexpand">True</property>
             <property name="halign">fill</property>
+            <style>
+              <class name="eva-headerbar"/>
+            </style>
             <property name="title-widget">
               <object class="GtkBox" id="header_bar">
                 <property name="orientation">horizontal</property>
@@ -103,6 +106,9 @@
                     <property name="margin-start">35</property>
                     <property name="tooltip-text">New tab</property>
                     <property name="action-name">win.new_tab</property>
+                    <style>
+                      <class name="flat"/>
+                    </style>
                     <child>
                       <object class="GtkImage">
                         <property name="icon-name">tab-new-symbolic</property>
@@ -114,6 +120,9 @@
                   <object id="menu_button" class="GtkMenuButton">
                     <property name="tooltip-text">Open application menu</property>
                     <property name="menu-model">actionMenu</property>
+                    <style>
+                      <class name="flat"/>
+                    </style>
                     <child>
                       <object class="GtkImage">
                         <property name="icon-name">open-menu-symbolic</property>

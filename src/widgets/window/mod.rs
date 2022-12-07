@@ -111,4 +111,25 @@ impl Window {
             page.set_title(host);
         }
     }
+
+    pub fn on_reload(&self) {
+        if let Some(tab) = self.current_tab() {
+            tab.reload();
+        }
+    }
+
+    pub fn on_go_previous(&self) {
+        if let Some(tab) = self.current_tab() {
+            tab.go_previous();
+        }
+    }
+
+    pub fn on_go_next(&self) {
+        if let Some(tab) = self.current_tab() {
+            tab.go_next();
+        }
+    }
+
+    pub fn on_go_home(&self) {
+    }
 }

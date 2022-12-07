@@ -10,5 +10,61 @@
       <default>'default'</default>
       <summary>The application theme to use</summary>
     </key>
+    <key name="homepage" type="s">
+      <default>'gemini://gemini.circumlunar.space'</default>
+    </key>
+    <key name="new-page" type="s">
+      <choices>
+        <choice value='home'/>
+        <choice value='blank'/>
+      </choices>
+      <default>'home'</default>
+    </key>
+    <key name="download-scheme" type="s">
+      <choices>
+        <choice value='ask'/>
+        <choice value='auto'/>
+      </choices>
+      <default>'ask'</default>
+    </key>
+    <key name="paragraph-font" type="s">
+      <default>'Sans Regular 12'</default>
+    </key>
+    <key name="h1-font" type="s">
+      <default>'Sans Bold 18'</default>
+    </key>
+    <key name="h2-font" type="s">
+      <default>'Sans Bold 16'</default>
+    </key>
+    <key name="h3-font" type="s">
+      <default>'Sans Bold 14'</default>
+    </key>
+    <key name="preformatted-font" type="s">
+      <default>'Monospace 12'</default>
+    </key>
+    <key name="fg-color" type="s">
+      <default>'rgba(153,193,241,255)'</default>
+    </key>
+    <key name="bg-color" type="s">
+      <default>'rgba(36,31,49,255)'</default>
+    </key>
+    <key name="pre-fg-color" type="s">
+      <default>'rgba(98,160,234,255)'</default>
+    </key>
+    <key name="pre-bg-color" type="s">
+      <default>'rgba(5,34,79,255)'</default>
+    </key>
+    <key name="quote-fg-color" type="s">
+      <default>'rgba(87,227,137,255)'</default>
+    </key>
+    <key name="quote-bg-color" type="s">
+      <default>'rgba(22,110,0,255)'</default>
+    </key>
+    <key name="link-color" type="s">
+      <default>'rgba(192,97,203,255)'</default>
+    </key>
+    <key name="hover-color" type="s">
+      <default>'rgba(255,0,0,255)'</default>
+    </key>
   </schema>
 </schemalist>

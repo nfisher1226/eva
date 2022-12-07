@@ -31,19 +31,6 @@ impl Tab {
         self.imp().viewer.visit(&addr);
     }
 
-    fn set_nav_buttons_sensitive(&self, sensitive: bool) {
-        self.imp().reload_button.set_sensitive(sensitive);
-        if sensitive {
-            let back = self.imp().viewer.has_previous();
-            self.imp().back_button.set_sensitive(back);
-            let next = self.imp().viewer.has_next();
-            self.imp().back_button.set_sensitive(next);
-        } else {
-            self.imp().forward_button.set_sensitive(sensitive);
-            self.imp().back_button.set_sensitive(sensitive);
-        }
-    }
-
     pub fn set_fonts(&self) {
         if let Ok(cfg) = CONFIG.try_lock() {
             let fonts = cfg.fonts.clone();
@@ -53,6 +40,22 @@ impl Tab {
             self.imp().viewer.set_font_h1(fonts.h1.to_pango());
             self.imp().viewer.set_font_h2(fonts.h2.to_pango());
             self.imp().viewer.set_font_h3(fonts.h3.to_pango());
+        }
+    }
+
+    pub fn reload(&self) {
+        self.imp().viewer.reload();
+    }
+
+    pub fn go_next(&self) {
+        if self.imp().viewer.has_next() {
+            self.imp().viewer.go_next();
+        }
+    }
+
+    pub fn go_previous(&self) {
+        if self.imp().viewer.has_previous() {
+            self.imp().viewer.go_previous();
         }
     }
 
