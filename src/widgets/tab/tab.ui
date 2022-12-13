@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <object class="AdwTabPage" id="page"/>
+  <object class="BookmarkEditor" id="bookmark_editor"/>
   <template class="Tab" parent="GtkBox">
     <property name="orientation">vertical</property>
     <child>
@@ -69,6 +70,7 @@
           <object class="GtkMenuButton" id="bookmark_button">
             <property name="icon-name">bookmark-new-symbolic</property>
             <property name="tooltip-text">Bookmark current page</property>
+            <property name="popover">bookmark_editor</property>
           </object>
         </child>
       </object>

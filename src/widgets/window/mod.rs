@@ -130,6 +130,5 @@ impl Window {
         }
     }
 
-    pub fn on_go_home(&self) {
-    }
+    pub fn on_go_home(&self) {}
 }

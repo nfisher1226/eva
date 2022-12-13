@@ -3,7 +3,7 @@ use {
     adw::{
         gtk::{
             self,
-            glib::{self, subclass::InitializingObject},
+            glib::{self, clone, subclass::InitializingObject},
             CompositeTemplate,
         },
         prelude::*,
@@ -62,6 +62,20 @@ impl ObjectImpl for Window {
             pop.add_child(&switcher, "theme");
         }
         instance.set_css();
+        self.connect_signals();
+    }
+}
+
+impl Window {
+    fn connect_signals(&self) {
+        let win = self.instance();
+        self.tab_view
+            .get()
+            .connect_n_pages_notify(clone!(@weak win => move |view| {
+                if view.n_pages() == 0 {
+                    win.close();
+                }
+            }));
     }
 }
 

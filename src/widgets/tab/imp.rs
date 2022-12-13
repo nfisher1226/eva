@@ -1,4 +1,5 @@
 use {
+    crate::prelude::BookmarkEditor,
     adw::gtk::{
         self,
         glib::{
@@ -26,6 +27,8 @@ pub struct Tab {
     pub addr_bar: TemplateChild<gtk::Entry>,
     #[template_child]
     pub bookmark_button: TemplateChild<gtk::MenuButton>,
+    #[template_child]
+    pub bookmark_editor: TemplateChild<BookmarkEditor>,
     #[template_child]
     pub scroller: TemplateChild<gtk::ScrolledWindow>,
     #[template_child]
@@ -82,36 +85,63 @@ impl Tab {
         let viewer = self.viewer.get();
         let instance = self.instance();
         viewer.connect_page_load_started(clone!(@weak page, @weak self as s => move |_,_| {
-            page.set_loading(true);
-            page.set_title("[loading]");
-            s.set_nav_buttons_sensitive(false);
+            s.on_page_load_started(&page);
         }));
         viewer.connect_page_load_redirect(clone!(@weak page => move |_,_| {
-            page.set_loading(true);
-            page.set_title("[redirect]");
+            Self::on_page_redirect(&page);
         }));
-        viewer.connect_page_loaded(clone!(@weak instance, @weak page, @weak self as s => move |_,addr| {
-            page.set_loading(false);
-            instance.emit_by_name::<()>("page-loaded", &[&addr]);
-            s.set_nav_buttons_sensitive(true);
-        }));
-        viewer.connect_page_load_failed(clone!(@weak instance, @weak page, @weak self as s => move |_,addr| {
-            page.set_loading(false);
-            instance.emit_by_name::<()>("page-load-failed", &[&addr]);
-            s.set_nav_buttons_sensitive(true);
-        }));
+        viewer.connect_page_loaded(
+            clone!(@weak instance, @weak page, @weak self as s => move |_,addr| {
+                s.on_page_loaded(&page, &addr);
+            }),
+        );
+        viewer.connect_page_load_failed(
+            clone!(@weak instance, @weak page, @weak self as s => move |_,addr| {
+                s.on_page_load_failed(&page, &addr);
+            }),
+        );
         viewer.connect_request_new_tab(clone!(@weak instance => move |_,addr| {
             instance.emit_by_name::<()>("request-new-tab", &[&addr]);
         }));
         viewer.connect_request_new_window(clone!(@weak instance => move |_,addr| {
             instance.emit_by_name::<()>("request-new-tab", &[&addr]);
         }));
-        let addr_bar = self.addr_bar.get();
-        addr_bar.connect_activate(clone!(@weak viewer => move |bar| {
-            let mut uri = String::from(bar.text());
-            uri = crate::uri::uri(&mut uri);
-            viewer.visit(&uri);
-        }));
+        self.addr_bar
+            .get()
+            .connect_activate(clone!(@weak self as s => move |_| {
+                s.on_addr_bar_activate();
+            }));
+    }
+
+    fn on_page_load_started(&self, page: &adw::TabPage) {
+        page.set_loading(true);
+        page.set_title("[loading]");
+        self.set_nav_buttons_sensitive(false);
+    }
+
+    fn on_page_redirect(page: &adw::TabPage) {
+        page.set_loading(true);
+        page.set_title("[redirect]");
+    }
+
+    fn on_page_loaded(&self, page: &adw::TabPage, addr: &str) {
+        page.set_loading(false);
+        self.instance().emit_by_name::<()>("page-loaded", &[&addr]);
+        self.set_nav_buttons_sensitive(true);
+        self.update_bookmark_editor();
+    }
+
+    fn on_page_load_failed(&self, page: &adw::TabPage, addr: &str) {
+        page.set_loading(false);
+        self.instance()
+            .emit_by_name::<()>("page-load-failed", &[&addr]);
+        self.set_nav_buttons_sensitive(true);
+    }
+
+    fn on_addr_bar_activate(&self) {
+        let mut uri = String::from(self.addr_bar.get().text());
+        uri = crate::uri::uri(&mut uri);
+        self.viewer.get().visit(&uri);
     }
 
     fn set_nav_buttons_sensitive(&self, sensitive: bool) {
@@ -125,6 +155,22 @@ impl Tab {
         } else {
             forward_button.set_sensitive(false);
             back_button.set_sensitive(false);
+        }
+    }
+
+    pub fn update_bookmark_editor(&self) {
+        if self
+            .bookmark_editor
+            .get()
+            .update(self.viewer.uri().as_str())
+        {
+            self.bookmark_button
+                .get()
+                .set_icon_name("user-bookmarks-symbolic");
+        } else {
+            self.bookmark_button
+                .get()
+                .set_icon_name("bookmark-new-symbolic");
         }
     }
 }
