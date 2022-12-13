@@ -1,8 +1,11 @@
-use gtk::{
-    glib::{self, subclass::InitializingObject},
-    prelude::*,
-    subclass::prelude::*,
-    CompositeTemplate,
+use {
+    crate::{bookmarks::Bookmark, BOOKMARKS},
+    adw::gtk::{
+        glib::{self, clone, subclass::InitializingObject},
+        prelude::*,
+        subclass::prelude::*,
+        CompositeTemplate,
+    },
 };
 
 #[derive(CompositeTemplate, Default)]
@@ -42,6 +45,23 @@ impl ObjectSubclass for BookmarkEditor {
 impl ObjectImpl for BookmarkEditor {
     fn constructed(&self) {
         self.parent_constructed();
+        self.cancel
+            .get()
+            .connect_clicked(clone!(@weak self as s => move |_| {
+                s.instance().popdown();
+            }));
+        self.accept
+            .get()
+            .connect_clicked(clone!(@weak self as s => move |_| {
+                let bm = Bookmark::from(&s.instance().clone());
+                if let Ok(mut bmarks) = BOOKMARKS.try_lock() {
+                    bmarks.update(&bm);
+                    if let Err(e) = bmarks.save() {
+                        eprintln!("Error: {e}");
+                    }
+                    s.instance().popdown();
+                }
+            }));
     }
 }
 
