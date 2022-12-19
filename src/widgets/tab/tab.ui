@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <object class="AdwTabPage" id="page"/>
-  <object class="BookmarkEditor" id="bookmark_editor"/>
   <template class="Tab" parent="GtkBox">
     <property name="orientation">vertical</property>
     <child>
@@ -58,6 +57,25 @@
           <object class="GtkEntry" id="addr_bar">
             <property name="placeholder_text">Search or enter an address</property>
             <property name="hexpand">1</property>
+            <property name="secondary-icon-name">edit-clear-symbolic</property>
+            <property name="secondary-icon-activatable">True</property>
+            <property name="completion">
+              <object class="GtkEntryCompletion" id="addr_completion">
+                <property name="inline-completion">True</property>
+                <property name="inline-selection">True</property>
+                <property name="popup-completion">True</property>
+                <property name="popup-single-match">False</property>
+                <property name="text-column">0</property>
+                <property name="minimum-key-length">1</property>
+                <property name="model">
+                  <object class="GtkListStore" id="addr_completion_model">
+                    <columns>
+                      <column type="gchararray"/>
+                    </columns>
+                  </object>
+                </property>
+              </object>
+            </property>
           </object>
         </child>
         <child>
@@ -70,7 +88,9 @@
           <object class="GtkMenuButton" id="bookmark_button">
             <property name="icon-name">bookmark-new-symbolic</property>
             <property name="tooltip-text">Bookmark current page</property>
-            <property name="popover">bookmark_editor</property>
+            <property name="popover">
+              <object class="BookmarkEditor" id="bookmark_editor"/>
+            </property>
           </object>
         </child>
       </object>

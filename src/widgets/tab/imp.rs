@@ -1,5 +1,5 @@
 use {
-    crate::prelude::BookmarkEditor,
+    crate::{prelude::BookmarkEditor, BOOKMARKS},
     adw::gtk::{
         self,
         glib::{
@@ -12,6 +12,7 @@ use {
     },
     gemview::GemView,
     once_cell::sync::Lazy,
+    std::borrow::Borrow,
 };
 
 #[derive(CompositeTemplate, Default)]
@@ -25,6 +26,10 @@ pub struct Tab {
     pub reload_button: TemplateChild<gtk::Button>,
     #[template_child]
     pub addr_bar: TemplateChild<gtk::Entry>,
+    #[template_child]
+    addr_completion: TemplateChild<gtk::EntryCompletion>,
+    #[template_child]
+    addr_completion_model: TemplateChild<gtk::ListStore>,
     #[template_child]
     pub bookmark_button: TemplateChild<gtk::MenuButton>,
     #[template_child]
@@ -54,6 +59,7 @@ impl ObjectImpl for Tab {
     fn constructed(&self) {
         self.parent_constructed();
         self.instance().set_fonts();
+        self.init_completion();
     }
 
     fn signals() -> &'static [Signal] {
@@ -111,6 +117,19 @@ impl Tab {
             .connect_activate(clone!(@weak self as s => move |_| {
                 s.on_addr_bar_activate();
             }));
+        self.addr_bar
+            .get()
+            .connect_icon_press(clone!(@weak self as s => move |_,position| {
+                s.on_entry_icon_activated(position);
+            }));
+    }
+
+    fn on_entry_icon_activated(&self, position: gtk::EntryIconPosition) {
+        if position == gtk::EntryIconPosition::Secondary {
+            let entry = self.addr_bar.get();
+            entry.buffer().delete_text(0, None);
+            entry.grab_focus();
+        }
     }
 
     fn on_page_load_started(&self, page: &adw::TabPage) {
@@ -171,6 +190,20 @@ impl Tab {
             self.bookmark_button
                 .get()
                 .set_icon_name("bookmark-new-symbolic");
+        }
+    }
+
+    fn init_completion(&self) {
+        if let Ok(bmarks) = BOOKMARKS.try_lock() {
+            let bmarks = bmarks.borrow().clone();
+            for bm in bmarks.all.values() {
+                let mut iter = self.addr_completion_model.append();
+                self.addr_completion_model
+                    .set(&iter, &[(0, &bm.name().to_value())]);
+                iter = self.addr_completion_model.append();
+                self.addr_completion_model
+                    .set(&iter, &[(0, &bm.url().to_value())]);
+            }
         }
     }
 }
