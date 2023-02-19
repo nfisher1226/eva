@@ -23,11 +23,11 @@ impl Default for Application {
 
 impl Application {
     pub fn new() -> Self {
-        Object::new(&[
-            ("application-id", &Some("org.codeberg.jeang3nie.eva")),
-            ("flags", &ApplicationFlags::HANDLES_OPEN),
-            ("register-session", &true.to_value()),
-        ])
+        Object::builder()
+            .property("application-id", &Some("org.codeberg.jeang3nie.eva"))
+            .property("flags", &ApplicationFlags::HANDLES_OPEN)
+            .property("register-session", &true.to_value())
+            .build()
     }
 
     pub fn add_actions(&self, win: &crate::prelude::Window) {

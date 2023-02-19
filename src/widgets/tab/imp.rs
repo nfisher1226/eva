@@ -58,7 +58,7 @@ impl ObjectSubclass for Tab {
 impl ObjectImpl for Tab {
     fn constructed(&self) {
         self.parent_constructed();
-        self.instance().set_fonts();
+        self.obj().set_fonts();
         self.init_completion();
     }
 
@@ -89,7 +89,7 @@ impl WidgetImpl for Tab {}
 impl Tab {
     pub fn connect_signals(&self, page: &adw::TabPage) {
         let viewer = self.viewer.get();
-        let instance = self.instance();
+        let instance = self.obj();
         viewer.connect_page_load_started(clone!(@weak page, @weak self as s => move |_,_| {
             s.on_page_load_started(&page);
         }));
@@ -124,14 +124,6 @@ impl Tab {
             }));
     }
 
-    fn on_entry_icon_activated(&self, position: gtk::EntryIconPosition) {
-        if position == gtk::EntryIconPosition::Secondary {
-            let entry = self.addr_bar.get();
-            entry.buffer().delete_text(0, None);
-            entry.grab_focus();
-        }
-    }
-
     fn on_page_load_started(&self, page: &adw::TabPage) {
         page.set_loading(true);
         page.set_title("[loading]");
@@ -145,14 +137,14 @@ impl Tab {
 
     fn on_page_loaded(&self, page: &adw::TabPage, addr: &str) {
         page.set_loading(false);
-        self.instance().emit_by_name::<()>("page-loaded", &[&addr]);
+        self.obj().emit_by_name::<()>("page-loaded", &[&addr]);
         self.set_nav_buttons_sensitive(true);
         self.update_bookmark_editor();
     }
 
     fn on_page_load_failed(&self, page: &adw::TabPage, addr: &str) {
         page.set_loading(false);
-        self.instance()
+        self.obj()
             .emit_by_name::<()>("page-load-failed", &[&addr]);
         self.set_nav_buttons_sensitive(true);
     }
@@ -161,6 +153,14 @@ impl Tab {
         let mut uri = String::from(self.addr_bar.get().text());
         uri = crate::uri::uri(&mut uri);
         self.viewer.get().visit(&uri);
+    }
+
+    fn on_entry_icon_activated(&self, position: gtk::EntryIconPosition) {
+        if position == gtk::EntryIconPosition::Secondary {
+            let entry = self.addr_bar.get();
+            entry.buffer().delete_text(0, None);
+            entry.grab_focus();
+        }
     }
 
     fn set_nav_buttons_sensitive(&self, sensitive: bool) {

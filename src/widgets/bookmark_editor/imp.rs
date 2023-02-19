@@ -48,18 +48,18 @@ impl ObjectImpl for BookmarkEditor {
         self.cancel
             .get()
             .connect_clicked(clone!(@weak self as s => move |_| {
-                s.instance().popdown();
+                s.obj().popdown();
             }));
         self.accept
             .get()
             .connect_clicked(clone!(@weak self as s => move |_| {
-                let bm = Bookmark::from(&s.instance().clone());
+                let bm = Bookmark::from(&s.obj().clone());
                 if let Ok(mut bmarks) = BOOKMARKS.try_lock() {
                     bmarks.update(&bm);
                     if let Err(e) = bmarks.save() {
                         eprintln!("Error: {e}");
                     }
-                    s.instance().popdown();
+                    s.obj().popdown();
                 }
             }));
     }

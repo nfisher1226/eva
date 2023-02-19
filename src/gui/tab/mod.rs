@@ -31,7 +31,7 @@ impl Default for Tab {
         let name: String = std::iter::repeat_with(fastrand::alphanumeric)
             .take(10)
             .collect();
-        let tab = gtk::builders::BoxBuilder::new()
+        let tab = gtk::Box::builder()
             .orientation(gtk::Orientation::Vertical)
             .name(&name)
             .build();
@@ -51,7 +51,7 @@ impl Default for Tab {
             .build();
         upload.add_button("Accept", gtk::ResponseType::Accept);
         upload.add_button("Cancel", gtk::ResponseType::Cancel);
-        let scroller = gtk::builders::ScrolledWindowBuilder::new()
+        let scroller = gtk::ScrolledWindow::builder()
             .hexpand(true)
             .vexpand(true)
             .propagate_natural_width(true)

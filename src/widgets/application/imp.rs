@@ -32,7 +32,7 @@ impl ObjectSubclass for Application {
 impl ObjectImpl for Application {
     fn constructed(&self) {
         self.parent_constructed();
-        let instance = self.instance();
+        let instance = self.obj();
         let set_property_action =
             PropertyAction::new("set-theme", &instance.style_manager(), "color-scheme");
         instance.add_action(&set_property_action);
@@ -45,7 +45,7 @@ impl ObjectImpl for Application {
 
 impl ApplicationImpl for Application {
     fn activate(&self) {
-        let instance = self.instance();
+        let instance = self.obj();
         if instance.windows().is_empty() {
             let window = Window::new(&instance);
             instance.add_actions(&window);

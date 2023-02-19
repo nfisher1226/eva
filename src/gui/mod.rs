@@ -443,7 +443,7 @@ impl Gui {
             .replace("DEFAULT_FG_COLOR", &context.color().to_string())
             .replace("ReducedRGBA", "rgba")
             .replace("RGBA", "rgba");
-        provider.load_from_data(css.as_bytes());
+        provider.load_from_data(&css);
         StyleContext::add_provider_for_display(
             &Display::default().expect("Cannot connect to display"),
             &provider,

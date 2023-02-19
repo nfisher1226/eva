@@ -23,7 +23,7 @@ impl Default for Tab {
 
 impl Tab {
     pub fn new() -> Self {
-        Object::new(&[])
+        Object::new()
     }
 
     pub fn visit(&self, addr: &mut str) {

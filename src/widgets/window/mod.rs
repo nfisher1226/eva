@@ -29,7 +29,9 @@ glib::wrapper! {
 
 impl Window {
     pub fn new(app: &Application) -> Self {
-        Object::new(&[("application", app)])
+        Object::builder()
+            .property("application", app)
+            .build()
     }
 
     fn set_css(&self) {
@@ -49,7 +51,7 @@ impl Window {
                 .replace("DEFAULT_FG_COLOR", &context.color().to_string())
                 .replace("ReducedRGBA", "rgba")
                 .replace("RGBA", "rgba");
-            provider.load_from_data(css.as_bytes());
+            provider.load_from_data(&css);
             StyleContext::add_provider_for_display(
                 &Display::default().expect("Cannot connect to display"),
                 &provider,

@@ -30,7 +30,7 @@ impl Default for Prefs {
 
 impl Prefs {
     pub fn new() -> Self {
-        let dlg: Self = Object::new(&[("use-header-bar", &1)]);
+        let dlg: Self = Object::builder().property("use-header-bar", &1).build();
         let dialog = dlg.clone();
         dlg.imp().download_scheme.connect_changed(move |_| {
             if let Some(scheme) = dialog.download_scheme() {
@@ -60,7 +60,7 @@ impl Prefs {
     }
 
     pub fn homepage(&self) -> String {
-        self.imp().homepage.buffer().text()
+        self.imp().homepage.buffer().text().to_string()
     }
 
     pub fn set_homepage(&self, page: &str) {

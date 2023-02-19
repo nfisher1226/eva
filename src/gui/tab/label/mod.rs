@@ -20,7 +20,9 @@ impl Default for Label {
 
 impl Label {
     pub fn new() -> Self {
-        Object::new(&[("orientation", &gtk::Orientation::Horizontal)])
+        Object::builder()
+            .property("orientation", &gtk::Orientation::Horizontal)
+            .build()
     }
 
     pub fn close_button(&self) -> gtk::Button {

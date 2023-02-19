@@ -26,7 +26,7 @@ impl Default for BookmarkEditor {
 
 impl BookmarkEditor {
     pub fn new() -> Self {
-        Object::new(&[])
+        Object::new()
     }
 
     /// Retrieves the value from the `name` field from the editor
