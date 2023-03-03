@@ -1,7 +1,7 @@
 mod imp;
 
 use {
-    crate::{uri::uri, CONFIG},
+    crate::{prelude::Application, uri::uri, CONFIG},
     adw::{
         gtk::glib::{self, Object},
         prelude::*,
@@ -31,16 +31,15 @@ impl Tab {
         self.imp().viewer.visit(&addr);
     }
 
-    pub fn set_fonts(&self) {
-        if let Ok(cfg) = CONFIG.try_lock() {
-            let fonts = cfg.fonts.clone();
-            self.imp().viewer.set_font_paragraph(fonts.pg.to_pango());
-            self.imp().viewer.set_font_quote(fonts.quote.to_pango());
-            self.imp().viewer.set_font_pre(fonts.pre.to_pango());
-            self.imp().viewer.set_font_h1(fonts.h1.to_pango());
-            self.imp().viewer.set_font_h2(fonts.h2.to_pango());
-            self.imp().viewer.set_font_h3(fonts.h3.to_pango());
-        }
+    pub fn bind_fonts(&self, app: &Application) {
+        let settings = &app.imp().settings;
+        let viewer = self.imp().viewer.get();
+        settings.bind("paragraph-font", &viewer, "font-paragraph").build();
+        settings.bind("quote-font", &viewer, "font-quote").build();
+        settings.bind("preformatted-font", &viewer, "font-pre").build();
+        settings.bind("h1-font", &viewer, "font-h1").build();
+        settings.bind("h2-font", &viewer, "font-h2").build();
+        settings.bind("h3-font", &viewer, "font-h3").build();
     }
 
     pub fn reload(&self) {

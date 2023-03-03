@@ -2,8 +2,6 @@
 pub mod bookmarks;
 /// Handles getting the configuration data to and from disk
 pub mod config;
-/// Starts the graphical interface
-pub mod gui;
 /// Handles history creation and deletion
 pub mod history;
 /// Handles loading keybindings

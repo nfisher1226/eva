@@ -58,7 +58,6 @@ impl ObjectSubclass for Tab {
 impl ObjectImpl for Tab {
     fn constructed(&self) {
         self.parent_constructed();
-        self.obj().set_fonts();
         self.init_completion();
     }
 
@@ -144,8 +143,7 @@ impl Tab {
 
     fn on_page_load_failed(&self, page: &adw::TabPage, addr: &str) {
         page.set_loading(false);
-        self.obj()
-            .emit_by_name::<()>("page-load-failed", &[&addr]);
+        self.obj().emit_by_name::<()>("page-load-failed", &[&addr]);
         self.set_nav_buttons_sensitive(true);
     }
 
@@ -195,7 +193,7 @@ impl Tab {
 
     fn init_completion(&self) {
         if let Ok(bmarks) = BOOKMARKS.try_lock() {
-            let bmarks = bmarks.borrow().clone();
+            let bmarks = (*bmarks.borrow()).clone();
             for bm in bmarks.all.values() {
                 let mut iter = self.addr_completion_model.append();
                 self.addr_completion_model

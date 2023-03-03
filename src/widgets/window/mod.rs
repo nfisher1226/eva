@@ -29,9 +29,7 @@ glib::wrapper! {
 
 impl Window {
     pub fn new(app: &Application) -> Self {
-        Object::builder()
-            .property("application", app)
-            .build()
+        Object::builder().property("application", app).build()
     }
 
     fn set_css(&self) {
@@ -62,6 +60,8 @@ impl Window {
 
     pub fn open_tab(&self, address: Option<&mut str>) {
         let tab = Tab::new();
+        let app = self.application().unwrap().downcast::<crate::prelude::Application>().unwrap();
+        tab.bind_fonts(&app);
         let page = self.imp().tab_view.append(&tab);
         tab.imp().connect_signals(&page);
         if let Some(addr) = address {
@@ -79,8 +79,7 @@ impl Window {
         self.imp()
             .tab_view
             .selected_page()
-            .map(|x| x.child().downcast().ok())
-            .flatten()
+            .and_then(|x| x.child().downcast().ok())
     }
 
     pub fn close_current_page(&self) {

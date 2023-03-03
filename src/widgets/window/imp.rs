@@ -55,8 +55,7 @@ impl ObjectImpl for Window {
         if let Some(pop) = self
             .menu_button
             .popover()
-            .map(|x| x.downcast::<gtk::PopoverMenu>().ok())
-            .flatten()
+            .and_then(|x| x.downcast::<gtk::PopoverMenu>().ok())
         {
             let switcher = ThemeSwitcher::new();
             pop.add_child(&switcher, "theme");

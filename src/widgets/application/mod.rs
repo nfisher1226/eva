@@ -24,8 +24,8 @@ impl Default for Application {
 impl Application {
     pub fn new() -> Self {
         Object::builder()
-            .property("application-id", &Some("org.codeberg.jeang3nie.eva"))
-            .property("flags", &ApplicationFlags::HANDLES_OPEN)
+            .property("application-id", Some("org.codeberg.jeang3nie.eva"))
+            .property("flags", ApplicationFlags::HANDLES_OPEN)
             .property("register-session", &true.to_value())
             .build()
     }
