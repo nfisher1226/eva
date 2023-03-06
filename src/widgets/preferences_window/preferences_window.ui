@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <template class="PreferencesWindow" parent="AdwPreferencesWindow">
+    <child>
+      <object class="AdwPreferencesPage">
+        <property name="title">General</property>
+        <child>
+          <object class="AdwPreferencesGroup">
+            <property name="name">General</property>
+            <property name="title">General</property>
+            <child>
+              <object class="AdwEntryRow" id="homepage">
+                <property name="title">Homepage</property>
+                <property name="text">gemini://gemini.circumlunar.space</property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwComboRow" id="new_page_type">
+                <property name="title" translatable="true">New view</property>
+                <property name="subtitle" translatable="true">What page to display when opening a new viewer</property>
+                <property name="model">
+                  <object class="GtkStringList">
+                    <items>
+                      <item translatable="yes">Homepage</item>
+                      <item translatable="yes">Blank</item>
+                    </items>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwComboRow" id="downloads">
+                <property name="title" translatable="true">Downloads</property>
+                <property name="subtitle" translatable="true">Whether to download files automatically or ask every time</property>
+                <property name="model">
+                  <object class="GtkStringList">
+                    <items>
+                      <item>Automatic</item>
+                      <item>Ask</item>
+                    </items>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow" id="download_location_row">
+                <property name="title">Download Location</property>
+                <child>
+                  <object class="GtkButton" id="download_location">
+                    <property name="tooltip-text">The location to download files</property>
+                    <property name="halign">fill</property>
+                    <property name="valign">center</property>
+                    <property name="label">~/Downloads</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="AdwPreferencesPage">
+        <property name="title">Fonts</property>
+        <child>
+          <object class="AdwPreferencesGroup">
+            <property name="name">Fonts</property>
+            <property name="title">Fonts</property>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title">Regular Font</property>
+                <child>
+                  <object class="GtkFontButton" id="pg_font">
+                    <property name="font">Sans Regular 12</property>
+                    <property name="halign">fill</property>
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title">H1 Font</property>
+                <child>
+                  <object class="GtkFontButton" id="h1_font">
+                    <property name="font">Sans Bold 18</property>
+                    <property name="halign">fill</property>
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title">H2 Font</property>
+                <child>
+                  <object class="GtkFontButton" id="h2_font">
+                    <property name="font">Sans Bold 16</property>
+                    <property name="halign">fill</property>
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title">H3 Font</property>
+                <child>
+                  <object class="GtkFontButton" id="h3_font">
+                    <property name="font">Sans Bold 14</property>
+                    <property name="halign">fill</property>
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title">Preformatted Font</property>
+                <child>
+                  <object class="GtkFontButton" id="pre_font">
+                    <property name="font">Monospace 12</property>
+                    <property name="halign">fill</property>
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title">Quote Font</property>
+                <child>
+                  <object class="GtkFontButton" id="quote_font">
+                    <property name="font">Sans Italic 12</property>
+                    <property name="halign">fill</property>
+                    <property name="valign">center</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="AdwPreferencesPage">
+        <property name="title">Colors</property>
+        <child>
+          <object class="AdwPreferencesGroup">
+            <property name="name">Colors</property>
+            <property name="title">Colors</property>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title" translatable="yes">Regular text</property>
+                <child>
+                  <object class="GtkColorButton" id="fg_color">
+                    <property name="hexpand">false</property>
+                    <property name="vexpand">false</property>
+                    <property name="valign">center</property>
+                    <property name="rgba">rgb(153,193,241)</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title" translatable="yes">Background Color</property>
+                <child>
+                  <object class="GtkColorButton" id="bg_color">
+                    <property name="hexpand">false</property>
+                    <property name="vexpand">false</property>
+                    <property name="valign">center</property>
+                    <property name="rgba">rgb(36,31,49)</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title" translatable="yes">Preformatted Text</property>
+                <child>
+                  <object class="GtkColorButton" id="pre_fg_color">
+                    <property name="hexpand">false</property>
+                    <property name="vexpand">false</property>
+                    <property name="valign">center</property>
+                    <property name="rgba">rgb(98,160,234)</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title" translatable="yes">Preformatted Background</property>
+                <child>
+                  <object class="GtkColorButton" id="pre_bg_color">
+                    <property name="hexpand">false</property>
+                    <property name="vexpand">false</property>
+                    <property name="valign">center</property>
+                    <property name="rgba">rgb(5,34,79)</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title" translatable="yes">Quote Text</property>
+                <child>
+                  <object class="GtkColorButton" id="quote_fg_color">
+                    <property name="hexpand">false</property>
+                    <property name="vexpand">false</property>
+                    <property name="valign">center</property>
+                    <property name="rgba">rgb(87,227,137)</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title" translatable="yes">Quote Background</property>
+                <child>
+                  <object class="GtkColorButton" id="quote_bg_color">
+                    <property name="hexpand">false</property>
+                    <property name="vexpand">false</property>
+                    <property name="valign">center</property>
+                    <property name="rgba">rgb(22,110,0)</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title" translatable="yes">Link normal</property>
+                <child>
+                  <object class="GtkColorButton" id="link_color">
+                    <property name="hexpand">false</property>
+                    <property name="vexpand">false</property>
+                    <property name="valign">center</property>
+                    <property name="rgba">rgb(192,97,203)</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title" translatable="yes">Link hover</property>
+                <child>
+                  <object class="GtkColorButton" id="hover_color">
+                    <property name="hexpand">false</property>
+                    <property name="vexpand">false</property>
+                    <property name="valign">center</property>
+                    <property name="rgba">rgb(255,0,0)</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
+

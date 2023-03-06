@@ -3,11 +3,14 @@ mod imp;
 
 use adw::{
     gtk::{
-        gio::{self, ApplicationFlags},
+        gio::{self, ApplicationFlags, Settings},
         glib::{self, Object},
     },
     prelude::*,
+    subclass::prelude::*,
 };
+
+use crate::prelude::PreferencesWindow;
 
 glib::wrapper! {
     pub struct Application(ObjectSubclass<imp::Application>)
@@ -32,5 +35,9 @@ impl Application {
 
     pub fn add_actions(&self, win: &crate::prelude::Window) {
         actions::add(win, self);
+    }
+
+    pub fn settings(&self) -> &Settings {
+        self.imp().settings.as_ref()
     }
 }

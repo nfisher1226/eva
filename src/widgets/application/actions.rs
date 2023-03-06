@@ -126,8 +126,8 @@ pub fn add(win: &Window, app: &Application) {
                 }));
             }
             "open_prefs" => {
-                action.connect_activate(clone!(@weak win => move |_,_| {
-                    //gui.dialogs.preferences.show();
+                action.connect_activate(clone!(@weak app => move |_,_| {
+                    PreferencesWindow::new(&app.settings()).present();
                 }));
             }
             "open_about" => {

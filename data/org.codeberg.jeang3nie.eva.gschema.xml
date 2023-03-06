@@ -13,19 +13,11 @@
     <key name="homepage" type="s">
       <default>'gemini://gemini.circumlunar.space'</default>
     </key>
-    <key name="new-page" type="s">
-      <choices>
-        <choice value='home'/>
-        <choice value='blank'/>
-      </choices>
-      <default>'home'</default>
+    <key name="new-page" type="u">
+      <default>0</default>
     </key>
-    <key name="download-scheme" type="s">
-      <choices>
-        <choice value='ask'/>
-        <choice value='auto'/>
-      </choices>
-      <default>'ask'</default>
+    <key name="download-scheme" type="u">
+      <default>0</default>
     </key>
     <key name="paragraph-font" type="s">
       <default>'Sans Regular 12'</default>

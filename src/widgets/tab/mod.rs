@@ -1,7 +1,7 @@
 mod imp;
 
 use {
-    crate::{prelude::Application, uri::uri, CONFIG},
+    crate::{prelude::Application, uri::uri},
     adw::{
         gtk::glib::{self, Object},
         prelude::*,
@@ -34,9 +34,13 @@ impl Tab {
     pub fn bind_fonts(&self, app: &Application) {
         let settings = &app.imp().settings;
         let viewer = self.imp().viewer.get();
-        settings.bind("paragraph-font", &viewer, "font-paragraph").build();
+        settings
+            .bind("paragraph-font", &viewer, "font-paragraph")
+            .build();
         settings.bind("quote-font", &viewer, "font-quote").build();
-        settings.bind("preformatted-font", &viewer, "font-pre").build();
+        settings
+            .bind("preformatted-font", &viewer, "font-pre")
+            .build();
         settings.bind("h1-font", &viewer, "font-h1").build();
         settings.bind("h2-font", &viewer, "font-h2").build();
         settings.bind("h3-font", &viewer, "font-h3").build();

@@ -1,5 +1,5 @@
 use {
-    crate::config::get_config_dir,
+    crate::prelude::get_config_dir,
     serde::Deserialize,
     std::{collections::HashMap, fs, path::PathBuf},
 };

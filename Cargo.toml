@@ -35,6 +35,7 @@ package = "gtk4"
 [dependencies.adw]
 version = "0.3"
 package = "libadwaita"
+features = [ "v1_2" ]
 
 [dependencies.rgba_simple]
 version = "0.9"

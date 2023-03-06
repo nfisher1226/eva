@@ -1,10 +1,7 @@
 mod imp;
 
 use {
-    crate::{
-        prelude::{Application, Tab},
-        CONFIG,
-    },
+    crate::prelude::{Application, Tab},
     adw::{
         gtk::{
             gdk::Display,
@@ -33,7 +30,7 @@ impl Window {
     }
 
     fn set_css(&self) {
-        if let Ok(cfg) = CONFIG.try_lock() {
+        /*if let Ok(cfg) = CONFIG.try_lock() {
             let colors = &cfg.colors;
             let provider = CssProvider::new();
             let context = self.style_context();
@@ -55,12 +52,16 @@ impl Window {
                 &provider,
                 gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
             );
-        }
+        }*/
     }
 
     pub fn open_tab(&self, address: Option<&mut str>) {
         let tab = Tab::new();
-        let app = self.application().unwrap().downcast::<crate::prelude::Application>().unwrap();
+        let app = self
+            .application()
+            .unwrap()
+            .downcast::<crate::prelude::Application>()
+            .unwrap();
         tab.bind_fonts(&app);
         let page = self.imp().tab_view.append(&tab);
         tab.imp().connect_signals(&page);

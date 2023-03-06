@@ -1,5 +1,5 @@
 use {
-    crate::prelude::Window,
+    crate::prelude::{PreferencesWindow, Window},
     adw::{
         gtk::{
             gio::{PropertyAction, Settings, SettingsBindFlags},
