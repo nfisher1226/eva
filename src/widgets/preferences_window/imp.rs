@@ -2,7 +2,7 @@ use adw::{
     gtk::{
         self,
         gio::Settings,
-        glib::{self, subclass::InitializingObject},
+        glib::{self, BindingFlags, prelude::ObjectExt, subclass::InitializingObject},
         prelude::SettingsExtManual,
         CompositeTemplate,
     },
@@ -70,6 +70,16 @@ impl ObjectSubclass for PreferencesWindow {
 impl ObjectImpl for PreferencesWindow {
     fn constructed(&self) {
         self.parent_constructed();
+        self.downloads
+            .get()
+            .bind_property("selected", &self.download_location_row.get(), "visible")
+            .flags(BindingFlags::SYNC_CREATE)
+            .transform_to(|_, num: u32| match num {
+                0 => Some(false),
+                1 => Some(true),
+                _ => None,
+            })
+            .build();
     }
 }
 
