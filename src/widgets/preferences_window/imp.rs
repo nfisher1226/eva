@@ -1,6 +1,7 @@
 use adw::{
     gtk::{
         self,
+        gdk::RGBA,
         gio::Settings,
         glib::{self, BindingFlags, prelude::ObjectExt, subclass::InitializingObject},
         prelude::SettingsExtManual,
@@ -108,6 +109,150 @@ impl PreferencesWindow {
             .build();
         settings
             .bind("quote-font", &self.quote_font.get(), "font")
+            .build();
+        settings
+            .bind("fg-color", &self.fg_color.get(), "rgba")
+            .mapping(|variant, _vtype| {
+                variant
+                    .get::<String>()
+                    .expect("The value needs to be of type `String`")
+                    .parse::<RGBA>()
+                    .map(|x| x.into())
+                    .ok()
+            })
+            .set_mapping(|value, _vtype| {
+                let color = value
+                    .get::<RGBA>()
+                    .expect("The value needs to be of type gdk::RGBA")
+                    .to_string();
+                Some(color.into())
+            })
+            .build();
+        settings
+            .bind("bg-color", &self.bg_color.get(), "rgba")
+            .mapping(|variant, _vtype| {
+                variant
+                    .get::<String>()
+                    .expect("The value needs to be of type `String`")
+                    .parse::<RGBA>()
+                    .map(|x| x.into())
+                    .ok()
+            })
+            .set_mapping(|value, _vtype| {
+                let color = value
+                    .get::<RGBA>()
+                    .expect("The value needs to be of type gdk::RGBA")
+                    .to_string();
+                Some(color.into())
+            })
+            .build();
+        settings
+            .bind("pre-fg-color", &self.pre_fg_color.get(), "rgba")
+            .mapping(|variant, _vtype| {
+                variant
+                    .get::<String>()
+                    .expect("The value needs to be of type `String`")
+                    .parse::<RGBA>()
+                    .map(|x| x.into())
+                    .ok()
+            })
+            .set_mapping(|value, _vtype| {
+                let color = value
+                    .get::<RGBA>()
+                    .expect("The value needs to be of type gdk::RGBA")
+                    .to_string();
+                Some(color.into())
+            })
+            .build();
+        settings
+            .bind("pre-bg-color", &self.pre_bg_color.get(), "rgba")
+            .mapping(|variant, _vtype| {
+                variant
+                    .get::<String>()
+                    .expect("The value needs to be of type `String`")
+                    .parse::<RGBA>()
+                    .map(|x| x.into())
+                    .ok()
+            })
+            .set_mapping(|value, _vtype| {
+                let color = value
+                    .get::<RGBA>()
+                    .expect("The value needs to be of type gdk::RGBA")
+                    .to_string();
+                Some(color.into())
+            })
+            .build();
+        settings
+            .bind("quote-fg-color", &self.quote_fg_color.get(), "rgba")
+            .mapping(|variant, _vtype| {
+                variant
+                    .get::<String>()
+                    .expect("The value needs to be of type `String`")
+                    .parse::<RGBA>()
+                    .map(|x| x.into())
+                    .ok()
+            })
+            .set_mapping(|value, _vtype| {
+                let color = value
+                    .get::<RGBA>()
+                    .expect("The value needs to be of type gdk::RGBA")
+                    .to_string();
+                Some(color.into())
+            })
+            .build();
+        settings
+            .bind("quote-bg-color", &self.quote_bg_color.get(), "rgba")
+            .mapping(|variant, _vtype| {
+                variant
+                    .get::<String>()
+                    .expect("The value needs to be of type `String`")
+                    .parse::<RGBA>()
+                    .map(|x| x.into())
+                    .ok()
+            })
+            .set_mapping(|value, _vtype| {
+                let color = value
+                    .get::<RGBA>()
+                    .expect("The value needs to be of type gdk::RGBA")
+                    .to_string();
+                Some(color.into())
+            })
+            .build();
+        settings
+            .bind("link-color", &self.link_color.get(), "rgba")
+            .mapping(|variant, _vtype| {
+                variant
+                    .get::<String>()
+                    .expect("The value needs to be of type `String`")
+                    .parse::<RGBA>()
+                    .map(|x| x.into())
+                    .ok()
+            })
+            .set_mapping(|value, _vtype| {
+                let color = value
+                    .get::<RGBA>()
+                    .expect("The value needs to be of type gdk::RGBA")
+                    .to_string();
+                Some(color.into())
+            })
+            .build();
+        settings
+            .bind("hover-color", &self.hover_color.get(), "rgba")
+            .mapping(|variant, _vtype| {
+                variant
+                    .get::<String>()
+                    .expect("The value needs to be of type `String`")
+                    .parse::<RGBA>()
+                    .map(|x| x.into())
+                    .ok()
+            })
+            .set_mapping(|value, _vtype| {
+                let color = value
+                    .get::<RGBA>()
+                    .expect("The value needs to be of type gdk::RGBA")
+                    .to_string();
+                Some(color.into())
+            })
             .build();
     }
 }

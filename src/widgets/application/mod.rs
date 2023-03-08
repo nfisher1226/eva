@@ -10,8 +10,6 @@ use adw::{
     subclass::prelude::*,
 };
 
-use crate::prelude::PreferencesWindow;
-
 glib::wrapper! {
     pub struct Application(ObjectSubclass<imp::Application>)
         @extends adw::Application, gtk::Application, gio::Application,

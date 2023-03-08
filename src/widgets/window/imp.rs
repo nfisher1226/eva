@@ -46,12 +46,6 @@ impl ObjectSubclass for Window {
 impl ObjectImpl for Window {
     fn constructed(&self) {
         self.parent_constructed();
-        let instance = self.obj();
-        if let Some(app) = instance.application() {
-            if let Some(app) = app.downcast_ref::<crate::prelude::Application>() {
-                app.add_actions(&instance);
-            }
-        }
         if let Some(pop) = self
             .menu_button
             .popover()
@@ -60,7 +54,6 @@ impl ObjectImpl for Window {
             let switcher = ThemeSwitcher::new();
             pop.add_child(&switcher, "theme");
         }
-        instance.set_css();
         self.connect_signals();
     }
 }
