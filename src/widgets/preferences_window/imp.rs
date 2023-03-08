@@ -3,6 +3,7 @@ use adw::{
         self,
         gio::Settings,
         glib::{self, BindingFlags, prelude::ObjectExt, subclass::InitializingObject},
+        pango::FontDescription,
         prelude::SettingsExtManual,
         CompositeTemplate,
     },
@@ -21,35 +22,35 @@ pub struct PreferencesWindow {
     #[template_child]
     pub download_location_row: TemplateChild<adw::ActionRow>,
     #[template_child]
-    pub download_location: TemplateChild<gtk::Button>,
+    pub download_location_button: TemplateChild<gtk::Button>,
     #[template_child]
-    pub pg_font: TemplateChild<gtk::FontButton>,
+    pub pg_font: TemplateChild<gtk::FontDialogButton>,
     #[template_child]
-    pub h1_font: TemplateChild<gtk::FontButton>,
+    pub h1_font: TemplateChild<gtk::FontDialogButton>,
     #[template_child]
-    pub h2_font: TemplateChild<gtk::FontButton>,
+    pub h2_font: TemplateChild<gtk::FontDialogButton>,
     #[template_child]
-    pub h3_font: TemplateChild<gtk::FontButton>,
+    pub h3_font: TemplateChild<gtk::FontDialogButton>,
     #[template_child]
-    pub pre_font: TemplateChild<gtk::FontButton>,
+    pub pre_font: TemplateChild<gtk::FontDialogButton>,
     #[template_child]
-    pub quote_font: TemplateChild<gtk::FontButton>,
+    pub quote_font: TemplateChild<gtk::FontDialogButton>,
     #[template_child]
-    pub fg_color: TemplateChild<gtk::ColorButton>,
+    pub fg_color: TemplateChild<gtk::ColorDialogButton>,
     #[template_child]
-    pub bg_color: TemplateChild<gtk::ColorButton>,
+    pub bg_color: TemplateChild<gtk::ColorDialogButton>,
     #[template_child]
-    pub pre_fg_color: TemplateChild<gtk::ColorButton>,
+    pub pre_fg_color: TemplateChild<gtk::ColorDialogButton>,
     #[template_child]
-    pub pre_bg_color: TemplateChild<gtk::ColorButton>,
+    pub pre_bg_color: TemplateChild<gtk::ColorDialogButton>,
     #[template_child]
-    pub quote_fg_color: TemplateChild<gtk::ColorButton>,
+    pub quote_fg_color: TemplateChild<gtk::ColorDialogButton>,
     #[template_child]
-    pub quote_bg_color: TemplateChild<gtk::ColorButton>,
+    pub quote_bg_color: TemplateChild<gtk::ColorDialogButton>,
     #[template_child]
-    pub link_color: TemplateChild<gtk::ColorButton>,
+    pub link_color: TemplateChild<gtk::ColorDialogButton>,
     #[template_child]
-    pub hover_color: TemplateChild<gtk::ColorButton>,
+    pub hover_color: TemplateChild<gtk::ColorDialogButton>,
 }
 
 #[glib::object_subclass]
@@ -92,22 +93,64 @@ impl PreferencesWindow {
             .bind("new-page", &self.new_page_type.get(), "selected")
             .build();
         settings
-            .bind("paragraph-font", &self.pg_font.get(), "font")
+            .bind("paragraph-font", &self.pg_font.get(), "font-desc")
+            .set_mapping(|_, font| {
+                Some(font.as_str().into())
+            })
+            .mapping(|font,_| {
+                let font = font.get::<String>().unwrap();
+                Some(FontDescription::from_string(&font).into())
+            })
             .build();
         settings
-            .bind("h1-font", &self.h1_font.get(), "font")
+            .bind("h1-font", &self.h1_font.get(), "font-desc")
+            .set_mapping(|_, font| {
+                Some(font.as_str().into())
+            })
+            .mapping(|font,_| {
+                let font = font.get::<String>().unwrap();
+                Some(FontDescription::from_string(&font).into())
+            })
             .build();
         settings
-            .bind("h2-font", &self.h2_font.get(), "font")
+            .bind("h2-font", &self.h2_font.get(), "font-desc")
+            .set_mapping(|_, font| {
+                Some(font.as_str().into())
+            })
+            .mapping(|font,_| {
+                let font = font.get::<String>().unwrap();
+                Some(FontDescription::from_string(&font).into())
+            })
             .build();
         settings
-            .bind("h3-font", &self.h3_font.get(), "font")
+            .bind("h3-font", &self.h3_font.get(), "font-desc")
+            .set_mapping(|_, font| {
+                Some(font.as_str().into())
+            })
+            .mapping(|font,_| {
+                let font = font.get::<String>().unwrap();
+                Some(FontDescription::from_string(&font).into())
+            })
             .build();
         settings
-            .bind("preformatted-font", &self.pre_font.get(), "font")
+            .bind("preformatted-font", &self.pre_font.get(), "font-desc")
+            .set_mapping(|_, font| {
+                Some(font.as_str().into())
+            })
+            .mapping(|font,_| {
+                let font = font.get::<String>().unwrap();
+                Some(FontDescription::from_string(&font).into())
+            })
             .build();
         settings
-            .bind("quote-font", &self.quote_font.get(), "font")
+            .bind("quote-font", &self.quote_font.get(), "font-desc")
+            .set_mapping(|_, font| {
+                Some(font.as_str().into())
+            })
+            .mapping(|font,_| {
+                let font = font.get::<String>().unwrap();
+                Some(FontDescription::from_string(&font).into())
+            })
             .build();
     }
 }

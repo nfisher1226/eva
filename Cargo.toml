@@ -31,6 +31,7 @@ features = ["std", "serde"]
 [dependencies.gtk]
 version = "0.6"
 package = "gtk4"
+features = ["v4_10"]
 
 [dependencies.adw]
 version = "0.3"

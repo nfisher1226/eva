@@ -47,7 +47,7 @@
               <object class="AdwActionRow" id="download_location_row">
                 <property name="title">Download Location</property>
                 <child>
-                  <object class="GtkButton" id="download_location">
+                  <object class="GtkButton" id="download_location_button">
                     <property name="tooltip-text">The location to download files</property>
                     <property name="halign">fill</property>
                     <property name="valign">center</property>
@@ -71,8 +71,7 @@
               <object class="AdwActionRow">
                 <property name="title">Regular Font</property>
                 <child>
-                  <object class="GtkFontButton" id="pg_font">
-                    <property name="font">Sans Regular 12</property>
+                  <object class="GtkFontDialogButton" id="pg_font">
                     <property name="halign">fill</property>
                     <property name="valign">center</property>
                   </object>
@@ -83,8 +82,7 @@
               <object class="AdwActionRow">
                 <property name="title">H1 Font</property>
                 <child>
-                  <object class="GtkFontButton" id="h1_font">
-                    <property name="font">Sans Bold 18</property>
+                  <object class="GtkFontDialogButton" id="h1_font">
                     <property name="halign">fill</property>
                     <property name="valign">center</property>
                   </object>
@@ -95,8 +93,7 @@
               <object class="AdwActionRow">
                 <property name="title">H2 Font</property>
                 <child>
-                  <object class="GtkFontButton" id="h2_font">
-                    <property name="font">Sans Bold 16</property>
+                  <object class="GtkFontDialogButton" id="h2_font">
                     <property name="halign">fill</property>
                     <property name="valign">center</property>
                   </object>
@@ -107,8 +104,7 @@
               <object class="AdwActionRow">
                 <property name="title">H3 Font</property>
                 <child>
-                  <object class="GtkFontButton" id="h3_font">
-                    <property name="font">Sans Bold 14</property>
+                  <object class="GtkFontDialogButton" id="h3_font">
                     <property name="halign">fill</property>
                     <property name="valign">center</property>
                   </object>
@@ -119,8 +115,7 @@
               <object class="AdwActionRow">
                 <property name="title">Preformatted Font</property>
                 <child>
-                  <object class="GtkFontButton" id="pre_font">
-                    <property name="font">Monospace 12</property>
+                  <object class="GtkFontDialogButton" id="pre_font">
                     <property name="halign">fill</property>
                     <property name="valign">center</property>
                   </object>
@@ -131,8 +126,7 @@
               <object class="AdwActionRow">
                 <property name="title">Quote Font</property>
                 <child>
-                  <object class="GtkFontButton" id="quote_font">
-                    <property name="font">Sans Italic 12</property>
+                  <object class="GtkFontDialogButton" id="quote_font">
                     <property name="halign">fill</property>
                     <property name="valign">center</property>
                   </object>
@@ -154,7 +148,7 @@
               <object class="AdwActionRow">
                 <property name="title" translatable="yes">Regular text</property>
                 <child>
-                  <object class="GtkColorButton" id="fg_color">
+                  <object class="GtkColorDialogButton" id="fg_color">
                     <property name="hexpand">false</property>
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
@@ -167,7 +161,7 @@
               <object class="AdwActionRow">
                 <property name="title" translatable="yes">Background Color</property>
                 <child>
-                  <object class="GtkColorButton" id="bg_color">
+                  <object class="GtkColorDialogButton" id="bg_color">
                     <property name="hexpand">false</property>
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
@@ -180,7 +174,7 @@
               <object class="AdwActionRow">
                 <property name="title" translatable="yes">Preformatted Text</property>
                 <child>
-                  <object class="GtkColorButton" id="pre_fg_color">
+                  <object class="GtkColorDialogButton" id="pre_fg_color">
                     <property name="hexpand">false</property>
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
@@ -193,7 +187,7 @@
               <object class="AdwActionRow">
                 <property name="title" translatable="yes">Preformatted Background</property>
                 <child>
-                  <object class="GtkColorButton" id="pre_bg_color">
+                  <object class="GtkColorDialogButton" id="pre_bg_color">
                     <property name="hexpand">false</property>
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
@@ -206,7 +200,7 @@
               <object class="AdwActionRow">
                 <property name="title" translatable="yes">Quote Text</property>
                 <child>
-                  <object class="GtkColorButton" id="quote_fg_color">
+                  <object class="GtkColorDialogButton" id="quote_fg_color">
                     <property name="hexpand">false</property>
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
@@ -219,7 +213,7 @@
               <object class="AdwActionRow">
                 <property name="title" translatable="yes">Quote Background</property>
                 <child>
-                  <object class="GtkColorButton" id="quote_bg_color">
+                  <object class="GtkColorDialogButton" id="quote_bg_color">
                     <property name="hexpand">false</property>
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
@@ -232,7 +226,7 @@
               <object class="AdwActionRow">
                 <property name="title" translatable="yes">Link normal</property>
                 <child>
-                  <object class="GtkColorButton" id="link_color">
+                  <object class="GtkColorDialogButton" id="link_color">
                     <property name="hexpand">false</property>
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
@@ -245,7 +239,7 @@
               <object class="AdwActionRow">
                 <property name="title" translatable="yes">Link hover</property>
                 <child>
-                  <object class="GtkColorButton" id="hover_color">
+                  <object class="GtkColorDialogButton" id="hover_color">
                     <property name="hexpand">false</property>
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
