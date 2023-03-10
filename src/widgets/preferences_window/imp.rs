@@ -3,7 +3,7 @@ use adw::{
         self,
         gdk::RGBA,
         gio::Settings,
-        glib::{self, BindingFlags, prelude::ObjectExt, subclass::InitializingObject},
+        glib::{self, prelude::ObjectExt, subclass::InitializingObject, BindingFlags},
         prelude::SettingsExtManual,
         CompositeTemplate,
     },

@@ -1,7 +1,7 @@
 mod imp;
 
 use {
-    crate::prelude::{Application, Tab},
+    crate::{history, prelude::{Application, Tab}},
     adw::{
         gtk::{
             gdk::Display,
@@ -33,26 +33,25 @@ impl Window {
     }
 
     fn set_css(&self, app: &Application) {
-            let settings = app.settings();
-            let provider = CssProvider::new();
-            let context = self.style_context();
-            let css = include_str!("style.css")
-                .replace("NORMAL_FG_COLOR", &settings.string("fg-color"))
-                .replace("NORMAL_BG_COLOR", &settings.string("bg-color"))
-                .replace("QUOTE_FG_COLOR", &settings.string("quote-fg-color"))
-                .replace("QUOTE_BG_COLOR", &settings.string("quote-bg-color"))
-                .replace("PRE_FG_COLOR", &settings.string("pre-fg-color"))
-                .replace("PRE_BG_COLOR", &settings.string("pre-bg-color"))
-                .replace("LINK_COLOR", &settings.string("link-color"))
-                .replace("HOVER_COLOR", &settings.string("hover-color"))
-                .replace("DEFAULT_FG_COLOR", &context.color().to_string());
-            println!("CSS: {}", &css);
-            provider.load_from_data(&css);
-            StyleContext::add_provider_for_display(
-                &Display::default().expect("Cannot connect to display"),
-                &provider,
-                gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
-            );
+        let settings = app.settings();
+        let provider = CssProvider::new();
+        let context = self.style_context();
+        let css = include_str!("style.css")
+            .replace("NORMAL_FG_COLOR", &settings.string("fg-color"))
+            .replace("NORMAL_BG_COLOR", &settings.string("bg-color"))
+            .replace("QUOTE_FG_COLOR", &settings.string("quote-fg-color"))
+            .replace("QUOTE_BG_COLOR", &settings.string("quote-bg-color"))
+            .replace("PRE_FG_COLOR", &settings.string("pre-fg-color"))
+            .replace("PRE_BG_COLOR", &settings.string("pre-bg-color"))
+            .replace("LINK_COLOR", &settings.string("link-color"))
+            .replace("HOVER_COLOR", &settings.string("hover-color"))
+            .replace("DEFAULT_FG_COLOR", &context.color().to_string());
+        provider.load_from_data(&css);
+        StyleContext::add_provider_for_display(
+            &Display::default().expect("Cannot connect to display"),
+            &provider,
+            gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
+        );
     }
 
     pub fn open_tab(&self, address: Option<&mut str>) {
@@ -68,8 +67,11 @@ impl Window {
         if let Some(addr) = address {
             tab.visit(addr);
         }
-        tab.connect_page_loaded(clone!(@weak self as window, @weak page => move |_,_| {
+        tab.connect_page_loaded(clone!(@weak self as window, @weak page => move |_,uri| {
             window.update_title(&page);
+            if let Err(e) = history::append_history(&uri) {
+                eprintln!("Error updating history: {e}");
+            }
         }));
         tab.connect_page_load_failed(clone!(@weak self as window, @weak page => move |_,_| {
             window.update_title(&page);
