@@ -37,6 +37,10 @@ features = ["std", "serde"]
 version = "0.6"
 package = "gtk4"
 
+[dependencies.indexmap]
+version = "1.9"
+features = ["serde"]
+
 [dependencies.nix]
 version = "0.26"
 default_features = false

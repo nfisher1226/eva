@@ -1,7 +1,10 @@
 mod imp;
 
 use {
-    crate::{history, prelude::{Application, Tab}},
+    crate::{
+        history,
+        prelude::{Application, Tab},
+    },
     adw::{
         gtk::{
             gdk::Display,
@@ -28,7 +31,7 @@ impl Window {
     pub fn new(app: &Application) -> Self {
         let obj = Object::builder().property("application", app).build();
         app.add_actions(&obj);
-        obj.set_css(&app);
+        obj.set_css(app);
         obj
     }
 
@@ -67,12 +70,14 @@ impl Window {
         if let Some(addr) = address {
             tab.visit(addr);
         }
-        tab.connect_page_loaded(clone!(@weak self as window, @weak page => move |_,uri| {
-            window.update_title(&page);
-            if let Err(e) = history::append_history(&uri) {
-                eprintln!("Error updating history: {e}");
-            }
-        }));
+        tab.connect_page_loaded(
+            clone!(@weak self as window, @weak app, @weak page => move |_,uri| {
+                window.update_title(&page);
+                if let Err(e) = history::append(&uri, &app) {
+                    eprintln!("Error updating history: {e}");
+                }
+            }),
+        );
         tab.connect_page_load_failed(clone!(@weak self as window, @weak page => move |_,_| {
             window.update_title(&page);
         }));

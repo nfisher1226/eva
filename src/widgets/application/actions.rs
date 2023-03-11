@@ -127,7 +127,7 @@ pub fn add(win: &Window, app: &Application) {
             }
             "open_prefs" => {
                 action.connect_activate(clone!(@weak app => move |_,_| {
-                    PreferencesWindow::new(&app.settings()).present();
+                    PreferencesWindow::new(app.settings()).present();
                 }));
             }
             "open_about" => {

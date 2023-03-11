@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk" version="4.0"/>
+  <object class="GtkAdjustment" id="history_adjustment">
+    <property name="upper">2000</property>
+    <property name="lower">0</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
   <template class="PreferencesWindow" parent="AdwPreferencesWindow">
     <child>
       <object class="AdwPreferencesPage">
@@ -52,6 +58,22 @@
                     <property name="halign">fill</property>
                     <property name="valign">center</property>
                     <property name="label">~/Downloads</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow">
+                <property name="title">History items</property>
+                <property name="subtitle">Any items beyond this limit will be discarded, oldest first</property>
+                <child>
+                  <object class="GtkSpinButton" id="history_items">
+                    <property name="tooltip-text">The number of items to keep in the browser history</property>
+                    <property name="halign">fill</property>
+                    <property name="valign">center</property>
+                    <property name="digits">0</property>
+                    <property name="numeric">True</property>
+                    <property name="adjustment">history_adjustment</property>
                   </object>
                 </child>
               </object>

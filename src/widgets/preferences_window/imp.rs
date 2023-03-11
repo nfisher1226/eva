@@ -24,6 +24,8 @@ pub struct PreferencesWindow {
     #[template_child]
     pub download_location: TemplateChild<gtk::Button>,
     #[template_child]
+    pub history_items: TemplateChild<gtk::SpinButton>,
+    #[template_child]
     pub pg_font: TemplateChild<gtk::FontButton>,
     #[template_child]
     pub h1_font: TemplateChild<gtk::FontButton>,
@@ -76,11 +78,14 @@ impl ObjectImpl for PreferencesWindow {
             .bind_property("selected", &self.download_location_row.get(), "visible")
             .flags(BindingFlags::SYNC_CREATE)
             .transform_to(|_, num: u32| match num {
-                0 => Some(false),
-                1 => Some(true),
+                0 => Some(true),
+                1 => Some(false),
                 _ => None,
             })
             .build();
+        self.history_items.set_snap_to_ticks(true);
+        self.history_items
+            .set_update_policy(gtk::SpinButtonUpdatePolicy::IfValid);
     }
 }
 
@@ -91,6 +96,9 @@ impl PreferencesWindow {
             .build();
         settings
             .bind("new-page", &self.new_page_type.get(), "selected")
+            .build();
+        settings
+            .bind("history-items", &self.history_items.get(), "value")
             .build();
         settings
             .bind("paragraph-font", &self.pg_font.get(), "font")
