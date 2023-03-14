@@ -1,12 +1,14 @@
 mod imp;
 
 use {
-    crate::{prelude::Application, uri::uri},
+    crate::{prelude::Application, history::History, uri::uri, BOOKMARKS},
     adw::{
         gtk::glib::{self, Object},
         prelude::*,
         subclass::prelude::*,
     },
+    gemview::GemView,
+    url::Url,
 };
 
 glib::wrapper! {
@@ -24,6 +26,18 @@ impl Default for Tab {
 impl Tab {
     pub fn new() -> Self {
         Object::new()
+    }
+
+    pub fn viewer(&self) -> GemView {
+        self.imp().viewer.get()
+    }
+
+    pub fn add_bar(&self) -> gtk::Entry {
+        self.imp().addr_bar.get()
+    }
+
+    pub fn bookmark_button(&self) -> gtk::MenuButton {
+        self.imp().bookmark_button.get()
     }
 
     pub fn visit(&self, addr: &mut str) {
@@ -59,6 +73,75 @@ impl Tab {
     pub fn go_previous(&self) {
         if self.imp().viewer.has_previous() {
             self.imp().viewer.go_previous();
+        }
+    }
+
+    pub fn request_eva_page(&self, uri: &str) {
+        if let Ok(url) = Url::parse(uri) {
+            match url.host_str() {
+                Some("bookmarks") => match url.path() {
+                    "" | "/" => self.open_bookmarks(),
+                    "/tags" | "/tags/" => self.open_bookmark_tags(),
+                    p => {
+                        let maybe_tag = p.replace("/tags/", "");
+                        let bookmarks = BOOKMARKS.lock().unwrap();
+                        if let Some(page) = bookmarks.tag_to_gmi(&maybe_tag) {
+                            let viewer = self.viewer();
+                            viewer.render_gmi(&page);
+                            viewer.set_uri(uri);
+                        }
+                    }
+                },
+                Some("history") => {
+                    if let Ok(Some(history)) = History::from_file() {
+                        let page = history.page();
+                        let viewer = self.viewer();
+                        viewer.render_gmi(&page);
+                        viewer.set_uri("eva://history");
+                        self.add_bar().set_text("eva://history");
+                        self.set_title("history");
+                    }
+                }
+                Some("source") => {
+                    self.view_source();
+                }
+                _ => {}
+            }
+        }
+    }
+
+    pub fn open_bookmarks(&self) {
+        let bookmarks = BOOKMARKS.lock().unwrap();
+        let page = bookmarks.to_gmi();
+        let viewer = self.viewer();
+        viewer.render_gmi(&page);
+        viewer.set_uri("eva://bookmarks");
+        self.add_bar().set_text("eva://bookmarks");
+        self.bookmark_button()
+            .set_icon_name("bookmark-new-symbolic");
+        self.set_title("bookmarks");
+    }
+
+    fn open_bookmark_tags(&self) {
+        let bookmarks = BOOKMARKS.lock().unwrap();
+        let page = bookmarks.tags_to_gmi();
+        let viewer = self.viewer();
+        viewer.render_gmi(&page);
+        viewer.set_uri("eva://bookmarks/tags");
+        self.add_bar().set_text("eva://bookmarks/tags");
+        self.set_title("tags");
+        self.bookmark_button()
+            .set_icon_name("bookmark-new-symbolic");
+    }
+
+    pub fn view_source(&self) {
+        let viewer = self.viewer();
+        let mime = viewer.buffer_mime();
+        let content = viewer.buffer_content();
+        if mime.starts_with("text") {
+            let content = String::from_utf8_lossy(&content);
+            viewer.render_text(&content);
+            self.add_bar().set_text("eva://source");
         }
     }
 

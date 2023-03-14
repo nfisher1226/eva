@@ -93,7 +93,7 @@ pub fn add(win: &Window, app: &Application) {
             }
             "open_bookmarks" => {
                 action.connect_activate(clone!(@weak win => move |_,_| {
-                    //gui.open_bookmarks();
+                    win.current_tab().map(|t| t.request_eva_page("eva://bookmarks"));
                 }));
             }
             "bookmark_page" => {
@@ -105,7 +105,7 @@ pub fn add(win: &Window, app: &Application) {
             }
             "open_history" => {
                 action.connect_activate(clone!(@weak win => move |_,_| {
-                    //println!("Not implemented yet");
+                    win.current_tab().map(|t| t.request_eva_page("eva://history"));
                 }));
             }
             "clear_history" => {

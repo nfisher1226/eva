@@ -67,6 +67,7 @@ impl Window {
         tab.bind_fonts(&app);
         let page = self.imp().tab_view.append(&tab);
         tab.imp().connect_signals(&page);
+        tab.imp().bind_title(&page);
         if let Some(addr) = address {
             tab.visit(addr);
         }

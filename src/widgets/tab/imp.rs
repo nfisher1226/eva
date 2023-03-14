@@ -4,7 +4,9 @@ use {
         self,
         glib::{
             self, clone,
+            BindingFlags,
             subclass::{InitializingObject, Signal},
+            Properties,
         },
         prelude::*,
         subclass::prelude::*,
@@ -12,11 +14,13 @@ use {
     },
     gemview::GemView,
     once_cell::sync::Lazy,
-    std::borrow::Borrow,
+    std::{borrow::Borrow, cell::RefCell},
+    url::Url,
 };
 
-#[derive(CompositeTemplate, Default)]
+#[derive(CompositeTemplate, Default, Properties)]
 #[template(file = "tab.ui")]
+#[properties(wrapper_type = super::Tab)]
 pub struct Tab {
     #[template_child]
     pub back_button: TemplateChild<gtk::Button>,
@@ -38,6 +42,8 @@ pub struct Tab {
     pub scroller: TemplateChild<gtk::ScrolledWindow>,
     #[template_child]
     pub viewer: TemplateChild<GemView>,
+    #[property(get,set)]
+    title: RefCell<String>,
 }
 
 #[glib::object_subclass]
@@ -56,6 +62,18 @@ impl ObjectSubclass for Tab {
 }
 
 impl ObjectImpl for Tab {
+    fn properties() -> &'static [glib::ParamSpec] {
+        Self::derived_properties()
+    }
+
+    fn set_property(&self, _id: usize, _value: &glib::Value, _pspec: &glib::ParamSpec) {
+        Self::derived_set_property(self, _id, _value, _pspec)
+    }
+
+    fn property(&self, _id: usize, _pspec: &glib::ParamSpec) -> glib::Value {
+        Self::derived_property(self, _id, _pspec)
+    }
+
     fn constructed(&self) {
         self.parent_constructed();
         self.init_completion();
@@ -105,6 +123,13 @@ impl Tab {
                 s.on_page_load_failed(&page, &addr);
             }),
         );
+        viewer.connect_request_unsupported_scheme(clone!(@weak instance => move |_,addr| {
+            if let Ok(url) = Url::parse(&addr) {
+                if url.scheme() == "eva" {
+                    instance.request_eva_page(&addr);
+                }
+            }
+        }));
         viewer.connect_request_new_tab(clone!(@weak instance => move |_,addr| {
             instance.emit_by_name::<()>("request-new-tab", &[&addr]);
         }));
@@ -121,6 +146,12 @@ impl Tab {
             .connect_icon_press(clone!(@weak self as s => move |_,position| {
                 s.on_entry_icon_activated(position);
             }));
+    }
+
+    pub fn bind_title(&self, page: &adw::TabPage) {
+        self.obj().bind_property("title", page, "title")
+            .flags(BindingFlags::BIDIRECTIONAL)
+            .build();
     }
 
     fn on_page_load_started(&self, page: &adw::TabPage) {
