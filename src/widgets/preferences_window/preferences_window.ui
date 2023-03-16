@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk" version="4.0"/>
+  <object class="GtkFontDialog" id="pg_font_dialog"/>
+  <object class="GtkFontDialog" id="h1_font_dialog"/>
+  <object class="GtkFontDialog" id="h2_font_dialog"/>
+  <object class="GtkFontDialog" id="h3_font_dialog"/>
+  <object class="GtkFontDialog" id="pre_font_dialog"/>
+  <object class="GtkFontDialog" id="quote_font_dialog"/>
+  <object class="GtkColorDialog" id="fg_color_dialog"/>
+  <object class="GtkColorDialog" id="bg_color_dialog"/>
+  <object class="GtkColorDialog" id="pre_fg_color_dialog"/>
+  <object class="GtkColorDialog" id="pre_bg_color_dialog"/>
+  <object class="GtkColorDialog" id="quote_fg_color_dialog"/>
+  <object class="GtkColorDialog" id="quote_bg_color_dialog"/>
+  <object class="GtkColorDialog" id="link_color_dialog"/>
+  <object class="GtkColorDialog" id="hover_color_dialog"/>
   <template class="PreferencesWindow" parent="AdwPreferencesWindow">
     <child>
       <object class="AdwPreferencesPage">
@@ -74,6 +88,7 @@
                   <object class="GtkFontDialogButton" id="pg_font">
                     <property name="halign">fill</property>
                     <property name="valign">center</property>
+                    <property name="dialog">pg_font_dialog</property>
                   </object>
                 </child>
               </object>
@@ -85,6 +100,7 @@
                   <object class="GtkFontDialogButton" id="h1_font">
                     <property name="halign">fill</property>
                     <property name="valign">center</property>
+                    <property name="dialog">h1_font_dialog</property>
                   </object>
                 </child>
               </object>
@@ -96,6 +112,7 @@
                   <object class="GtkFontDialogButton" id="h2_font">
                     <property name="halign">fill</property>
                     <property name="valign">center</property>
+                    <property name="dialog">h2_font_dialog</property>
                   </object>
                 </child>
               </object>
@@ -107,6 +124,7 @@
                   <object class="GtkFontDialogButton" id="h3_font">
                     <property name="halign">fill</property>
                     <property name="valign">center</property>
+                    <property name="dialog">h3_font_dialog</property>
                   </object>
                 </child>
               </object>
@@ -118,6 +136,7 @@
                   <object class="GtkFontDialogButton" id="pre_font">
                     <property name="halign">fill</property>
                     <property name="valign">center</property>
+                    <property name="dialog">pre_font_dialog</property>
                   </object>
                 </child>
               </object>
@@ -129,6 +148,7 @@
                   <object class="GtkFontDialogButton" id="quote_font">
                     <property name="halign">fill</property>
                     <property name="valign">center</property>
+                    <property name="dialog">quote_font_dialog</property>
                   </object>
                 </child>
               </object>
@@ -153,6 +173,7 @@
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
                     <property name="rgba">rgb(153,193,241)</property>
+                    <property name="dialog">fg_color_dialog</property>
                   </object>
                 </child>
               </object>
@@ -166,6 +187,7 @@
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
                     <property name="rgba">rgb(36,31,49)</property>
+                    <property name="dialog">bg_color_dialog</property>
                   </object>
                 </child>
               </object>
@@ -179,6 +201,7 @@
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
                     <property name="rgba">rgb(98,160,234)</property>
+                    <property name="dialog">pre_fg_color_dialog</property>
                   </object>
                 </child>
               </object>
@@ -192,6 +215,7 @@
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
                     <property name="rgba">rgb(5,34,79)</property>
+                    <property name="dialog">pre_bg_color_dialog</property>
                   </object>
                 </child>
               </object>
@@ -205,6 +229,7 @@
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
                     <property name="rgba">rgb(87,227,137)</property>
+                    <property name="dialog">quote_fg_color_dialog</property>
                   </object>
                 </child>
               </object>
@@ -218,6 +243,7 @@
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
                     <property name="rgba">rgb(22,110,0)</property>
+                    <property name="dialog">quote_bg_color_dialog</property>
                   </object>
                 </child>
               </object>
@@ -231,6 +257,7 @@
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
                     <property name="rgba">rgb(192,97,203)</property>
+                    <property name="dialog">link_color_dialog</property>
                   </object>
                 </child>
               </object>
@@ -244,6 +271,7 @@
                     <property name="vexpand">false</property>
                     <property name="valign">center</property>
                     <property name="rgba">rgb(255,0,0)</property>
+                    <property name="dialog">hover_color_dialog</property>
                   </object>
                 </child>
               </object>
